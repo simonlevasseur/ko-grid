@@ -1,0 +1,86 @@
+$pagingHeight: 24px;
+
+.nssg-paging {
+    display: flex;
+    align-items: center;
+    color: #2f88a0;
+    font-size: 14px;
+    font-family: 'Open Sans', 'Myriad Set Pro', Arial, sans-serif;
+    text-align: right;
+
+    * {
+        box-sizing: border-box;
+    }
+}
+
+.nssg-paging-selector-container,
+.nssg-paging-count {
+    margin-right: 20px;
+}
+
+.nssg-paging-view {
+    margin-right: 5px;
+}
+
+.nssg-paging-controls {
+    display: flex;
+    align-items: center;
+}
+
+.nssg-paging-current {
+    height: $pagingHeight;
+    line-height: $pagingHeight;
+}
+
+.nssg-paging-arrow {
+    display: block;
+    height: 9px;
+    background: center center no-repeat;
+}
+
+.nssg-paging-first {
+    width: 7px;
+    margin-right: 10px;
+    background-image: url('img/pageFirst.png');
+}
+
+.nssg-paging-prev {
+    width: 5px;
+    margin-right: 10px;
+    background-image: url('img/pagePrev.png');
+}
+
+.nssg-paging-next {
+    width: 5px;
+    margin-left: 10px;
+    background-image: url('img/pageNext.png');
+}
+
+.nssg-paging-last {
+    width: 7px;
+    margin-left: 10px;
+    background-image: url('img/pageLast.png');
+}
+
+.nssg-paging-current {
+    width: 24px;
+    padding: 0;
+    background: #55c5f2 linear-gradient(to bottom, #55c5f2 0%, #2f88a0 100%) 0% 0%/100% repeat-x;
+    color: white;
+    border: 1px solid #c8cccc;
+    border-radius: 3px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+
+    &:focus {
+        color: #58585a;
+        background: white;
+        filter: none;
+    }
+}
+
+.nssg-paging-total {
+    width: auto;
+    margin-left: 5px;
+}

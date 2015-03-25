@@ -1,0 +1,9 @@
+.nssg-col-grip {
+    position: absolute;
+    top: 0;
+    right: -5px;
+    width: 10px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 1; // To appear above next th
+}

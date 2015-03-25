@@ -1,0 +1,49 @@
+.nssg-tbody-tr {
+    &:hover {
+        .nssg-actions-container {
+            display: flex;
+        }
+    }
+}
+
+.nssg-td-actions {
+    position: relative;
+    padding: 0px;
+    border-right: none;
+}
+
+.nssg-actions-container {
+    display: none;
+    position: absolute;
+    top: -4px;
+    left: 100px;
+    background-color: rgba(255, 255, 255, 0.6);
+    background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.6) 0%, rgba(238, 241, 243, 0.6) 100%);
+    background-position: 0% 0%;
+    background-repeat: repeat-x;
+    background-size: 100%;
+    border: 1px solid #9AB7C3;
+    border-radius: 2px;
+    box-sizing: content-box;
+}
+
+.nssg-action {
+    width: 30px;
+    height: 26px;
+}
+
+.nssg-action-delete {
+    background: url('img/delete.png') center center no-repeat;
+
+    &:hover {
+        background: url('img/delete-hover.png') center center no-repeat;
+    }
+}
+
+.nssg-action-invoke {
+    background: url('img/view.png') center center no-repeat;
+
+    &:hover {
+        background: url('img/view-hover.png') center center no-repeat;
+    }
+}

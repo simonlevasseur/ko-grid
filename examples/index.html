@@ -1,19 +1,96 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html> <!--<![endif]-->
+<html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>koGrid Example</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../build/koGrid.css">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,600,700,800,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="../build/not-so-simple-grid.css">
+        <style>
+            body {
+                background-color: #EEEEDD;
+                margin: 0 auto;
+                font-family: 'Open Sans';
+            }
+            .nssg-container {
+                width: 600px;
+                position: relative;
+                margin: 10px auto;
+            }
+            .nssg-paging {
+                width: 600px;
+                margin: 50px auto 10px auto;
+            }
+        </style>
     </head>
     <body>
-        <p>Hello world!</p>
+        <!-- ko if: gridVM -->
+            <grid-paging params="vm: gridVM().pager"></grid-paging>
+            <grid params="vm: gridVM"></grid>
+        <!-- /ko -->
+
         <script type="application/javascript" src="../ext/jquery-2.1.0.min.js"></script>
-        <script type="application/javascript" src="../ext/knockout-3.1.0.min.js"></script>
-        <script src="//localhost:35729/livereload.js"></script>
+        <script type="application/javascript" src="../ext/knockout-3.3.0.debug.js"></script>
+        <script type="application/javascript" src="../build/not-so-simple-grid.js"></script>
+        <script type="text/javascript">
+            var vm = function () {
+                var self = this;
+                window.grid = this.gridVM = ko.observable();
+
+                setTimeout(function () {
+                    self.gridVM(new ko.Grid({
+                        columns: [
+                            {
+                                id: 'name',
+                                heading: 'Name',
+                                dataAccessor: 'name',
+                                sortFunction: function (a, b) {
+                                    var strA = a.toLowerCase(),
+                                        strB = b.toLowerCase();
+                                    if (strA.indexOf('simon') !== -1) { return -1; }
+                                    if (strB.indexOf('simon') !== -1) { return 1; }
+                                    return strA === strB ? 0 : (strA < strB ? -1 : 1);
+                                }
+                            },
+                            { id: 'age', heading: 'Age', dataAccessor: 'age', minWidth: 100 },
+                            { id: 'email', heading: 'Email Address', dataAccessor: 'email', sortable: ko.observable(false) },
+                            { id: 'date', heading: 'Date', dataAccessor: 'date', sortable: false },
+                            { id: 'company', heading: 'Company', dataAccessor: 'company' }
+                        ],
+                        data: function (args) {
+                            var promise = $.Deferred();
+
+                            $.getJSON('data.json').done(function (data) {
+                                var start = args.start,
+                                    count = args.count,
+                                    retData = data.data;
+
+                                promise.resolve({
+                                    data: retData.slice(start, start + retData.length),
+                                    total: retData.length
+                                });
+                            });
+
+                            return promise;
+                        },
+                        deletable: true,
+                        invokable: true,
+                        pageable: {
+                            pageSizes: [10, 20]
+                        },
+                        resizable: true,
+                        selectable: true,
+                        sortable: {
+                            enabled: ko.observable(true),
+                            defaultSortCol: 'age',
+                            defaultSortDir: 'asc'
+                        }
+                    }));
+                }, 1000);
+            };
+
+            ko.applyBindings(new vm());
+        </script>
     </body>
 </html>

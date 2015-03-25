@@ -1,0 +1,25 @@
+.nssg-sortable {
+    cursor: pointer;
+
+    &.nssg-sorted {
+        padding-right: 18px;
+        text-decoration: underline;
+
+        &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 18px;
+            height: 100%;
+        }
+
+        &.nssg-sorted-asc:before {
+            background: url('img/arrowUpBlue.png') center center no-repeat;
+        }
+
+        &.nssg-sorted-desc:before {
+            background: url('img/arrowDownBlue.png') center center no-repeat;
+        }
+    }
+}

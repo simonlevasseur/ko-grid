@@ -1,0 +1,11 @@
+.nssg-th-text,
+.nssg-td-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nssg-th-text {
+    font-size: 13px;
+    font-weight: 600;
+}
