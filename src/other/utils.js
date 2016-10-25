@@ -17,6 +17,19 @@ function isFunction(obj) {
     return typeof obj === "function";
 }
 
+function isPromise(obj) {
+    return obj && typeof obj === "object" && typeof obj.then === "function";
+}
+
+function promisify(value)
+{
+    if (!isPromise(value))
+    {
+        return Promise.resolve(value);
+    }
+    return value;
+}
+
 function isObject(obj) {
     return obj !== null && typeof obj === 'object' && !isArray(obj);
 }

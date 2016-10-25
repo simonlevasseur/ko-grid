@@ -170,7 +170,7 @@ ko.utils.extend(Grid.prototype, {
             };
 
             var self = this;
-            dataOption(params).done(function (dto) {
+            dataOption(params).then(function (dto) {
                 var data = ko.unwrap(dto.data).slice(0); // Array clone to ensure proper data
                 self.data(data);
 
