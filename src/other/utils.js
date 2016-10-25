@@ -1,6 +1,26 @@
 /*****************/
 /***** UTILS *****/
 /*****************/
+
+//All properties in objTarget which also occur in objSource will be replaced with the versions
+//from objSource.  Nested objects will be processed recursively.  Arrays will be replaced, not merged.
+function deepReplace(objTarget, objSource)
+{
+    for(var key in objSource)
+    {
+        var value = objSource[key];
+        if (typeof value === "object" && !Array.isArray(value))
+        {
+            objTarget[key] = objTarget[key] || {};
+            deepReplace(objTarget[key], value);
+        }
+        else
+        {
+            objTarget[key] = value;
+        }
+    }
+}
+
 function isArray(obj) {
     return Array.isArray(obj);
 }
@@ -50,6 +70,26 @@ function isObservableArray(obj) {
 
 function isPromise(obj) {
     return obj && typeof obj === "object" && typeof obj.then === "function";
+}
+
+//Recursively walks through objects, invoking the supplied predicate whenever
+//the condition function returns true
+//
+// condition/predicate signature: (value, key, obj)
+function walkObject(obj, condition, predicate)
+{
+    for(var key in obj)
+    {
+        var value = obj[key];
+        if (condition(value, key, obj))
+        {
+            predicate(value, key, obj);
+        }
+        if (typeof value === "object" && !Array.isArray(value))
+        {
+            walkObject(value, condition, predicate);
+        }
+    }
 }
 
 /************************/
