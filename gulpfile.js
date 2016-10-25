@@ -37,8 +37,11 @@ gulp.task('js', [/*'jscs', 'lint'*/], function (cb) {
     html2js.config = {
         namespace: 'templates',
         name: function(file) {
+            var relativeName = file.relative;
+            relativeName = relativeName.replace(/\\/g, "/");
+            
             // Template names should match file names without extensions
-            var filepath = file.relative.split('.')[0], 
+            var filepath = relativeName.split('.')[0], 
                 parts = filepath.split('/'),
                 name = parts[parts.length - 1];
 
