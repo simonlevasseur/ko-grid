@@ -44,6 +44,8 @@ function __nssgGetGlobal()
 
     //= include "classes/Sorter.js"
     
+   //= include "classes/gridCustomizer.js"
+
     /**********************/
     /***** COMPONENTS *****/
     /**********************/
@@ -62,4 +64,5 @@ function __nssgGetGlobal()
     ko.Grid = Grid;
     ko.Grid.Sorter = Sorter;
     ko.Grid.Pager = Pager;
+    ko.Grid.Customizer = GridCustomizer;
 }));
