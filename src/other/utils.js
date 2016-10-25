@@ -9,6 +9,19 @@ function isArrayOrObsArray(obj) {
     return isArray(obj) || isObservableArray(obj);
 }
 
+function isEmptyObject(obj) {
+    if (!isObject(obj)) {
+        return false;
+    }
+
+    var name;
+    for (name in obj) {
+        return false;
+    }
+
+    return true;
+}
+
 function isFuncNotObsArray(obj) {
     return isFunction(obj) && !ko.isObservable(obj);
 }
@@ -17,9 +30,6 @@ function isFunction(obj) {
     return typeof obj === "function";
 }
 
-function isPromise(obj) {
-    return obj && typeof obj === "object" && typeof obj.then === "function";
-}
 
 function promisify(value)
 {
@@ -34,21 +44,12 @@ function isObject(obj) {
     return obj !== null && typeof obj === 'object' && !isArray(obj);
 }
 
-function isEmptyObject(obj) {
-    if (!isObject(obj)) {
-        return false;
-    }
-
-    var name;
-    for (name in obj) {
-        return false;
-    }
-
-    return true;
-}
-
 function isObservableArray(obj) {
     return ko.isObservable(obj) && 'push' in obj;
+}
+
+function isPromise(obj) {
+    return obj && typeof obj === "object" && typeof obj.then === "function";
 }
 
 /************************/
