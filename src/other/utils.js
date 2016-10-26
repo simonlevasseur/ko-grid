@@ -9,13 +9,17 @@ function deepReplace(objTarget, objSource)
     for(var key in objSource)
     {
         var value = objSource[key];
-        if (typeof value === "object" && !Array.isArray(value))
+        if (typeof value === "object" && !(Array.isArray(value)  || isPromise(value)))
         {
             objTarget[key] = objTarget[key] || {};
             deepReplace(objTarget[key], value);
         }
         else
         {
+            if (Array.isArray(value))
+            {
+                value = value.slice();
+            }
             objTarget[key] = value;
         }
     }
