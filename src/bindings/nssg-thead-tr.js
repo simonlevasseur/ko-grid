@@ -2,7 +2,9 @@
     ko.bindingHandlers.nssgTheadTr = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var gridVM = ko.unwrap(bindingContext.$component),
-                cols = gridVM.columns;
+                cols = gridVM.columns,
+                $container = $(element).closest('.nssg-container');
+            
 
             /*******************/
             /***** SORTING *****/
@@ -17,12 +19,11 @@
             /***** COLUMN RESIZING *****/
             /***************************/
             if (gridVM.options.resizable) {
-                var $container = $('.nssg-container'),
-                    containerWidth = $container.width(), // Without borders
+                var containerWidth = $container.width(), // Without borders
                     allColWidths = defineColWidths(cols, containerWidth);
 
                 // Set table width
-                $('.nssg-table').width(allColWidths);
+                $('.nssg-table', $container).width(allColWidths);
             }
 
             /************************/

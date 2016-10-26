@@ -5,7 +5,8 @@
                 col = valueAccessor(),
                 gridVM = ko.unwrap(bindingContext.$component),
                 $th = $(element),
-                $document = $(document);
+                $document = $(document),
+                $container = $(element).closest('.nssg-container');
 
             /**************************/
             /***** COLUMN SORTING *****/
@@ -49,12 +50,11 @@
             }
 
             function onDocumentMouseMove(e) {
-                var $container = $('.nssg-container'),
-                    currentWidth = $th.outerWidth(),
+                var currentWidth = $th.outerWidth(),
                     newWidth = startWidth + (e.pageX - startX),
                     difference = newWidth - currentWidth,
 
-                    $table = $('.nssg-table'),
+                    $table = $('.nssg-table', $container),
                     tableWidth = $table.outerWidth(),
                     newTableWidth = tableWidth + difference;
 
