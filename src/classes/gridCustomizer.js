@@ -1,7 +1,7 @@
 /****************************/
 /***** CUSTOMIZER CLASS *****/
 /****************************/
-var GridCustomizer = function (baseOptions, baseInitializer) {
+var gridCustomizer = function (baseOptions, baseInitializer) {
     return function CustomizedGrid(overrideOptions, overrideInitializer)
     {
         var actualGrid = ko.observable();

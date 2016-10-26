@@ -47,5 +47,5 @@
     ko.Grid = Grid;
     ko.Grid.Sorter = Sorter;
     ko.Grid.Pager = Pager;
-    ko.Grid.Customizer = GridCustomizer;
+    ko.Grid.customize = gridCustomizer;
 }));
