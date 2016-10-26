@@ -4,25 +4,31 @@
 
 //All properties in objTarget which also occur in objSource will be replaced with the versions
 //from objSource.  Nested objects will be processed recursively.  Arrays will be replaced, not merged.
-function deepReplace(objTarget, objSource)
+function deepReplace(objTarget)
 {
-    for(var key in objSource)
+    var objSources = Array.prototype.slice.call(arguments, 1);
+    for (var i=0;i<objSources.length;i++)
     {
-        var value = objSource[key];
-        if (typeof value === "object" && !(Array.isArray(value)  || isPromise(value)))
+        var objSource = objSources[i];
+        for(var key in objSource)
         {
-            objTarget[key] = objTarget[key] || {};
-            deepReplace(objTarget[key], value);
-        }
-        else
-        {
-            if (Array.isArray(value))
+            var value = objSource[key];
+            if (typeof value === "object" && !(Array.isArray(value)  || isPromise(value)))
             {
-                value = value.slice();
+                objTarget[key] = objTarget[key] || {};
+                deepReplace(objTarget[key], value);
             }
-            objTarget[key] = value;
+            else
+            {
+                if (Array.isArray(value))
+                {
+                    value = value.slice();
+                }
+                objTarget[key] = value;
+            }
         }
     }
+    return objTarget;
 }
 
 function isArray(obj) {
