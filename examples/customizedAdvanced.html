@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>koGrid Example</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,600,700,800,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="../build/not-so-simple-grid.css">
+        <style>
+            body {
+                background-color: #EEEEDD;
+                margin: 0 auto;
+                font-family: 'Open Sans';
+            }
+            .nssg-container {
+                width: 600px;
+                position: relative;
+                margin: 10px auto;
+            }
+            .nssg-paging {
+                width: 600px;
+                margin: 50px auto 10px auto;
+            }
+            .smallGrid, .bigGrid {
+                position:absolute;
+                left:50%
+            }
+            .smallGrid {
+                margin-left:-600px
+            }
+        </style>
+    </head>
+    <body>
+        <div class="smallGrid" data-bind="if: smallGridVM">
+            <grid-paging params="vm: smallGridVM().pager"></grid-paging>
+            <grid params="vm: smallGridVM"></grid>
+        </div>
+        <div class="bigGrid" data-bind="if: bigGridVM">
+            <grid-paging params="vm: bigGridVM().pager"></grid-paging>
+            <grid params="vm: bigGridVM"></grid>
+        </div>
+
+        <script type="application/javascript" src="../ext/jquery-2.1.0.min.js"></script>
+        <script type="application/javascript" src="../ext/knockout-3.3.0.debug.js"></script>
+        <script type="application/javascript" src="../node_modules/promise-polyfill/promise.js"></script>
+        <script type="application/javascript" src="../build/not-so-simple-grid.js"></script>
+        <script type="text/javascript">
+            var myCustomizedGrid = ko.Grid.Customizer({
+                columns: [
+                    {
+                        id: 'name',
+                        heading: 'Name',
+                        dataAccessor: 'name',
+                        sortFunction: function (a, b) {
+                            var strA = a.toLowerCase(),
+                                strB = b.toLowerCase();
+                            if (strA.indexOf('simon') !== -1) { return -1; }
+                            if (strB.indexOf('simon') !== -1) { return 1; }
+                            return strA === strB ? 0 : (strA < strB ? -1 : 1);
+                        }
+                    },
+                    { id: 'age', heading: 'Age', dataAccessor: 'age', minWidth: 100 },
+                    { id: 'email', heading: 'Email Address', dataAccessor: 'email', sortable: ko.observable(false) },
+                    { id: 'date', heading: 'Date', dataAccessor: 'date', sortable: false },
+                    { id: 'company', heading: 'Company', dataAccessor: 'company' },
+                    { id: 'image', heading: 'Color', dataAccessor: 'company', type: 'swirl'}
+                ],
+                data: function (args) {
+                    return new Promise(function(resolve, reject){
+                        $.getJSON('data.json').then(function (data) {
+                            var start = args.start,
+                                count = args.count,
+                                retData = data.data;
+                            resolve({
+                                data: retData.slice(start, start + retData.length),
+                                total: retData.length
+                            });
+                        });
+                    })
+                },
+                deletable: true,
+                invokable: true,
+                pageable: {
+                    pageSizes: [10, 20]
+                },
+                resizable: true,
+                selectable: true,
+                sortable: {
+                    enabled: ko.observable(true),
+                    defaultSortCol: 'age',
+                    defaultSortDir: 'asc'
+                },
+                templates :{
+                    "swirl": new Promise(function(resolve, reject){
+                        setTimeout(function(){
+                            console.log("pretending complete, now continuing to load the grid");
+                            resolve("<img data-bind=\"attr:{src:'http://lorempixel.com/60/60/abstract/'+$parent[dataAccessor].replace(/[\\s\\.]*/g, '')}\">");
+                        },5000);//simulated load time
+                        console.log("It's not actually this slow, we're just pretending to show that properties can be promises")
+                    })
+                }
+            });
+        
+            var vm = function () {
+                this.smallGridVM = myCustomizedGrid({
+                    pageable : {
+                        pageSizes: [5]
+                    }
+                });
+                this.bigGridVM = myCustomizedGrid({
+                    pageable : {
+                        pageSizes: [20]
+                    }
+                }, function(options){
+                    //removing the age or email column just to show that we can
+                    console.log(JSON.stringify(options.columns));
+                    if (Math.random() < 0.5)
+                    {
+                       options.columns.splice(1,1);
+                    }
+                    else
+                    {
+                       options.columns.splice(2,1);
+                    }
+                
+                })
+            };
+            ko.applyBindings(new vm());
+        </script>
+    </body>
+</html>
