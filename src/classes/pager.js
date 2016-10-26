@@ -76,21 +76,18 @@ ko.utils.extend(Pager.prototype, {
         // If pageable option was not set or was set to false then use the defaults. (Disabled by default)
         if (!userOptions || isEmptyObject(userOptions)) {
             // Clone options to protect defaults from being modified
-            opts = $.extend(opts, Pager.DEFAULTS);
+            opts = deepReplace(opts, Pager.DEFAULTS);
         }
 
         // If pageable option was set to true then use the defaults but enable paging.
         else if (userOptions === true) {
-            opts = $.extend(opts, Pager.DEFAULTS, { enabled: true });
+            opts = deepReplace(opts, Pager.DEFAULTS, { enabled: true });
         }
 
         // User passed in some paging options so merge them with the defaults.
         // If enabled is omitted then enable it for them.
         else {
-            opts = $.extend(opts, Pager.DEFAULTS, { enabled: true }, userOptions);
-
-            // $.extend merges arrays but we want to replace.
-            opts.pageSizes = userOptions.pageSizes || Pager.DEFAULTS.pageSizes;
+            opts = deepReplace(opts, Pager.DEFAULTS, { enabled: true }, userOptions);
         }
 
         this.enabled(opts.enabled);

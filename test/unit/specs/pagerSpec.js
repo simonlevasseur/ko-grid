@@ -7,7 +7,7 @@ function createInstance(passedOptions) {
             pageSizes: [10, 50, 100, 250, 500, 1000],
             serverPaging: false
         },
-        options = $.extend({}, defaultOptions, passedOptions),
+        options = deepReplace({}, defaultOptions, passedOptions),
         data = sampleData.slice(0);
 
     return new Pager(options, data);

@@ -79,7 +79,7 @@ ko.utils.extend(Grid.prototype, {
             if (isObject(defaultOptions[key]) && value === true) {
                 options[key] = defaultOptions[key];
             } else { // Merge the user's options into the default options
-                options[key] = defaultOptions[key] ? $.extend({}, defaultOptions[key], value) : value;
+                options[key] = defaultOptions[key] ? deepReplace({}, defaultOptions[key], value) : value;
             }
         });
 
@@ -102,7 +102,7 @@ ko.utils.extend(Grid.prototype, {
 
         // Add select column
         if (options.selectable) {
-            var selectCol = $.extend({}, options.selectable, {
+            var selectCol = deepReplace({}, options.selectable, {
                 type: 'select',
                 resizable: false,
                 sortable: false
