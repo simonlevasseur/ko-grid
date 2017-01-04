@@ -1,0 +1,28 @@
+{
+  "name": "not-so-simple-grid",
+  "description": "Knockout Table binding that supports sorting, filtering, paging, column resizing, dynamic column selection, reusable factory constructors, etc",
+  "main": "dist/not-so-simple-grid.js",
+  "authors": [
+    "Simon LeVasseur"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "grid",
+    "table",
+    "knockout"
+  ],
+  "homepage": "https://github.com/simonlevasseur/ko-grid",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "build",
+    "coverage",
+    "examples",
+    "ext",
+    "src",
+    "gulpfile.js"
+  ]
+}

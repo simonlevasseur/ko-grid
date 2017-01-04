@@ -97,6 +97,11 @@ gulp.task('test', function(cb) {
     });
 });
 
+gulp.task('publish', [/*'jscs','lint','js','test'*/], function(){
+    return gulp.src('build/not-so-simple-grid.js')
+        .pipe(gulp.dest('dist'));
+});
+
 gulp.task('watch', ['css', 'js'], function (done) {
     browserSync.init({ server: './', directory: true }, function () {
         gulp.watch(['src/**/*.js', 'src/**/*.html'], ['test', 'js']);
