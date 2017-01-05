@@ -1,0 +1,18 @@
+{
+    "extends": ["airbnb-base/legacy"],
+    "rules": {
+        "func-names": "off",
+        "indent": ["error", 4],
+        "max-len": "warn",
+        "no-unused-vars": "warn",
+        "semi": ["error", "always"],
+        "spaced-comment": "warn"
+    },
+    "globals":{
+        "expect":true
+    },
+    "env":{
+        "mocha": true,
+        "browser": true
+    }
+}
