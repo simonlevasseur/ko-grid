@@ -17,7 +17,8 @@ var Pager = function (options, data) {
 
     // Variables
     this.data = data;
-    this.currentPageIndex = ko.observable(0).extend({ notify: 'always' }); // Notify always so currentPageIndexUI re-evaluates after invalid values are entered
+    // Notify always so currentPageIndexUI re-evaluates after invalid values are entered
+    this.currentPageIndex = ko.observable(0).extend({ notify: 'always' });
     this.itemsOnCurrentPage = ko.pureComputed({
         read: this.getItemsOnCurrentPage,
         deferEvaluation: true,
@@ -106,16 +107,16 @@ ko.utils.extend(Pager.prototype, {
      */
     getItemsOnCurrentPage: function () {
         // Computed Triggers
-        var pageSize = ko.unwrap(this.pageSize),
-            currentPageIndex = ko.unwrap(this.currentPageIndex),
-            allData = ko.unwrap(this.data),
-            enabled = ko.unwrap(this.enabled),
-            serverPaging = ko.unwrap(this.serverPaging),
-            totalItems = ko.unwrap(this.totalItems),
+        var pageSize = ko.unwrap(this.pageSize);
+        var currentPageIndex = ko.unwrap(this.currentPageIndex);
+        var allData = ko.unwrap(this.data);
+        var enabled = ko.unwrap(this.enabled);
+        var serverPaging = ko.unwrap(this.serverPaging);
+        var totalItems = ko.unwrap(this.totalItems);
 
         // Private Variables
-            startIndex = pageSize * currentPageIndex,
-            endIndex = (startIndex + pageSize) || totalItems - 1;
+        var startIndex = pageSize * currentPageIndex;
+        var endIndex = (startIndex + pageSize) || totalItems - 1;
 
         // If the paging is disabled, return all data
         if (!enabled) {
@@ -151,15 +152,15 @@ ko.utils.extend(Pager.prototype, {
      */
     getMaxPageIndex: function () {
         // Computed Triggers
-        var totalItems = ko.unwrap(this.totalItems),
-            pageSize = ko.unwrap(this.pageSize) || totalItems || 1,
+        var totalItems = ko.unwrap(this.totalItems);
+        var pageSize = ko.unwrap(this.pageSize) || totalItems || 1;
             // Page size is generally a positive integer, however when the page size is set to 0
             // (to show unlimited items) then it will result in an illegal division by 0. (ex: 10/0 = NaN)
             // In this scenario we use the total items as the denominator. (ex: 10/10 = 1)
             // If total items is 0 then we have another division by 0 so we default to 1. (ex: 0/1 = 0)
 
         // Private Variables
-            maxPageIndex = Math.ceil(totalItems / pageSize) - 1; // Will be -1 if no items
+        var maxPageIndex = Math.ceil(totalItems / pageSize) - 1; // Will be -1 if no items
 
         return Math.max(0, maxPageIndex);
     },
@@ -183,9 +184,9 @@ ko.utils.extend(Pager.prototype, {
      */
     getRowStartUI: function () {
         // Computed Triggers
-        var page = ko.unwrap(this.currentPageIndex),
-            pageSize = ko.unwrap(this.pageSize),
-            totalItems = ko.unwrap(this.totalItems);
+        var page = ko.unwrap(this.currentPageIndex);
+        var pageSize = ko.unwrap(this.pageSize);
+        var totalItems = ko.unwrap(this.totalItems);
 
         return totalItems > 0 ? (page * pageSize) + 1 : 0;
     },
@@ -197,12 +198,12 @@ ko.utils.extend(Pager.prototype, {
      */
     getRowEndUI: function () {
         // Computed Triggers
-        var rowStart = ko.unwrap(this.rowStartUI),
-            pageSize = ko.unwrap(this.pageSize),
-            totalItems = ko.unwrap(this.totalItems),
+        var rowStart = ko.unwrap(this.rowStartUI);
+        var pageSize = ko.unwrap(this.pageSize);
+        var totalItems = ko.unwrap(this.totalItems);
 
         // Private Variables
-            rowEnd = (rowStart + pageSize - 1) || totalItems; // If rowEnd is 0 we are showing unlimited
+        var rowEnd = ((rowStart + pageSize) - 1) || totalItems; // If rowEnd is 0 we are showing unlimited
 
         return Math.min(rowEnd, totalItems);
     },
@@ -213,26 +214,27 @@ ko.utils.extend(Pager.prototype, {
      */
     getRowCountHTML: function () {
         // Computed Triggers
-        var start = ko.unwrap(this.rowStartUI),
-            end = ko.unwrap(this.rowEndUI),
-            total = ko.unwrap(this.totalItems),
-            showingPageSelector = ko.unwrap(this.getShowPageSelector);
+        var start = ko.unwrap(this.rowStartUI);
+        var end = ko.unwrap(this.rowEndUI);
+        var total = ko.unwrap(this.totalItems);
+        var showingPageSelector = ko.unwrap(this.getShowPageSelector);
 
         if (showingPageSelector) {
             return 'Showing <strong>' + start + '-' + end + '</strong> of <strong>' + total + '</strong>';
-        } else {
+        }
+        else {
             return 'Showing <strong>' + total + '</strong> records.';
         }
     },
 
     getShowPageSelector: function () {
         // Computed Triggers
-        var enabled = ko.unwrap(this.enabled),
-            pageSizes = ko.unwrap(this.pageSizes),
+        var enabled = ko.unwrap(this.enabled);
+        var pageSizes = ko.unwrap(this.pageSizes);
 
         // Private Variables
-            hasOnePageOption = pageSizes.length === 1,
-            firstOptionIsUnlimited = pageSizes[0] === 0;
+        var hasOnePageOption = pageSizes.length === 1;
+        var firstOptionIsUnlimited = pageSizes[0] === 0;
 
         return enabled && (!hasOnePageOption || !firstOptionIsUnlimited);
     },
@@ -248,8 +250,8 @@ ko.utils.extend(Pager.prototype, {
      */
     setCurrentPageIndexUI: function (val) {
         // Private Variables
-        var val = isNaN(val) ? 1 : val, // Set back to page 1 if something invalid was entered
-            newIndex = val - 1; // Convert to 0-based index
+        var valFixed = isNaN(val) ? 1 : val; // Set back to page 1 if something invalid was entered
+        var newIndex = valFixed - 1; // Convert to 0-based index
 
         this.goToPage(newIndex);
     },
@@ -263,12 +265,14 @@ ko.utils.extend(Pager.prototype, {
      * Selects the first page size if the current option is no longer valid.
      */
     onPageSizesChange: function (sizes) {
+        var pageSize;
+
         if (!isArray(sizes) || !sizes.length) {
             throw new Error('Invalid page sizes. An array of integers with at least one value is expected.');
         }
 
         // Private Variables
-        var pageSize = ko.unwrap(this.pageSize);
+        pageSize = ko.unwrap(this.pageSize);
 
         // If the current page size is no longer valid then pick the first available page size
         if (sizes.indexOf(pageSize) === -1) {
@@ -280,7 +284,7 @@ ko.utils.extend(Pager.prototype, {
      * Runs whenever page size changes.
      * Goes back to the first page.
      */
-    onPageSizeChange: function (pageSize) {
+    onPageSizeChange: function () {
         // Design Decision: If the user changes the page size we go back to the first page to avoid confusion
         this.goToFirstPage();
     },

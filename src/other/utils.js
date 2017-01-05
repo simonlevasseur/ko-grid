@@ -1,23 +1,27 @@
+/* eslint no-unused-vars: "off" */
+
 /*****************/
 /**     UTILS   **/
 /*****************/
 
 // All properties in objTarget which also occur in objSource will be replaced with the versions
 // from objSource.  Nested objects will be processed recursively.  Arrays will be replaced, not merged.
+
 function deepReplace(objTarget) {
     var objSources = Array.prototype.slice.call(arguments, 1);
     for (var i = 0; i < objSources.length; i++) {
         var objSource = objSources[i];
-        for (var key in objSource) {
+        for (var key in objSource) { // eslint-disable-line guard-for-in
             var value = objSource[key];
             if (typeof value === 'object' && !(Array.isArray(value) || isPromise(value))) {
-                objTarget[key] = objTarget[key] || {};
+                objTarget[key] = objTarget[key] || {}; // eslint-disable-line no-param-reassign
                 deepReplace(objTarget[key], value);
-            } else {
+            }
+            else {
                 if (Array.isArray(value)) {
                     value = value.slice();
                 }
-                objTarget[key] = value;
+                objTarget[key] = value; // eslint-disable-line no-param-reassign
             }
         }
     }
@@ -38,7 +42,7 @@ function isEmptyObject(obj) {
     }
 
     var name;
-    for (name in obj) {
+    for (name in obj) { // eslint-disable-line guard-for-in
         return false;
     }
 
@@ -79,6 +83,9 @@ function isPromise(obj) {
 // condition/predicate signature: (value, key, obj)
 function walkObject(obj, condition, predicate) {
     for (var key in obj) {
+        if (!obj.hasOwnProperty(key)) {
+            continue;
+        }
         var value = obj[key];
         if (condition(value, key, obj)) {
             predicate(value, key, obj);
@@ -96,7 +103,7 @@ ko.extenders.nssgSingleSelect = function (target, option) {
     // Before change clears the array before the new value is set
     target.subscribe(function (oldVal) {
         if (oldVal && oldVal.length) {
-            oldVal.length = 0;
+            oldVal.length = 0; // eslint-disable-line no-param-reassign
         }
     }, null, 'beforeChange');
 

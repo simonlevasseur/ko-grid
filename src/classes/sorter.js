@@ -7,7 +7,9 @@ var Sorter = function (options, data) {
     this.serverSorting = options.serverSorting || false;
     this.defaultSortCol = options.defaultSortCol || undefined;
     this.defaultSortDir = options.defaultSortDir || 'asc';
-    this.dataAccessor = (typeof options.dataAccessor === 'function') ? options.dataAccessor : function (dataObj, col) { dataObj[col.dataAccessor]; };
+    this.dataAccessor = (typeof options.dataAccessor === 'function') ? options.dataAccessor : function (dataObj, col) {
+        return dataObj[col.dataAccessor];
+    };
 
     // Variables
     this.data = data;
@@ -27,11 +29,13 @@ ko.utils.extend(Sorter.prototype, {
      * Set the default sorting column and direction
      */
     init: function () {
-        var defSortCol = this.defaultSortCol,
-            defSortDir = this.defaultSortDir;
+        var defSortCol = this.defaultSortCol;
+        var defSortDir = this.defaultSortDir;
 
         // Set initial column sort if defined
-        defSortCol && this.setColSort(defSortCol, defSortDir);
+        if (defSortCol) {
+            this.setColSort(defSortCol, defSortDir);
+        }
     },
 
     /**
@@ -42,22 +46,25 @@ ko.utils.extend(Sorter.prototype, {
      * @returns {boolean} - Returns whether or not the new column was sortable
      */
     setColSort: function (newSortCol, newSortDir) {
+        var oldSortCol;
+        var oldSortDir;
+
         // Abort if column is not sortable
         if (ko.unwrap(newSortCol.sortable) === false) {
             return false;
         }
 
-        var oldSortCol = this.currentSortCol(),
-            oldSortDir = this.currentSortDir();
+        oldSortCol = this.currentSortCol();
+        oldSortDir = this.currentSortDir();
 
         // Set observable to new column
         this.currentSortCol(newSortCol);
 
         // Determine & Set new sort direction
         if (!newSortDir) {
-            newSortDir = 'asc';
+            newSortDir = 'asc'; // eslint-disable-line no-param-reassign
             if (oldSortCol === newSortCol) {
-                newSortDir = (oldSortDir === 'asc') ? 'desc' : 'asc';
+                newSortDir = (oldSortDir === 'asc') ? 'desc' : 'asc'; // eslint-disable-line no-param-reassign
             }
         }
 
@@ -76,24 +83,26 @@ ko.utils.extend(Sorter.prototype, {
             return;
         }
 
-        var sortCol = this.currentSortCol(),
-            sortDir = this.currentSortDir(),
-            sortFn = sortCol.sortFunction,
-            data = this.data;
+        var sortCol = this.currentSortCol();
+        var sortDir = this.currentSortDir();
+        var sortFn = sortCol.sortFunction;
+        var data = this.data;
+        var sampleDataItem;
+        var dataValue;
 
         if (!sortFn) {
-            var sampleDataItem = ko.utils.arrayFirst(ko.unwrap(data), function (datum) {
-                    return this.dataAccessor(datum, sortCol);
-                }, this),
-                dataValue = this.dataAccessor(sampleDataItem, sortCol);
+            sampleDataItem = ko.utils.arrayFirst(ko.unwrap(data), function (datum) {
+                return this.dataAccessor(datum, sortCol);
+            }, this);
+            dataValue = this.dataAccessor(sampleDataItem, sortCol);
 
             sortFn = Sorter.guessSortFn(dataValue);
         }
 
         // Sort the data!
         data.sort(function (a, b) {
-            var valueA = this.dataAccessor(a, sortCol),
-                valueB = this.dataAccessor(b, sortCol);
+            var valueA = this.dataAccessor(a, sortCol);
+            var valueB = this.dataAccessor(b, sortCol);
 
             return sortDir === 'desc' ? -(sortFn(valueA, valueB)) : sortFn(valueA, valueB);
         }.bind(this));
@@ -127,9 +136,14 @@ ko.utils.extend(Sorter, {
      * @returns {number} - Value representing if a is smaller, bigger or equal to b
      */
     sortAlphabetically: function (a, b) {
-        var strA = a ? a.toLowerCase() : a,
-            strB = b ? b.toLowerCase() : b;
-        return strA === strB ? 0 : (strA < strB ? -1 : 1);
+        var strA = a ? a.toLowerCase() : a;
+        var strB = b ? b.toLowerCase() : b;
+        if (strA === strB) {
+            return 0;
+        }
+        else {
+            return strA < strB ? -1 : 1;
+        }
     },
 
     /**

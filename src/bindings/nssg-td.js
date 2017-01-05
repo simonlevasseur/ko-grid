@@ -1,9 +1,9 @@
 ko.bindingHandlers.nssgTd = {
     init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        var NAMESPACE = 'nssgTd',
-            col = valueAccessor(),
-            gridVM = ko.unwrap(bindingContext.$component),
-            $td = $(element);
+        var col = valueAccessor();
+        var $td = $(element);
+
+        ko.unwrap(bindingContext.$component);
 
         /***************************/
         /**    COLUMN TEMPLATE    **/

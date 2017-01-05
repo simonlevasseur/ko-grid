@@ -1,7 +1,7 @@
 ko.bindingHandlers.nssgTbody = {
     init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        var gridVM = ko.unwrap(bindingContext.$component),
-            itemsOnCurrentPage = gridVM.pager.itemsOnCurrentPage;
+        var gridVM = ko.unwrap(bindingContext.$component);
+        var itemsOnCurrentPage = gridVM.pager.itemsOnCurrentPage;
 
         /************************/
         /**     DATA BINDING   **/

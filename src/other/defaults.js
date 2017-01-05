@@ -1,7 +1,8 @@
 /********************/
 /**     DEFAULTS   **/
 /********************/
-var defaultOptions = {
+var defaultOptions; // eslint-disable-line no-unused-vars
+defaultOptions = {
     // actions: [],
     // columns: [],
     // data: [],
@@ -13,8 +14,8 @@ var defaultOptions = {
     },
     invokable: {
         css: 'nssg-action-invoke',
-        onClick: function (rowData) {
-            alert('Item invoked.');
+        onClick: function () {
+            // console.debug('Item invoked.');
         }
     },
     pageable: {
@@ -36,7 +37,9 @@ var defaultOptions = {
         defaultSortCol: null,
         defaultSortDir: 'asc',
         dataAccessor: function (dataObj, col) {
-            if (!dataObj) { return null; }
+            if (!dataObj) {
+                return null;
+            }
             return (typeof col.dataAccessor === 'function') ? col.dataAccessor(dataObj) : dataObj[col.dataAccessor];
         },
         serverSorting: false

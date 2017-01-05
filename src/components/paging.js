@@ -1,6 +1,6 @@
 ko.components.register('grid-paging', {
     viewModel: {
-        createViewModel: function (params, componentInfo) {
+        createViewModel: function (params) {
             return params.vm;
         }
     },

@@ -72,7 +72,7 @@ describe('Sorter', function () {
             expect(sorter.currentSortCol()).not.toBe(columns[3]);
         });
 
-        it('should set the sort direction ascending if it\s a new column sort', function () {
+        it('should set the sort direction ascending if it\'s a new column sort', function () {
             sorter.setColSort(columns[2]);
             expect(sorter.currentSortCol()).toBe(columns[2]);
             expect(sorter.currentSortDir()).toBe('asc');

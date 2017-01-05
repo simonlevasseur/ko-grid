@@ -1,44 +1,47 @@
 (function () {
     ko.bindingHandlers.nssgTh = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var NAMESPACE = 'nssgTh',
-                col = valueAccessor(),
-                gridVM = ko.unwrap(bindingContext.$component),
-                $th = $(element),
-                $document = $(document),
-                $container = $(element).closest('.nssg-container');
+            var NAMESPACE = 'nssgTh';
+            var col = valueAccessor();
+            var gridVM = ko.unwrap(bindingContext.$component);
+            var $th = $(element);
+            var $document = $(document);
+            var $container = $(element).closest('.nssg-container');
+            var $colGrip = null;
 
             /**************************/
             /**     COLUMN SORTING   **/
             /**************************/
             var isSortable = ko.pureComputed(function () {
-                    var gridIsSortable = ko.unwrap(gridVM.options.sortable) && ko.unwrap(gridVM.options.sortable.enabled),
-                        colIsSortable = ko.unwrap(col.sortable) !== false;
+                var gridIsSortable = ko.unwrap(gridVM.options.sortable) &&
+                    ko.unwrap(gridVM.options.sortable.enabled);
+                var colIsSortable = ko.unwrap(col.sortable) !== false;
 
-                    return gridIsSortable && colIsSortable;
-                }),
+                return gridIsSortable && colIsSortable;
+            });
 
-                isSorted = ko.pureComputed(function () {
-                    return ko.unwrap(gridVM.sorter.currentSortCol) === col;
-                }),
+            var isSorted = ko.pureComputed(function () {
+                return ko.unwrap(gridVM.sorter.currentSortCol) === col;
+            });
 
-                isSortedAsc = ko.pureComputed(function () {
-                    return isSorted() && ko.unwrap(gridVM.sorter.currentSortDir) === 'asc';
-                }),
+            var isSortedAsc = ko.pureComputed(function () {
+                return isSorted() && ko.unwrap(gridVM.sorter.currentSortDir) === 'asc';
+            });
 
-                isSortedDesc = ko.pureComputed(function () {
-                    return isSorted() && ko.unwrap(gridVM.sorter.currentSortDir) === 'desc';
-                });
+            var isSortedDesc = ko.pureComputed(function () {
+                return isSorted() && ko.unwrap(gridVM.sorter.currentSortDir) === 'desc';
+            });
 
             /***************************/
             /**     COLUMN RESIZING   **/
             /***************************/
-            var startX,
-                startWidth;
+            var startX;
+            var startWidth;
 
-            function onColGripClick(e) {
+            function onColGripClick() {
                 return false;
             }
+
 
             function onColGripMouseDown(e) {
                 startX = e.pageX;
@@ -50,13 +53,13 @@
             }
 
             function onDocumentMouseMove(e) {
-                var currentWidth = $th.outerWidth(),
-                    newWidth = startWidth + (e.pageX - startX),
-                    difference = newWidth - currentWidth,
+                var currentWidth = $th.outerWidth();
+                var newWidth = startWidth + (e.pageX - startX);
+                var difference = newWidth - currentWidth;
 
-                    $table = $('.nssg-table', $container),
-                    tableWidth = $table.outerWidth(),
-                    newTableWidth = tableWidth + difference;
+                var $table = $('.nssg-table', $container);
+                var tableWidth = $table.outerWidth();
+                var newTableWidth = tableWidth + difference;
 
                 if (newTableWidth >= $container.width()) {
                     $table.outerWidth(newTableWidth);
@@ -65,17 +68,17 @@
             }
 
             function onDocumentMouseUp(e) {
-                $document.off('.' + NAMESPACE);
-
                 var colWidth = startWidth + (e.pageX - startX);
                 col.width = colWidth;
+
+                $document.off('.' + NAMESPACE);
 
                 // Tell the grid that something has changed
                 gridVM.emitChange();
             }
 
             if (gridVM.options.resizable && col.resizable !== false) {
-                var $colGrip = $('<div></div>')
+                $colGrip = $('<div></div>')
                     .addClass('nssg-col-grip')
                     .appendTo($th)
                     .on('click.' + NAMESPACE, onColGripClick)

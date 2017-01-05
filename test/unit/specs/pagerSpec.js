@@ -2,13 +2,13 @@
 
 function createInstance(passedOptions) {
     var defaultOptions = {
-            enabled: true,
-            defaultPageSize: 10,
-            pageSizes: [10, 50, 100, 250, 500, 1000],
-            serverPaging: false
-        },
-        options = deepReplace({}, defaultOptions, passedOptions),
-        data = sampleData.slice(0);
+        enabled: true,
+        defaultPageSize: 10,
+        pageSizes: [10, 50, 100, 250, 500, 1000],
+        serverPaging: false
+    };
+    var options = deepReplace({}, defaultOptions, passedOptions);
+    var data = sampleData.slice(0);
 
     return new Pager(options, data);
 }
@@ -17,10 +17,10 @@ describe('Pager', function () {
     var pager;
 
     describe('No paging options set', function () {
-        var pager1,
-            pager2,
-            pager3,
-            pager4;
+        var pager1;
+        var pager2;
+        var pager3;
+        var pager4;
 
         beforeAll(function () {
             pager1 = new Pager({}, sampleData.slice(0));
@@ -72,7 +72,7 @@ describe('Pager', function () {
         });
 
         it('should use page sizes passed in', function () {
-            var pager1 = new Pager(true, sampleData.slice(0));
+            pager = new Pager(true, sampleData.slice(0));
             expect(pager.pageSizes()).toEqual([15, 20]);
         });
 
@@ -85,7 +85,7 @@ describe('Pager', function () {
         });
 
         it('should display the correct number of pages', function () {
-            expect(pager.maxPageIndex()).toEqual(Math.ceil(400 / 15 - 1));
+            expect(pager.maxPageIndex()).toEqual(Math.ceil((400 / 15) - 1));
         });
 
         it('should show the current number of items', function () {
@@ -94,9 +94,9 @@ describe('Pager', function () {
     });
 
     describe('Setting defaultPageSize option', function () {
-        var pager1,
-            pager2,
-            pager3;
+        var pager1;
+        var pager2;
+        var pager3;
 
         beforeAll(function () {
             pager1 = new Pager({ defaultPageSize: 50 }, sampleData.slice(0));
@@ -109,7 +109,7 @@ describe('Pager', function () {
         });
 
         it('should display the correct number of pages', function () {
-            expect(pager1.maxPageIndex()).toEqual(Math.ceil(400 / 50 - 1));
+            expect(pager1.maxPageIndex()).toEqual(Math.ceil((400 / 50) - 1));
         });
 
         it('should show the current number of items', function () {

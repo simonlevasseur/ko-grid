@@ -1,7 +1,7 @@
 ko.bindingHandlers.nssgTbodyTr = {
     init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        var gridVM = ko.unwrap(bindingContext.$component),
-            cols = gridVM.columns;
+        var gridVM = ko.unwrap(bindingContext.$component);
+        var cols = gridVM.columns;
 
         /************************/
         /**    DATA BINDING    **/

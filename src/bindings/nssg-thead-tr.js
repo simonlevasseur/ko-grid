@@ -1,15 +1,16 @@
 (function () {
     ko.bindingHandlers.nssgTheadTr = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var gridVM = ko.unwrap(bindingContext.$component),
-                cols = gridVM.columns,
-                $container = $(element).closest('.nssg-container');
-
+            var gridVM = ko.unwrap(bindingContext.$component);
+            var cols = gridVM.columns;
+            var $container = $(element).closest('.nssg-container');
+            var containerWidth = null;
+            var allColWidths = null;
 
             /*******************/
             /**     SORTING   **/
             /*******************/
-            $(element).on('click', '.nssg-th', function (e, data) {
+            $(element).on('click', '.nssg-th', function (e) {
                 var column = ko.dataFor(e.target);
 
                 gridVM.onSortByCol(column);
@@ -19,8 +20,8 @@
             /**     COLUMN RESIZING   **/
             /***************************/
             if (gridVM.options.resizable) {
-                var containerWidth = $container.width(), // Without borders
-                    allColWidths = defineColWidths(cols, containerWidth);
+                containerWidth = $container.width(); // Without borders
+                allColWidths = defineColWidths(cols, containerWidth);
 
                 // Set table width
                 $('.nssg-table', $container).width(allColWidths);
@@ -39,19 +40,19 @@
             return { controlsDescendantBindings: true };
         }
     };
-
     function defineColWidths(columns, containerWidth) {
-        var cols = ko.unwrap(columns),
-            cumulativeWidths = 0;
+        var cols = ko.unwrap(columns);
+        var cumulativeWidths = 0;
+        var difference = null;
 
         // Set all column width and minWidth
         ko.utils.arrayForEach(cols, function (col) {
             if (col.minWidth === undefined) {
-                col.minWidth = 80;
+                col.minWidth = 80; // eslint-disable-line no-param-reassign
             }
 
             if (col.width === undefined) {
-                col.width = col.minWidth;
+                col.width = col.minWidth; // eslint-disable-line no-param-reassign
             }
 
             cumulativeWidths += col.width;
@@ -59,7 +60,7 @@
 
         // Our columns don't fill the container :(
         if (cumulativeWidths < containerWidth) {
-            var difference = containerWidth - cumulativeWidths;
+            difference = containerWidth - cumulativeWidths;
 
             // Make the last column take up the remaining space
             cols[cols.length - 1].width += difference;

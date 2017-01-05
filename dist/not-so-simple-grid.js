@@ -1,19 +1,55 @@
 /* istanbul ignore next */
-;(function (factory) {
+(function (factory) {
     'use strict';
 
-    if (typeof require === "function" && typeof exports === "object" && typeof module === "object") {
-        factory(require("ko"), require("jquery"), exports);
-    } else if (typeof define === "function" && define.amd) {
-        define(["ko", "jquery", "exports"], factory);
+    if (typeof require === 'function' && typeof exports === 'object' && typeof module === 'object') {
+        factory(require('ko'), require('jquery'), exports);  // eslint-disable-line global-require
+    } else if (typeof define === 'function' && define.amd) { // eslint-disable-line no-undef
+        define(['ko', 'jquery', 'exports'], factory); // eslint-disable-line no-undef
     } else {
-        factory(ko, $);
+        factory(ko, $); // eslint-disable-line no-undef
     }
-}(function (ko, $, exports) {
+}(function (ko) {
     'use strict';
-    
     /*********************/
-    /***** TEMPLATES *****/
+    /** SYMBOL POLYFILL **/
+    /*********************/
+    
+    var symbolDetection;
+    
+    try {
+        symbolDetection = Symbol('foo');
+    } catch (ignored) {}
+    
+    if (!symbolDetection) {
+        Symbol = function (name) {
+            return '' + name + Math.floor(Math.random() * 99999);
+        };
+    }
+    
+
+    /* eslint no-unused-vars: 0 */
+    
+    /*************************/
+    /** INTERNAL REFERENCES **/
+    /*************************/
+    
+    var refGetAllSelected = Symbol('getAllSelected');
+    var refSetAllSelected = Symbol('setAllSelected');
+    var refFetchData = Symbol('fetchData');
+    var refOnItemsOnCurrentPageChange = Symbol('onItemsOnCurrentPageChange');
+    var refOnSaveableChanges = Symbol('onSaveableChanges');
+    var refBuildOptions = Symbol('buildOptions');
+    var refEmitChange = Symbol('emitChange');
+    var refFindColById = Symbol('findColById');
+    var refGetSaveableGridObj = Symbol('getSaveableGridObj');
+    var refGetValueForCol = Symbol('getValueForCol');
+    var refSortData = Symbol('sortData');
+    
+
+
+    /*********************/
+    /**     TEMPLATES   **/
     /*********************/
     var templates = {};
 templates["grid"] = "<div class=nssg-container data-bind=\"css: { isLoading: !data.loaded() }\"><table class=nssg-table><thead class=nssg-thead><tr class=nssg-thead-tr data-bind=\"nssgTheadTr: true\"><th class=nssg-th data-bind=\"nssgTh: col\"></th></tr></thead><tbody class=nssg-tobdy data-bind=\"nssgTbody: true\"><tr class=nssg-tbody-tr data-bind=\"nssgTbodyTr: true\"><td class=nssg-td data-bind=\"nssgTd: col\"></td></tr></tbody></table></div>";
@@ -24,29 +60,22 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
 templates["select-th"] = "<input type=checkbox data-bind=\"checked: $component().data.allSelected, visible: multiSelect\">";
 templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, attr: { title: col.heading }\"></div>";
     /*****************/
-    /***** UTILS *****/
+    /**     UTILS   **/
     /*****************/
     
-    //All properties in objTarget which also occur in objSource will be replaced with the versions
-    //from objSource.  Nested objects will be processed recursively.  Arrays will be replaced, not merged.
-    function deepReplace(objTarget)
-    {
+    // All properties in objTarget which also occur in objSource will be replaced with the versions
+    // from objSource.  Nested objects will be processed recursively.  Arrays will be replaced, not merged.
+    function deepReplace(objTarget) {
         var objSources = Array.prototype.slice.call(arguments, 1);
-        for (var i=0;i<objSources.length;i++)
-        {
+        for (var i = 0; i < objSources.length; i++) {
             var objSource = objSources[i];
-            for(var key in objSource)
-            {
+            for (var key in objSource) {
                 var value = objSource[key];
-                if (typeof value === "object" && !(Array.isArray(value)  || isPromise(value)))
-                {
+                if (typeof value === 'object' && !(Array.isArray(value) || isPromise(value))) {
                     objTarget[key] = objTarget[key] || {};
                     deepReplace(objTarget[key], value);
-                }
-                else
-                {
-                    if (Array.isArray(value))
-                    {
+                } else {
+                    if (Array.isArray(value)) {
                         value = value.slice();
                     }
                     objTarget[key] = value;
@@ -82,14 +111,12 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     }
     
     function isFunction(obj) {
-        return typeof obj === "function";
+        return typeof obj === 'function';
     }
     
     
-    function promisify(value)
-    {
-        if (!isPromise(value))
-        {
+    function promisify(value) {
+        if (!isPromise(value)) {
             return Promise.resolve(value);
         }
         return value;
@@ -104,31 +131,27 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     }
     
     function isPromise(obj) {
-        return obj && typeof obj === "object" && typeof obj.then === "function";
+        return obj && typeof obj === 'object' && typeof obj.then === 'function';
     }
     
-    //Recursively walks through objects, invoking the supplied predicate whenever
-    //the condition function returns true
+    // Recursively walks through objects, invoking the supplied predicate whenever
+    // the condition function returns true
     //
     // condition/predicate signature: (value, key, obj)
-    function walkObject(obj, condition, predicate)
-    {
-        for(var key in obj)
-        {
+    function walkObject(obj, condition, predicate) {
+        for (var key in obj) {
             var value = obj[key];
-            if (condition(value, key, obj))
-            {
+            if (condition(value, key, obj)) {
                 predicate(value, key, obj);
             }
-            if (typeof value === "object" && !Array.isArray(value))
-            {
+            if (typeof value === 'object' && !Array.isArray(value)) {
                 walkObject(value, condition, predicate);
             }
         }
     }
     
     /************************/
-    /***** KO EXTENDERS *****/
+    /**     KO EXTENDERS   **/
     /************************/
     ko.extenders.nssgSingleSelect = function (target, option) {
         // Before change clears the array before the new value is set
@@ -147,7 +170,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     
 
     /********************/
-    /***** DEFAULTS *****/
+    /**     DEFAULTS   **/
     /********************/
     var defaultOptions = {
         // actions: [],
@@ -196,7 +219,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     
 
     /**********************/
-    /***** GRID CLASS *****/
+    /**    GRID CLASS    **/
     /**********************/
     var Grid = function (userOptions) {
         // IMPORTANT: The order of the variable declarations matters here
@@ -204,13 +227,13 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
         this.data.loaded = ko.observable(false); // Flag to track when data is loading
         this.data.selected = ko.observableArray([]); // Holds all selected rows
         this.data.allSelected = ko.pureComputed({
-            read: this._getAllSelected,
-            write: this._setAllSelected,
+            read: this[refGetAllSelected],
+            write: this[refSetAllSelected],
             owner: this,
             deferEvaluation: true
         });
     
-        this.options = this._buildOptions(userOptions);
+        this.options = this[refBuildOptions](userOptions);
     
         // Must wait for options to be built
         this.columns = ko.observableArray(this.options.columns);
@@ -218,262 +241,21 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
         this.sorter = new Sorter(this.options.sortable, this.data);
     
         // Let's go get some data to show!
-        this._fetchData();
+        this[refFetchData]();
     
         // Subscriptions
-        this.pager.itemsOnCurrentPage.subscribe(this._onItemsOnCurrentPageChange, this);
+        this.pager.itemsOnCurrentPage.subscribe(this[refOnItemsOnCurrentPageChange], this);
     
         // React to saveable changes
-        ko.computed(this._onSaveableChanges, this).extend({ rateLimit: 500 });
+        ko.computed(this[refOnSaveableChanges], this).extend({ rateLimit: 500 });
     };
     
     /**************************/
-    /***** GRID PROTOTYPE *****/
+    /**     GRID PROTOTYPE   **/
     /**************************/
     ko.utils.extend(Grid.prototype, {
-        /****************************/
-        /***** COMPUTED METHODS *****/
-        /****************************/
-    
-        /**
-         * Returns if all items on current page are selected
-         * @returns {boolean} - Returns true if all selected, false otherwise
-         */
-        _getAllSelected: function () {
-            // Triggers
-            var itemsOnCurrentPage = ko.unwrap(this.pager.itemsOnCurrentPage),
-                selectedData = this.data.selected();
-    
-            return itemsOnCurrentPage.length === selectedData.length;
-        },
-    
-        /**
-         * Selects all of the items on the current page
-         */
-        _setAllSelected: function (val) {
-            this.data.selected(val ? ko.unwrap(this.pager.itemsOnCurrentPage).slice(0) : []);
-        },
-    
-        /***************************/
-        /***** PRIVATE METHODS *****/
-        /***************************/
-    
-        /**
-         * Takes in user-defined options and builds a complete options object
-         * @param {Object} userOptions - User-defined options
-         * @returns {Object} - Complete grid options
-         */
-        _buildOptions: function (userOptions) {
-            var options = {
-                actions: [], // This property is required for deletable and invokable
-                pageable: {}, // This option is required by the pager class
-                sortable: {} // This option is required by the sorter class
-            };
-    
-            // Merge the user's options into the default options
-            ko.utils.objectForEach(userOptions, function (key, value) {
-                // If user entered true for a complex option then use the default options
-                if (isObject(defaultOptions[key]) && value === true) {
-                    options[key] = defaultOptions[key];
-                } else { // Merge the user's options into the default options
-                    options[key] = defaultOptions[key] ? deepReplace({}, defaultOptions[key], value) : value;
-                }
-            });
-    
-            // Set all undefined column types to text
-            ko.utils.arrayForEach(options.columns, function (col) {
-                if (!col.type) {
-                    col.type = 'text';
-                }
-            });
-    
-            // Add delete row action
-            if (options.deletable) {
-                options.actions.push(options.deletable); // Make it the last action
-            }
-    
-            // Add invoke row action
-            if (options.invokable) {
-                options.actions.unshift(options.invokable); // Make it the first action
-            }
-    
-            // Add select column
-            if (options.selectable) {
-                var selectCol = deepReplace({}, options.selectable, {
-                    type: 'select',
-                    resizable: false,
-                    sortable: false
-                });
-    
-                // If single select only, then extend the observable array to only ever hold one value
-                if (!options.selectable.multiSelect) {
-                    this.data.selected.extend({ nssgSingleSelect: true });
-                }
-    
-                options.columns.unshift(selectCol);
-            }
-    
-            // Add actions column
-            if (options.actions && options.actions.length) {
-                var actionsCol = {
-                    type: 'actions',
-                    resizable: false,
-                    sortable: false,
-                    width: 0,
-                    minWidth: 0,
-                    maxWidth: 0
-                };
-    
-                options.columns.unshift(actionsCol);
-            }
-    
-            if (options.sortable.defaultSortCol) {
-                options.sortable.defaultSortCol = this._findColById(options.sortable.defaultSortCol, options.columns);
-            }
-    
-            return options;
-        },
-    
-        _emitChange: function () {
-            if (this.options.onOptionsChange) {
-                this.options.onOptionsChange(this._getSaveableGridObj());
-            }
-        },
-    
-        /**
-         * Fetches and sets data based on currently set parameters
-         * @returns {Array|ObservableArray|Promise} - Returns the data array or a promise
-         */
-        _fetchData: function () {
-            this.data.loaded(false); // Shows the loading icon
-    
-            var dataOption = this.options.data;
-    
-            if (isArray(dataOption)) {
-                this.data(dataOption);
-                this._sortData();
-                this.data.loaded(true);
-            } else if (isObservableArray(dataOption)) {
-                this.data = dataOption;
-                this._sortData();
-                this.data.loaded(true);
-            } else if (isFunction(dataOption)) {
-                // Gather parameters that are required to fetch remote data
-                var params = {
-                    start: ko.unwrap(this.pager.currentPageIndex) * ko.unwrap(this.pager.pageSize), // Record start index
-                    count: ko.unwrap(this.pager.pageSize), // Record count
-                    sortBy: ko.unwrap(this.sorter.currentSortCol),
-                    sortDir: ko.unwrap(this.sorter.currentSortDir)
-                };
-    
-                var self = this;
-                dataOption(params).then(function (dto) {
-                    var data = ko.unwrap(dto.data).slice(0); // Array clone to ensure proper data
-                    self.data(data);
-    
-                    // When using server paging we must depend on the provider to tell
-                    // us the total number of records available.
-                    if (ko.unwrap(self.pager.serverPaging)) {
-                        self.pager.totalItems(dto.total);
-                    }
-    
-                    self.data.loaded(true);
-                });
-            }
-        },
-    
-        /**
-         * Finds a column by the column definition ID property
-         * @param {String} colId - ID of the column to find
-         * @param {Array|ObservableArray} [cols] - The optional set of columns to use in the search
-         * @returns {Column} - The column matching the passed in ID
-         */
-        _findColById: function (colId, cols) {
-            var columns = ko.unwrap(cols) || this.columns();
-    
-            return ko.utils.arrayFirst(columns, function (col) {
-                return col.id === colId;
-            });
-        },
-    
-        _getSaveableGridObj: function () {
-            var obj = {
-                columns: [],
-                pageable: {
-                    defaultPageSize: ko.unwrap(this.pager.pageSize)
-                },
-                sortable: {
-                    defaultSortCol: this.sorter.currentSortCol() ? this.sorter.currentSortCol().id : null,
-                    defaultSortDir: this.sorter.currentSortDir()
-                }
-            };
-    
-            ko.utils.arrayForEach(this.columns(), function (col) {
-                if (col.type !== 'actions' && col.type !== 'select') {
-                    obj.columns.push({ id: col.id, width: col.width });
-                }
-            });
-    
-            return obj;
-        },
-    
-        /**
-         * Gets the data that would be displayed in the grid's cell
-         * @param {Object} dataObj - The data object that is used for the current row
-         * @param {Column} col - The current sort column object
-         * @returns {*} - The data that is displayed in the cell
-        */
-        _getValueForCol: function (dataObj, col) {
-            if (!dataObj) { return null; }
-            return (typeof col.dataAccessor === 'function') ? col.dataAccessor(dataObj) : dataObj[col.dataAccessor];
-        },
-    
-        /**
-         * Attempts to sort the data according to currently set parameters
-         */
-        _sortData: function () {
-            if (this.sorter.enabled()) {
-                this.sorter.doSort();
-            }
-        },
-    
-        /*************************/
-        /***** SUBSCRIPTIONS *****/
-        /*************************/
-    
-        /**
-         * Event handler for when items on current page changes
-         * Removes the selection items that are no longer displayed on the page
-         * @param {Array} itemsOnCurrentPage - The new array of items displayed on the current page
-         */
-        _onItemsOnCurrentPageChange: function (itemsOnCurrentPage) {
-            var selectedData = this.data.selected.peek(),
-                newSelectedData = [];
-    
-            ko.utils.arrayForEach(selectedData, function (item, index) {
-                if (itemsOnCurrentPage.indexOf(item) !== -1) {
-                    newSelectedData.push(item);
-                }
-            });
-    
-            this.data.selected(newSelectedData);
-        },
-    
-        _onSaveableChanges: function () {
-            // Triggers
-            ko.unwrap(this.columns); // Column visibility and order
-            ko.unwrap(this.pager.pageSize);
-            ko.unwrap(this.sorter.currentSortCol);
-            ko.unwrap(this.sorter.currentSortDir);
-    
-            // Action
-            if (!ko.computedContext.isInitial()) {
-                this._emitChange();
-            }
-        },
-    
         /*********************/
-        /***** UI EVENTS *****/
+        /**    UI EVENTS    **/
         /*********************/
     
         /**
@@ -487,18 +269,19 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
         /**
          * Grid-level sort method
          * @param {Column} newSortCol - The new column to sort by
-         * @param {Event} e - jQuery event object
          * @returns true - Allows event to bubble
          */
-        onSortByCol: function (newSortCol, e) {
+        onSortByCol: function (newSortCol) {
+            var colIsSortable;
+    
             if (!ko.unwrap(this.sorter.enabled)) {
                 return true; // Allow the event to bubble up, will not sort
             }
     
-            var colIsSortable = this.sorter.setColSort(newSortCol);
+            colIsSortable = this.sorter.setColSort(newSortCol);
     
             if (colIsSortable && this.sorter.serverSorting) {
-                this._fetchData();
+                this[refFetchData]();
             } else if (colIsSortable) {
                 this.sorter.doSort();
             }
@@ -507,16 +290,262 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
         },
     
         /**************************/
-        /***** PUBLIC METHODS *****/
+        /**     PUBLIC METHODS   **/
         /**************************/
         refresh: function () {
-            this._fetchData();
+            this[refFetchData]();
         }
     });
     
+        /****************************/
+        /**     COMPUTED METHODS   **/
+        /****************************/
+    
+        /**
+         * Returns if all items on current page are selected
+         * @returns {boolean} - Returns true if all selected, false otherwise
+         */
+    Grid.prototype[refGetAllSelected] = function () {
+            // Triggers
+        var itemsOnCurrentPage = ko.unwrap(this.pager.itemsOnCurrentPage);
+        var selectedData = this.data.selected();
+    
+        return itemsOnCurrentPage.length === selectedData.length;
+    };
+    
+        /**
+         * Selects all of the items on the current page
+         */
+    Grid.prototype[refSetAllSelected] = function (val) {
+        this.data.selected(val ? ko.unwrap(this.pager.itemsOnCurrentPage).slice(0) : []);
+    };
+    
+        /***************************/
+        /**     PRIVATE METHODS   **/
+        /***************************/
+    
+        /**
+         * Takes in user-defined options and builds a complete options object
+         * @param {Object} userOptions - User-defined options
+         * @returns {Object} - Complete grid options
+         */
+    Grid.prototype[refBuildOptions] = function (userOptions) {
+        var selectCol;
+        var actionsCol;
+    
+        var options = {
+            actions: [], // This property is required for deletable and invokable
+            pageable: {}, // This option is required by the pager class
+            sortable: {} // This option is required by the sorter class
+        };
+    
+            // Merge the user's options into the default options
+        ko.utils.objectForEach(userOptions, function (key, value) {
+                // If user entered true for a complex option then use the default options
+            if (isObject(defaultOptions[key]) && value === true) {
+                options[key] = defaultOptions[key];
+            } else { // Merge the user's options into the default options
+                options[key] = defaultOptions[key] ? deepReplace({}, defaultOptions[key], value) : value;
+            }
+        });
+    
+            // Set all undefined column types to text
+        ko.utils.arrayForEach(options.columns, function (col) {
+            if (!col.type) {
+                col.type = 'text'; // eslint-disable-line no-param-reassign
+            }
+        });
+    
+            // Add delete row action
+        if (options.deletable) {
+            options.actions.push(options.deletable); // Make it the last action
+        }
+    
+            // Add invoke row action
+        if (options.invokable) {
+            options.actions.unshift(options.invokable); // Make it the first action
+        }
+    
+            // Add select column
+        if (options.selectable) {
+            selectCol = deepReplace({}, options.selectable, {
+                type: 'select',
+                resizable: false,
+                sortable: false
+            });
+    
+                // If single select only, then extend the observable array to only ever hold one value
+            if (!options.selectable.multiSelect) {
+                this.data.selected.extend({ nssgSingleSelect: true });
+            }
+    
+            options.columns.unshift(selectCol);
+        }
+    
+            // Add actions column
+        if (options.actions && options.actions.length) {
+            actionsCol = {
+                type: 'actions',
+                resizable: false,
+                sortable: false,
+                width: 0,
+                minWidth: 0,
+                maxWidth: 0
+            };
+    
+            options.columns.unshift(actionsCol);
+        }
+    
+        if (options.sortable.defaultSortCol) {
+            options.sortable.defaultSortCol = this[refFindColById](options.sortable.defaultSortCol, options.columns);
+        }
+    
+        return options;
+    };
+    
+    Grid.prototype[refEmitChange] = function () {
+        if (this.options.onOptionsChange) {
+            this.options.onOptionsChange(this[refGetSaveableGridObj]());
+        }
+    };
+    
+        /**
+         * Fetches and sets data based on currently set parameters
+         * @returns {Array|ObservableArray|Promise} - Returns the data array or a promise
+         */
+    Grid.prototype[refFetchData] = function () {
+        var dataOption = this.options.data;
+        var params;
+        var self = this;
+    
+        this.data.loaded(false); // Shows the loading icon
+    
+        if (isArray(dataOption)) {
+            this.data(dataOption);
+            this[refSortData]();
+            this.data.loaded(true);
+        } else if (isObservableArray(dataOption)) {
+            this.data = dataOption;
+            this[refSortData]();
+            this.data.loaded(true);
+        } else if (isFunction(dataOption)) {
+                // Gather parameters that are required to fetch remote data
+            params = {
+                start: ko.unwrap(this.pager.currentPageIndex) * ko.unwrap(this.pager.pageSize), // Record start index
+                count: ko.unwrap(this.pager.pageSize), // Record count
+                sortBy: ko.unwrap(this.sorter.currentSortCol),
+                sortDir: ko.unwrap(this.sorter.currentSortDir)
+            };
+    
+            dataOption(params).then(function (dto) {
+                var data = ko.unwrap(dto.data).slice(0); // Array clone to ensure proper data
+                self.data(data);
+    
+                    // When using server paging we must depend on the provider to tell
+                    // us the total number of records available.
+                if (ko.unwrap(self.pager.serverPaging)) {
+                    self.pager.totalItems(dto.total);
+                }
+    
+                self.data.loaded(true);
+            });
+        }
+    };
+    
+        /**
+         * Finds a column by the column definition ID property
+         * @param {String} colId - ID of the column to find
+         * @param {Array|ObservableArray} [cols] - The optional set of columns to use in the search
+         * @returns {Column} - The column matching the passed in ID
+         */
+    Grid.prototype[refFindColById] = function (colId, cols) {
+        var columns = ko.unwrap(cols) || this.columns();
+    
+        return ko.utils.arrayFirst(columns, function (col) {
+            return col.id === colId;
+        });
+    };
+    
+    Grid.prototype[refGetSaveableGridObj] = function () {
+        var obj = {
+            columns: [],
+            pageable: {
+                defaultPageSize: ko.unwrap(this.pager.pageSize)
+            },
+            sortable: {
+                defaultSortCol: this.sorter.currentSortCol() ? this.sorter.currentSortCol().id : null,
+                defaultSortDir: this.sorter.currentSortDir()
+            }
+        };
+    
+        ko.utils.arrayForEach(this.columns(), function (col) {
+            if (col.type !== 'actions' && col.type !== 'select') {
+                obj.columns.push({ id: col.id, width: col.width });
+            }
+        });
+    
+        return obj;
+    };
+    
+        /**
+         * Gets the data that would be displayed in the grid's cell
+         * @param {Object} dataObj - The data object that is used for the current row
+         * @param {Column} col - The current sort column object
+         * @returns {*} - The data that is displayed in the cell
+        */
+    Grid.prototype[refGetValueForCol] = function (dataObj, col) {
+        if (!dataObj) { return null; }
+        return (typeof col.dataAccessor === 'function') ? col.dataAccessor(dataObj) : dataObj[col.dataAccessor];
+    };
+    
+        /**
+         * Attempts to sort the data according to currently set parameters
+         */
+    Grid.prototype[refSortData] = function () {
+        if (this.sorter.enabled()) {
+            this.sorter.doSort();
+        }
+    };
+    
+        /*************************/
+        /**     SUBSCRIPTIONS   **/
+        /*************************/
+    
+        /**
+         * Event handler for when items on current page changes
+         * Removes the selection items that are no longer displayed on the page
+         * @param {Array} itemsOnCurrentPage - The new array of items displayed on the current page
+         */
+    Grid.prototype[refOnItemsOnCurrentPageChange] = function (itemsOnCurrentPage) {
+        var selectedData = this.data.selected.peek();
+        var newSelectedData = [];
+    
+        ko.utils.arrayForEach(selectedData, function (item) {
+            if (itemsOnCurrentPage.indexOf(item) !== -1) {
+                newSelectedData.push(item);
+            }
+        });
+    
+        this.data.selected(newSelectedData);
+    };
+    
+    Grid.prototype[refOnSaveableChanges] = function () {
+            // Triggers
+        ko.unwrap(this.columns); // Column visibility and order
+        ko.unwrap(this.pager.pageSize);
+        ko.unwrap(this.sorter.currentSortCol);
+        ko.unwrap(this.sorter.currentSortDir);
+    
+            // Action
+        if (!ko.computedContext.isInitial()) {
+            this[refEmitChange]();
+        }
+    };
+    
+    
 
     /***********************/
-    /***** PAGER CLASS *****/
+    /**     PAGER CLASS   **/
     /***********************/
     
     /**
@@ -563,7 +592,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     };
     
     /************************/
-    /***** PAGER STATIC *****/
+    /**     PAGER STATIC   **/
     /************************/
     ko.utils.extend(Pager, {
         DEFAULTS: {
@@ -575,12 +604,12 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     });
     
     /***************************/
-    /***** PAGER PROTOTYPE *****/
+    /**     PAGER PROTOTYPE   **/
     /***************************/
     ko.utils.extend(Pager.prototype, {
     
         /*****************************/
-        /***** PRIVATE FUNCTIONS *****/
+        /**     PRIVATE FUNCTIONS   **/
         /*****************************/
     
         /**
@@ -608,13 +637,13 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
             }
     
             this.enabled(opts.enabled);
-            this.serverPaging(opts.serverPaging)
+            this.serverPaging(opts.serverPaging);
             this.pageSize(opts.defaultPageSize);
             this.pageSizes(opts.pageSizes);
         },
     
         /****************************/
-        /***** COMPUTED GETTERS *****/
+        /**     COMPUTED GETTERS   **/
         /****************************/
     
         /**
@@ -756,7 +785,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     
     
         /****************************/
-        /***** COMPUTED SETTERS *****/
+        /**     COMPUTED SETTERS   **/
         /****************************/
     
         /**
@@ -772,7 +801,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
         },
     
         /*************************/
-        /***** SUBSCRIPTIONS *****/
+        /**     SUBSCRIPTIONS   **/
         /*************************/
     
         /**
@@ -803,7 +832,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
         },
     
         /************************/
-        /***** UI FUNCTIONS *****/
+        /**     UI FUNCTIONS   **/
         /************************/
     
         /**
@@ -870,7 +899,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     
 
     /************************/
-    /***** SORTER CLASS *****/
+    /**     SORTER CLASS   **/
     /************************/
     var Sorter = function (options, data) {
         // Options
@@ -878,7 +907,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
         this.serverSorting = options.serverSorting || false;
         this.defaultSortCol = options.defaultSortCol || undefined;
         this.defaultSortDir = options.defaultSortDir || 'asc';
-        this.dataAccessor = (typeof options.dataAccessor === 'function') ? options.dataAccessor : function (dataObj, col) { dataObj[col.dataAccessor] };
+        this.dataAccessor = (typeof options.dataAccessor === 'function') ? options.dataAccessor : function (dataObj, col) { dataObj[col.dataAccessor]; };
     
         // Variables
         this.data = data;
@@ -890,7 +919,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     };
     
     /****************************/
-    /***** SORTER PROTOTYPE *****/
+    /**     SORTER PROTOTYPE   **/
     /****************************/
     ko.utils.extend(Sorter.prototype, {
         /**
@@ -972,7 +1001,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     });
     
     /**********************************/
-    /***** SORTER CLASS EXTENSION *****/
+    /**     SORTER CLASS EXTENSION   **/
     /**********************************/
     ko.utils.extend(Sorter, {
         /**
@@ -984,10 +1013,10 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
             var itemType = typeof item;
     
             switch (itemType) {
-                case 'number':
-                    return Sorter.sortNumerically;
-                default:
-                    return Sorter.sortAlphabetically;
+            case 'number':
+                return Sorter.sortNumerically;
+            default:
+                return Sorter.sortAlphabetically;
             }
         },
     
@@ -1015,77 +1044,67 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     });
     
 
-       /****************************/
-       /***** CUSTOMIZER CLASS *****/
-       /****************************/
-       var gridCustomizer = function (baseOptions, baseInitializer) {
-           return function CustomizedGrid(overrideOptions, overrideInitializer)
-           {
-               var actualGrid = ko.observable();
-               init();        
-               return actualGrid;
-               ///////////////////////////
-               
-               function init()
-               {
-                   var realOptions = {};
-                   
-                   loadBaseOptions()
-                       .then(loadOverrideOptions)
-                       .then(addTemplates)
-                       .then(initActualGrid)
-                       .catch(function(err)
-                       {
-                          console.error("Failed to initialize grid" ,(err && err.message ? err.message : err));
-                       });
-                   ////////////////////////
-                   
-                   function loadBaseOptions()
-                   {
-                       deepReplace(realOptions, baseOptions);
-                       if (typeof baseInitializer === "function")
-                       {
-                           baseInitializer(realOptions);
-                       }
-                       return loadAllDependencies(realOptions)
+   /****************************/
+   /**     CUSTOMIZER CLASS   **/
+   /****************************/
+   var gridCustomizer;
+   gridCustomizer = function (baseOptions, baseInitializer) {
+       return function CustomizedGrid(overrideOptions, overrideInitializer) {
+           var actualGrid = ko.observable();
+           init();
+           return actualGrid;
+           // /////////////////////////
+   
+           function init() {
+               var realOptions = {};
+   
+               loadBaseOptions()
+                   .then(loadOverrideOptions)
+                   .then(addTemplates)
+                   .then(initActualGrid)
+                   .catch(function (err) {
+                       console.error('Failed to initialize grid', (err && err.message ? err.message : err));
+                   });
+               // //////////////////////
+   
+               function loadBaseOptions() {
+                   deepReplace(realOptions, baseOptions);
+                   if (typeof baseInitializer === 'function') {
+                       baseInitializer(realOptions);
                    }
-                   function loadOverrideOptions()
-                   {            
-                       deepReplace(realOptions, overrideOptions);
-                       if (typeof overrideInitializer === "function")                
-                       {
-                           overrideInitializer(realOptions);
-                       }
-                   }
-                   function addTemplates()
-                   {
-                       deepReplace(templates, realOptions.templates);
-                   }
-                   function initActualGrid()
-                   {
-                      actualGrid(new Grid(realOptions));
-                   };
+                   return loadAllDependencies(realOptions);
                }
-           }    
+               function loadOverrideOptions() {
+                   deepReplace(realOptions, overrideOptions);
+                   if (typeof overrideInitializer === 'function') {
+                       overrideInitializer(realOptions);
+                   }
+               }
+               function addTemplates() {
+                   deepReplace(templates, realOptions.templates);
+               }
+               function initActualGrid() {
+                   actualGrid(new Grid(realOptions));
+               }
+           }
        };
-       
-       function loadAllDependencies(options)
-       {
-           var initPromises = [];
-           walkObject(options, isPromise, function(value, key, obj)
-           {
-               initPromises.push(value.then(function(resolvedValue){
-                   obj[key] = resolvedValue;
-               }))
-           });
-           
-           return Promise.all(initPromises)
-       }
-       
+   };
+   
+   function loadAllDependencies(options) {
+       var initPromises = [];
+       walkObject(options, isPromise, function (value, key, obj) {
+           initPromises.push(value.then(function (resolvedValue) {
+               obj[key] = resolvedValue; // eslint-disable-line no-param-reassign
+           }));
+       });
+   
+       return Promise.all(initPromises);
+   }
+   
 
 
     /**********************/
-    /***** COMPONENTS *****/
+    /**     COMPONENTS   **/
     /**********************/
     ko.components.register('grid', {
         viewModel: {
@@ -1099,7 +1118,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
 
     ko.components.register('grid-paging', {
         viewModel: {
-            createViewModel: function(params, componentInfo) {
+            createViewModel: function (params, componentInfo) {
                 return params.vm;
             }
         },
@@ -1109,38 +1128,39 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
 
 
     /********************/
-    /***** BINDINGS *****/
+    /**     BINDINGS   **/
     /********************/
-    ;(function () {
+    (function () {
         ko.bindingHandlers.nssgTheadTr = {
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-                var gridVM = ko.unwrap(bindingContext.$component),
-                    cols = gridVM.columns,
-                    $container = $(element).closest('.nssg-container');
-                
+                var gridVM = ko.unwrap(bindingContext.$component);
+                var cols = gridVM.columns;
+                var $container = $(element).closest('.nssg-container');
+                var containerWidth = null;
+                var allColWidths = null;
     
                 /*******************/
-                /***** SORTING *****/
+                /**     SORTING   **/
                 /*******************/
-                $(element).on('click', '.nssg-th', function (e, data) {
+                $(element).on('click', '.nssg-th', function (e) {
                     var column = ko.dataFor(e.target);
     
                     gridVM.onSortByCol(column);
                 });
     
                 /***************************/
-                /***** COLUMN RESIZING *****/
+                /**     COLUMN RESIZING   **/
                 /***************************/
                 if (gridVM.options.resizable) {
-                    var containerWidth = $container.width(), // Without borders
-                        allColWidths = defineColWidths(cols, containerWidth);
+                    containerWidth = $container.width(); // Without borders
+                    allColWidths = defineColWidths(cols, containerWidth);
     
                     // Set table width
                     $('.nssg-table', $container).width(allColWidths);
                 }
     
                 /************************/
-                /***** DATA BINDING *****/
+                /**     DATA BINDING   **/
                 /************************/
                 ko.applyBindingsToNode(element, {
                     foreach: {
@@ -1152,19 +1172,19 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
                 return { controlsDescendantBindings: true };
             }
         };
-    
         function defineColWidths(columns, containerWidth) {
-            var cols = ko.unwrap(columns),
-                cumulativeWidths = 0;
+            var cols = ko.unwrap(columns);
+            var cumulativeWidths = 0;
+            var difference = null;
     
             // Set all column width and minWidth
             ko.utils.arrayForEach(cols, function (col) {
                 if (col.minWidth === undefined) {
-                    col.minWidth = 80;
+                    col.minWidth = 80; // eslint-disable-line no-param-reassign
                 }
     
                 if (col.width === undefined) {
-                    col.width = col.minWidth;
+                    col.width = col.minWidth; // eslint-disable-line no-param-reassign
                 }
     
                 cumulativeWidths += col.width;
@@ -1172,7 +1192,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     
             // Our columns don't fill the container :(
             if (cumulativeWidths < containerWidth) {
-                var difference = containerWidth - cumulativeWidths;
+                difference = containerWidth - cumulativeWidths;
     
                 // Make the last column take up the remaining space
                 cols[cols.length - 1].width += difference;
@@ -1185,47 +1205,50 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     }());
     
 
-    ;(function () {
+    (function () {
         ko.bindingHandlers.nssgTh = {
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-                var NAMESPACE = 'nssgTh',
-                    col = valueAccessor(),
-                    gridVM = ko.unwrap(bindingContext.$component),
-                    $th = $(element),
-                    $document = $(document),
-                    $container = $(element).closest('.nssg-container');
+                var NAMESPACE = 'nssgTh';
+                var col = valueAccessor();
+                var gridVM = ko.unwrap(bindingContext.$component);
+                var $th = $(element);
+                var $document = $(document);
+                var $container = $(element).closest('.nssg-container');
+                var $colGrip = null;
     
                 /**************************/
-                /***** COLUMN SORTING *****/
+                /**     COLUMN SORTING   **/
                 /**************************/
                 var isSortable = ko.pureComputed(function () {
-                        var gridIsSortable = ko.unwrap(gridVM.options.sortable) && ko.unwrap(gridVM.options.sortable.enabled),
-                            colIsSortable = ko.unwrap(col.sortable) !== false;
+                    var gridIsSortable = ko.unwrap(gridVM.options.sortable) &&
+                        ko.unwrap(gridVM.options.sortable.enabled);
+                    var colIsSortable = ko.unwrap(col.sortable) !== false;
     
-                        return gridIsSortable && colIsSortable;
-                    }),
+                    return gridIsSortable && colIsSortable;
+                });
     
-                    isSorted = ko.pureComputed(function () {
-                        return ko.unwrap(gridVM.sorter.currentSortCol) === col;
-                    }),
+                var isSorted = ko.pureComputed(function () {
+                    return ko.unwrap(gridVM.sorter.currentSortCol) === col;
+                });
     
-                    isSortedAsc = ko.pureComputed(function () {
-                        return isSorted() && ko.unwrap(gridVM.sorter.currentSortDir) === 'asc';
-                    }),
+                var isSortedAsc = ko.pureComputed(function () {
+                    return isSorted() && ko.unwrap(gridVM.sorter.currentSortDir) === 'asc';
+                });
     
-                    isSortedDesc = ko.pureComputed(function () {
-                        return isSorted() && ko.unwrap(gridVM.sorter.currentSortDir) === 'desc';
-                    });
+                var isSortedDesc = ko.pureComputed(function () {
+                    return isSorted() && ko.unwrap(gridVM.sorter.currentSortDir) === 'desc';
+                });
     
                 /***************************/
-                /***** COLUMN RESIZING *****/
+                /**     COLUMN RESIZING   **/
                 /***************************/
-                var startX,
-                    startWidth;
+                var startX;
+                var startWidth;
     
-                function onColGripClick(e) {
+                function onColGripClick() {
                     return false;
                 }
+    
     
                 function onColGripMouseDown(e) {
                     startX = e.pageX;
@@ -1237,13 +1260,13 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
                 }
     
                 function onDocumentMouseMove(e) {
-                    var currentWidth = $th.outerWidth(),
-                        newWidth = startWidth + (e.pageX - startX),
-                        difference = newWidth - currentWidth,
+                    var currentWidth = $th.outerWidth();
+                    var newWidth = startWidth + (e.pageX - startX);
+                    var difference = newWidth - currentWidth;
     
-                        $table = $('.nssg-table', $container),
-                        tableWidth = $table.outerWidth(),
-                        newTableWidth = tableWidth + difference;
+                    var $table = $('.nssg-table', $container);
+                    var tableWidth = $table.outerWidth();
+                    var newTableWidth = tableWidth + difference;
     
                     if (newTableWidth >= $container.width()) {
                         $table.outerWidth(newTableWidth);
@@ -1252,17 +1275,17 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
                 }
     
                 function onDocumentMouseUp(e) {
-                    $document.off('.' + NAMESPACE);
-    
                     var colWidth = startWidth + (e.pageX - startX);
                     col.width = colWidth;
+    
+                    $document.off('.' + NAMESPACE);
     
                     // Tell the grid that something has changed
                     gridVM.emitChange();
                 }
     
                 if (gridVM.options.resizable && col.resizable !== false) {
-                    var $colGrip = $('<div></div>')
+                    $colGrip = $('<div></div>')
                         .addClass('nssg-col-grip')
                         .appendTo($th)
                         .on('click.' + NAMESPACE, onColGripClick)
@@ -1270,7 +1293,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
                 }
     
                 /***************************/
-                /***** COLUMN TEMPLATE *****/
+                /**     COLUMN TEMPLATE   **/
                 /***************************/
                 $th
                     .addClass('nssg-th-' + col.type)
@@ -1278,7 +1301,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
                     .append(templates[col.type + '-th']);
     
                 /*********************/
-                /***** DISPLOSAL *****/
+                /**     DISPLOSAL   **/
                 /*********************/
                 ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
                     if ($colGrip) {
@@ -1289,7 +1312,7 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
                 });
     
                 /************************/
-                /***** DATA BINDING *****/
+                /**     DATA BINDING   **/
                 /************************/
                 ko.applyBindingsToNode(element, {
                     css: {
@@ -1306,13 +1329,13 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
 
     ko.bindingHandlers.nssgTd = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var NAMESPACE = 'nssgTd',
-                col = valueAccessor(),
-                gridVM = ko.unwrap(bindingContext.$component),
-                $td = $(element);
+            var col = valueAccessor();
+            var $td = $(element);
+    
+            ko.unwrap(bindingContext.$component);
     
             /***************************/
-            /***** COLUMN TEMPLATE *****/
+            /**    COLUMN TEMPLATE    **/
             /***************************/
             $td
                 .addClass('nssg-td-' + col.type)
@@ -1323,11 +1346,11 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
 
     ko.bindingHandlers.nssgTbody = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var gridVM = ko.unwrap(bindingContext.$component),
-                itemsOnCurrentPage = gridVM.pager.itemsOnCurrentPage;
+            var gridVM = ko.unwrap(bindingContext.$component);
+            var itemsOnCurrentPage = gridVM.pager.itemsOnCurrentPage;
     
             /************************/
-            /***** DATA BINDING *****/
+            /**     DATA BINDING   **/
             /************************/
             ko.applyBindingsToNode(element, {
                 foreach: {
@@ -1343,11 +1366,11 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
 
     ko.bindingHandlers.nssgTbodyTr = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var gridVM = ko.unwrap(bindingContext.$component),
-                cols = gridVM.columns;
+            var gridVM = ko.unwrap(bindingContext.$component);
+            var cols = gridVM.columns;
     
             /************************/
-            /***** DATA BINDING *****/
+            /**    DATA BINDING    **/
             /************************/
             ko.applyBindingsToNode(element, {
                 foreach: {
@@ -1362,8 +1385,8 @@ templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, a
     
 
 
-    ko.Grid = Grid;
-    ko.Grid.Sorter = Sorter;
-    ko.Grid.Pager = Pager;
-    ko.Grid.customize = gridCustomizer;
+    ko.Grid = Grid; // eslint-disable-line no-undef, no-param-reassign
+    ko.Grid.Sorter = Sorter; // eslint-disable-line no-undef, no-param-reassign
+    ko.Grid.Pager = Pager; // eslint-disable-line no-undef, no-param-reassign
+    ko.Grid.customize = gridCustomizer; // eslint-disable-line no-undef, no-param-reassign
 }));
