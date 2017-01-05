@@ -1,5 +1,5 @@
 /***********************/
-/***** PAGER CLASS *****/
+/**     PAGER CLASS   **/
 /***********************/
 
 /**
@@ -46,7 +46,7 @@ var Pager = function (options, data) {
 };
 
 /************************/
-/***** PAGER STATIC *****/
+/**     PAGER STATIC   **/
 /************************/
 ko.utils.extend(Pager, {
     DEFAULTS: {
@@ -58,12 +58,12 @@ ko.utils.extend(Pager, {
 });
 
 /***************************/
-/***** PAGER PROTOTYPE *****/
+/**     PAGER PROTOTYPE   **/
 /***************************/
 ko.utils.extend(Pager.prototype, {
 
     /*****************************/
-    /***** PRIVATE FUNCTIONS *****/
+    /**     PRIVATE FUNCTIONS   **/
     /*****************************/
 
     /**
@@ -91,13 +91,13 @@ ko.utils.extend(Pager.prototype, {
         }
 
         this.enabled(opts.enabled);
-        this.serverPaging(opts.serverPaging)
+        this.serverPaging(opts.serverPaging);
         this.pageSize(opts.defaultPageSize);
         this.pageSizes(opts.pageSizes);
     },
 
     /****************************/
-    /***** COMPUTED GETTERS *****/
+    /**     COMPUTED GETTERS   **/
     /****************************/
 
     /**
@@ -239,7 +239,7 @@ ko.utils.extend(Pager.prototype, {
 
 
     /****************************/
-    /***** COMPUTED SETTERS *****/
+    /**     COMPUTED SETTERS   **/
     /****************************/
 
     /**
@@ -255,7 +255,7 @@ ko.utils.extend(Pager.prototype, {
     },
 
     /*************************/
-    /***** SUBSCRIPTIONS *****/
+    /**     SUBSCRIPTIONS   **/
     /*************************/
 
     /**
@@ -286,7 +286,7 @@ ko.utils.extend(Pager.prototype, {
     },
 
     /************************/
-    /***** UI FUNCTIONS *****/
+    /**     UI FUNCTIONS   **/
     /************************/
 
     /**

@@ -6,7 +6,7 @@ ko.bindingHandlers.nssgTd = {
             $td = $(element);
 
         /***************************/
-        /***** COLUMN TEMPLATE *****/
+        /**    COLUMN TEMPLATE    **/
         /***************************/
         $td
             .addClass('nssg-td-' + col.type)

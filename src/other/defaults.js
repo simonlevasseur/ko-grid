@@ -1,5 +1,5 @@
 /********************/
-/***** DEFAULTS *****/
+/**     DEFAULTS   **/
 /********************/
 var defaultOptions = {
     // actions: [],

@@ -1,5 +1,5 @@
 /************************/
-/***** SORTER CLASS *****/
+/**     SORTER CLASS   **/
 /************************/
 var Sorter = function (options, data) {
     // Options
@@ -7,7 +7,7 @@ var Sorter = function (options, data) {
     this.serverSorting = options.serverSorting || false;
     this.defaultSortCol = options.defaultSortCol || undefined;
     this.defaultSortDir = options.defaultSortDir || 'asc';
-    this.dataAccessor = (typeof options.dataAccessor === 'function') ? options.dataAccessor : function (dataObj, col) { dataObj[col.dataAccessor] };
+    this.dataAccessor = (typeof options.dataAccessor === 'function') ? options.dataAccessor : function (dataObj, col) { dataObj[col.dataAccessor]; };
 
     // Variables
     this.data = data;
@@ -19,7 +19,7 @@ var Sorter = function (options, data) {
 };
 
 /****************************/
-/***** SORTER PROTOTYPE *****/
+/**     SORTER PROTOTYPE   **/
 /****************************/
 ko.utils.extend(Sorter.prototype, {
     /**
@@ -101,7 +101,7 @@ ko.utils.extend(Sorter.prototype, {
 });
 
 /**********************************/
-/***** SORTER CLASS EXTENSION *****/
+/**     SORTER CLASS EXTENSION   **/
 /**********************************/
 ko.utils.extend(Sorter, {
     /**
@@ -113,10 +113,10 @@ ko.utils.extend(Sorter, {
         var itemType = typeof item;
 
         switch (itemType) {
-            case 'number':
-                return Sorter.sortNumerically;
-            default:
-                return Sorter.sortAlphabetically;
+        case 'number':
+            return Sorter.sortNumerically;
+        default:
+            return Sorter.sortAlphabetically;
         }
     },
 

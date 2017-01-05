@@ -4,7 +4,7 @@ ko.bindingHandlers.nssgTbody = {
             itemsOnCurrentPage = gridVM.pager.itemsOnCurrentPage;
 
         /************************/
-        /***** DATA BINDING *****/
+        /**     DATA BINDING   **/
         /************************/
         ko.applyBindingsToNode(element, {
             foreach: {

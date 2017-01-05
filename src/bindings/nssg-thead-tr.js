@@ -1,13 +1,13 @@
-;(function () {
+(function () {
     ko.bindingHandlers.nssgTheadTr = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var gridVM = ko.unwrap(bindingContext.$component),
                 cols = gridVM.columns,
                 $container = $(element).closest('.nssg-container');
-            
+
 
             /*******************/
-            /***** SORTING *****/
+            /**     SORTING   **/
             /*******************/
             $(element).on('click', '.nssg-th', function (e, data) {
                 var column = ko.dataFor(e.target);
@@ -16,7 +16,7 @@
             });
 
             /***************************/
-            /***** COLUMN RESIZING *****/
+            /**     COLUMN RESIZING   **/
             /***************************/
             if (gridVM.options.resizable) {
                 var containerWidth = $container.width(), // Without borders
@@ -27,7 +27,7 @@
             }
 
             /************************/
-            /***** DATA BINDING *****/
+            /**     DATA BINDING   **/
             /************************/
             ko.applyBindingsToNode(element, {
                 foreach: {

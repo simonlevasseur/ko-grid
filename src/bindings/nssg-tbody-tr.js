@@ -4,7 +4,7 @@ ko.bindingHandlers.nssgTbodyTr = {
             cols = gridVM.columns;
 
         /************************/
-        /***** DATA BINDING *****/
+        /**    DATA BINDING    **/
         /************************/
         ko.applyBindingsToNode(element, {
             foreach: {

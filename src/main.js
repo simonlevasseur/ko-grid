@@ -1,19 +1,19 @@
 /* istanbul ignore next */
-;(function (factory) {
+(function (factory) {
     'use strict';
 
-    if (typeof require === "function" && typeof exports === "object" && typeof module === "object") {
-        factory(require("ko"), require("jquery"), exports);
-    } else if (typeof define === "function" && define.amd) {
-        define(["ko", "jquery", "exports"], factory);
+    if (typeof require === 'function' && typeof exports === 'object' && typeof module === 'object') {
+        factory(require('ko'), require('jquery'), exports);
+    } else if (typeof define === 'function' && define.amd) {
+        define(['ko', 'jquery', 'exports'], factory);
     } else {
         factory(ko, $);
     }
 }(function (ko, $, exports) {
     'use strict';
-    
+
     /*********************/
-    /***** TEMPLATES *****/
+    /**     TEMPLATES   **/
     /*********************/
     //= include templates
 
@@ -26,17 +26,17 @@
     //= include "classes/Pager.js"
 
     //= include "classes/Sorter.js"
-    
+
    //= include "classes/gridCustomizer.js"
 
     /**********************/
-    /***** COMPONENTS *****/
+    /**     COMPONENTS   **/
     /**********************/
     //= include "components/grid.js"
     //= include "components/paging.js"
 
     /********************/
-    /***** BINDINGS *****/
+    /**     BINDINGS   **/
     /********************/
     //= include "bindings/nssg-thead-tr.js"
     //= include "bindings/nssg-th.js"

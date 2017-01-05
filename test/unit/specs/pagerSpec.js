@@ -17,7 +17,10 @@ describe('Pager', function () {
     var pager;
 
     describe('No paging options set', function () {
-        var pager1, pager2, pager3, pager4;
+        var pager1,
+            pager2,
+            pager3,
+            pager4;
 
         beforeAll(function () {
             pager1 = new Pager({}, sampleData.slice(0));
@@ -91,7 +94,9 @@ describe('Pager', function () {
     });
 
     describe('Setting defaultPageSize option', function () {
-        var pager1, pager2, pager3;
+        var pager1,
+            pager2,
+            pager3;
 
         beforeAll(function () {
             pager1 = new Pager({ defaultPageSize: 50 }, sampleData.slice(0));

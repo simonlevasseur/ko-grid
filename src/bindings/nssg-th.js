@@ -1,4 +1,4 @@
-;(function () {
+(function () {
     ko.bindingHandlers.nssgTh = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var NAMESPACE = 'nssgTh',
@@ -9,7 +9,7 @@
                 $container = $(element).closest('.nssg-container');
 
             /**************************/
-            /***** COLUMN SORTING *****/
+            /**     COLUMN SORTING   **/
             /**************************/
             var isSortable = ko.pureComputed(function () {
                     var gridIsSortable = ko.unwrap(gridVM.options.sortable) && ko.unwrap(gridVM.options.sortable.enabled),
@@ -31,7 +31,7 @@
                 });
 
             /***************************/
-            /***** COLUMN RESIZING *****/
+            /**     COLUMN RESIZING   **/
             /***************************/
             var startX,
                 startWidth;
@@ -83,7 +83,7 @@
             }
 
             /***************************/
-            /***** COLUMN TEMPLATE *****/
+            /**     COLUMN TEMPLATE   **/
             /***************************/
             $th
                 .addClass('nssg-th-' + col.type)
@@ -91,7 +91,7 @@
                 .append(templates[col.type + '-th']);
 
             /*********************/
-            /***** DISPLOSAL *****/
+            /**     DISPLOSAL   **/
             /*********************/
             ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
                 if ($colGrip) {
@@ -102,7 +102,7 @@
             });
 
             /************************/
-            /***** DATA BINDING *****/
+            /**     DATA BINDING   **/
             /************************/
             ko.applyBindingsToNode(element, {
                 css: {

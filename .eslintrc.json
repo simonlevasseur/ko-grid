@@ -6,7 +6,7 @@
         "max-len": "warn",
         "no-unused-vars": "warn",
         "semi": ["error", "always"],
-        "spaced-comment": "warn"
+        "spaced-comment": ["warn", "always", {"exceptions": ["*"], "markers":["="]}]
     },
     "globals":{
         "expect":true

@@ -3,7 +3,7 @@
 describe('Sorter', function () {
     var sorter;
 
-    beforeEach(function() {
+    beforeEach(function () {
         sorter = new Sorter(mockGridInstance);
     });
 

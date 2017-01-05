@@ -1,5 +1,5 @@
 /**********************/
-/***** GRID CLASS *****/
+/** *** GRID CLASS *****/
 /**********************/
 var Grid = function (userOptions) {
     // IMPORTANT: The order of the variable declarations matters here
@@ -31,11 +31,11 @@ var Grid = function (userOptions) {
 };
 
 /**************************/
-/***** GRID PROTOTYPE *****/
+/**     GRID PROTOTYPE   **/
 /**************************/
 ko.utils.extend(Grid.prototype, {
     /****************************/
-    /***** COMPUTED METHODS *****/
+    /**     COMPUTED METHODS   **/
     /****************************/
 
     /**
@@ -58,7 +58,7 @@ ko.utils.extend(Grid.prototype, {
     },
 
     /***************************/
-    /***** PRIVATE METHODS *****/
+    /**     PRIVATE METHODS   **/
     /***************************/
 
     /**
@@ -241,7 +241,7 @@ ko.utils.extend(Grid.prototype, {
     },
 
     /*************************/
-    /***** SUBSCRIPTIONS *****/
+    /**     SUBSCRIPTIONS   **/
     /*************************/
 
     /**
@@ -276,7 +276,7 @@ ko.utils.extend(Grid.prototype, {
     },
 
     /*********************/
-    /***** UI EVENTS *****/
+    /**    UI EVENTS    **/
     /*********************/
 
     /**
@@ -310,7 +310,7 @@ ko.utils.extend(Grid.prototype, {
     },
 
     /**************************/
-    /***** PUBLIC METHODS *****/
+    /**     PUBLIC METHODS   **/
     /**************************/
     refresh: function () {
         this._fetchData();
