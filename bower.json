@@ -1,6 +1,6 @@
 {
   "name": "not-so-simple-grid",
-  "description": "Knockout Table binding that supports sorting, filtering, paging, column resizing, dynamic column selection, reusable factory constructors, etc",
+  "description": "Knockout Table binding that supports sorting, filtering, paging, resizing, column selection, factory constructors, etc",
   "main": "dist/not-so-simple-grid.js",
   "authors": [
     "Simon LeVasseur"
@@ -21,6 +21,7 @@
     "build",
     "coverage",
     "examples",
+    "gulptasks",
     "ext",
     "src",
     "gulpfile.js"
