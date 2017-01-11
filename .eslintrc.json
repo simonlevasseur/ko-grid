@@ -15,7 +15,8 @@
         "no-plusplus":"off",
         "no-restricted-syntax":"off",
         "no-continue":"off",
-        "no-prototype-builtins":"off"
+        "no-prototype-builtins":"off",
+        "no-param-reassign":"off"
     },
     "globals":{
         "expect":true,
@@ -53,7 +54,8 @@
         "sampleData": true,
         "beforeAll": true,
         "columns": true,
-        "mockGridInstance": true
+        "mockGridInstance": true,
+        "gridState": true
     },
     "env":{
         "mocha": true,
