@@ -3,15 +3,15 @@
     'use strict';
 
     if (typeof require === 'function' && typeof exports === 'object' && typeof module === 'object') {
-        factory(require('ko'), require('jquery'), exports);  // eslint-disable-line global-require
+        factory(require('ko'), require('jquery'), require('processing-pipeline'), exports);  // eslint-disable-line global-require
     }
     else if (typeof define === 'function' && define.amd) { // eslint-disable-line no-undef
-        define(['ko', 'jquery', 'exports'], factory); // eslint-disable-line no-undef
+        define(['ko', 'jquery', 'processing-pipeline', 'exports'], factory); // eslint-disable-line no-undef
     }
     else {
-        factory(ko, $); // eslint-disable-line no-undef
+        factory(ko, $, PipelineFactory); // eslint-disable-line no-undef
     }
-}(function (ko) {
+}(function (ko, $, PipelineFactory) {
     'use strict';
 
     //= include "other/symbolPolyfill.js"
@@ -33,7 +33,7 @@
 
     //= include "classes/Sorter.js"
 
-   //= include "classes/gridCustomizer.js"
+    //= include "classes/gridCustomizer.js"
 
     /**********************/
     /**     COMPONENTS   **/
