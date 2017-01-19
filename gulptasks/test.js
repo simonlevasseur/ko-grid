@@ -4,7 +4,7 @@ gulp.task('test', function(cb) {
     var karma = require('karma').server;
 
     karma.start({
-        configFile: __dirname + '/test/karma.conf.js'
+        configFile: __dirname + '/../test/karma.conf.js'
     }, function () {
         cb();
     });
