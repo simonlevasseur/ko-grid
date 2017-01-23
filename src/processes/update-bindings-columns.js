@@ -8,6 +8,7 @@ gridState.processors['update-bindings-columns'] = {
     runs: function (options) {
         console.log('Updating the column bindings');
 
+        options.model.vm.columns(options.model.columns);
         // update the bindings
     }
 };

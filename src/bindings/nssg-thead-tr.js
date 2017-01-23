@@ -12,20 +12,10 @@
             /*******************/
             $(element).on('click', '.nssg-th', function (e) {
                 var column = ko.dataFor(e.target);
-
-                gridVM.onSortByCol(column);
+                var isAsc = !column.isSortedAsc;
+                
+                gridVM.process({sort:[{sortBy:column.id, sortAsc:isAsc}]});
             });
-
-            /***************************/
-            /**     COLUMN RESIZING   **/
-            /***************************/
-            if (gridVM.options.resizable) {
-                containerWidth = $container.width(); // Without borders
-                allColWidths = defineColWidths(cols, containerWidth);
-
-                // Set table width
-                $('.nssg-table', $container).width(allColWidths);
-            }
 
             /************************/
             /**     DATA BINDING   **/
@@ -38,6 +28,24 @@
             }, bindingContext);
 
             return { controlsDescendantBindings: true };
+        },
+        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var gridVM = ko.unwrap(bindingContext.$component);
+            var cols = gridVM.columns;
+            var $container = $(element).closest('.nssg-container');
+            var containerWidth = null;
+            var allColWidths = null;
+
+            /***************************/
+            /**     COLUMN RESIZING   **/
+            /***************************/
+            if (gridVM.options.resizable) {
+                containerWidth = $container.width(); // Without borders
+                allColWidths = defineColWidths(cols, containerWidth);
+
+                // Set table width
+                $('.nssg-table', $container).width(allColWidths);
+            }
         }
     };
     function defineColWidths(columns, containerWidth) {

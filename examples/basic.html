@@ -44,22 +44,19 @@
                         var promise = $.Deferred();
 
                         $.getJSON('data.json').done(function (data) {
-                            var start = args.start,
-                                count = args.count,
-                                retData = data.data;
-
-                            promise.resolve({
-                                data: retData.slice(start, start + retData.length),
-                                total: retData.length
-                            });
+                            promise.resolve(data);
                         });
 
                         return promise;
                     }
                 });
             };
+            
+            var foo = new vm();
+            setTimeout(function(){
+                ko.applyBindings(foo);
+            },500);
 
-            ko.applyBindings(new vm());
         </script>
     </body>
 </html>

@@ -8,10 +8,20 @@
             var $document = $(document);
             var $container = $(element).closest('.nssg-container');
             var $colGrip = null;
+        },
+        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var NAMESPACE = 'nssgTh';
+            var col = valueAccessor();
+            var gridVM = ko.unwrap(bindingContext.$component);
+            var $th = $(element);
+            var $document = $(document);
+            var $container = $(element).closest('.nssg-container');
+            var $colGrip = null;
 
             /**************************/
             /**     COLUMN SORTING   **/
             /**************************/
+            /*
             var isSortable = ko.pureComputed(function () {
                 var gridIsSortable = ko.unwrap(gridVM.options.sortable) &&
                     ko.unwrap(gridVM.options.sortable.enabled);
@@ -35,6 +45,7 @@
             /***************************/
             /**     COLUMN RESIZING   **/
             /***************************/
+            /*
             var startX;
             var startWidth;
 
@@ -96,6 +107,7 @@
             /*********************/
             /**     DISPLOSAL   **/
             /*********************/
+            /*
             ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
                 if ($colGrip) {
                     $colGrip.off('.' + NAMESPACE);
@@ -107,6 +119,7 @@
             /************************/
             /**     DATA BINDING   **/
             /************************/
+            /*
             ko.applyBindingsToNode(element, {
                 css: {
                     'nssg-sortable': isSortable,
@@ -115,6 +128,7 @@
                     'nssg-sorted-desc': isSortedDesc
                 }
             });
+            */
         }
-    };
+    }
 }());

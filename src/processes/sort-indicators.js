@@ -1,0 +1,23 @@
+/* eslint no-unused-vars: 0 */
+
+/***************/
+/** Sort Data **/
+/***************/
+gridState.processors["sort-indicators"] = {
+    watches: ['sort', 'columns'],
+    runs: function (options) {
+        console.log('Updating the sort indicators');
+
+        options.model.columns.forEach(function(column){
+            column.isSorted = false;
+            column.isSortedAsc = false;
+        });
+        options.model.sort.forEach(function(sort){
+            var column = findFirst(options.model.columns, {id:sort.sortBy});
+            if (column){
+                column.isSorted = true;
+                column.isSortedAsc = sort.sortAsc;
+            }
+        });
+    }
+};

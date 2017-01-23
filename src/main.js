@@ -16,8 +16,6 @@
 
     'use strict';
 
-    var pipeline = PipelineFactory.create();
-
     //= include "other/symbolPolyfill.js"
 
     //= include "classes/internalReferences.js"
@@ -30,24 +28,26 @@
     //= include "other/utils.js"
 
     //= include "other/defaults.js"
-
+    
+    function AddInitialProcesses(gridState)
+    {
+        //= include "processes/check-paging-valid.js"
+        //= include "processes/check-columns-valid.js"
+        //= include "processes/filter.js"
+        //= include "processes/last-updated.js"
+        //= include "processes/paging.js"
+        //= include "processes/redistribute-space.js"
+        //= include "processes/sort.js"
+        //= include "processes/sort-indicators.js"
+        //= include "processes/update-bindings-columns.js"
+        //= include "processes/update-bindings-data.js"
+        //= include "processes/update-bindings-paging.js"
+    }
     //= include "model/model.js"
-
-    //= include "processes/check-paging-valid.js"
-    //= include "processes/filter.js"
-    //= include "processes/last-updated.js"
-    //= include "processes/paging.js"
-    //= include "processes/redistribute-space.js"
-    //= include "processes/sort.js"
-    //= include "processes/update-bindings-columns.js"
-    //= include "processes/update-bindings-data.js"
-    //= include "processes/update-bindings-paging.js"
 
     //= include "classes/Grid.js"
 
     //= include "classes/Pager.js"
-
-    //= include "classes/Sorter.js"
 
     //= include "classes/gridCustomizer.js"
 
@@ -67,39 +67,5 @@
     //= include "bindings/nssg-tbody-tr.js"
 
     ko.Grid = Grid; // eslint-disable-line no-undef, no-param-reassign
-    ko.Grid.Sorter = Sorter; // eslint-disable-line no-undef, no-param-reassign
-    ko.Grid.Pager = Pager; // eslint-disable-line no-undef, no-param-reassign
     ko.Grid.customize = gridCustomizer; // eslint-disable-line no-undef, no-param-reassign
-
-    var theCurrentData;
-
-    gridState.processors['fetch-data'] = function (options) {
-        options.model.data = theCurrentData;
-    };
-
-    function delay(cb, ms) {
-        return function () {
-            setTimeout(cb, ms);
-        };
-    }
-
-    function pass1() {
-        console.log('Pass #1');
-        console.log('Initial State');
-        theCurrentData = [1, 2, 3];
-        pipeline.process(gridState, 'start').then(delay(pass2, 5000));
-    }
-    function pass2() {
-        console.log('Pass #2');
-        console.log('Nothing has changed');
-        pipeline.process(gridState, 'start').then(delay(pass3, 5000));
-    }
-    function pass3() {
-        console.log('Pass #3');
-        console.log('Changing the data');
-        theCurrentData.push(4);
-        pipeline.process(gridState, 'start');
-    }
-
-    pass1();
 }));
