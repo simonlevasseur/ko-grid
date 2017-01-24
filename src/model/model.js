@@ -29,7 +29,7 @@ function createInitialGridState()
             // }
         ],
         paging: {
-            pageSize: 10,
+            pageSize: 99999999,
             pageCount: 1,
             currentPage: 1
         },
