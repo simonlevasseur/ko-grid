@@ -1,14 +1,5 @@
 (function () {
     ko.bindingHandlers.nssgTh = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var NAMESPACE = 'nssgTh';
-            var col = valueAccessor();
-            var gridVM = ko.unwrap(bindingContext.$component);
-            var $th = $(element);
-            var $document = $(document);
-            var $container = $(element).closest('.nssg-container');
-            var $colGrip = null;
-        },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var NAMESPACE = 'nssgTh';
             var col = valueAccessor();
@@ -21,26 +12,10 @@
             /**************************/
             /**     COLUMN SORTING   **/
             /**************************/
-            /*
-            var isSortable = ko.pureComputed(function () {
-                var gridIsSortable = ko.unwrap(gridVM.options.sortable) &&
-                    ko.unwrap(gridVM.options.sortable.enabled);
-                var colIsSortable = ko.unwrap(col.sortable) !== false;
-
-                return gridIsSortable && colIsSortable;
-            });
-
-            var isSorted = ko.pureComputed(function () {
-                return ko.unwrap(gridVM.sorter.currentSortCol) === col;
-            });
-
-            var isSortedAsc = ko.pureComputed(function () {
-                return isSorted() && ko.unwrap(gridVM.sorter.currentSortDir) === 'asc';
-            });
-
-            var isSortedDesc = ko.pureComputed(function () {
-                return isSorted() && ko.unwrap(gridVM.sorter.currentSortDir) === 'desc';
-            });
+            var isSortable = col.isSortable;
+            var isSorted = col.isSorted;
+            var isSortedAsc = col.isSorted && col.isSortedAsc;
+            var isSortedDesc = col.isSorted && !col.isSortedAsc;
 
             /***************************/
             /**     COLUMN RESIZING   **/
@@ -119,7 +94,6 @@
             /************************/
             /**     DATA BINDING   **/
             /************************/
-            /*
             ko.applyBindingsToNode(element, {
                 css: {
                     'nssg-sortable': isSortable,
@@ -128,7 +102,6 @@
                     'nssg-sorted-desc': isSortedDesc
                 }
             });
-            */
         }
     }
 }());

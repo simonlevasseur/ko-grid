@@ -10,7 +10,6 @@ var Grid = function (userOptions) {
     // without them is disruptive to testing.  Eventually they'll be removed
     internalVM.options = {};
     internalVM.pager = {};
-    internalVM.sorter = {};
     
     internalVM.columns = ko.observableArray();
     var thisGridSymbol = Symbol("Grid Instance");
@@ -35,11 +34,15 @@ var Grid = function (userOptions) {
     function extendProperty(target, source, propName)
     {
         var rootValue = source[propName];
-        if (typeof rootValue === "object")
+        if (Array.isArray(rootValue))
+        {
+            target[propName] = rootValue;
+        }
+        else if (typeof rootValue === "object")
         {
             if (!target[propName])
             {
-                target[propName] = Array.isArray(rootValue) ? [] : {};
+                target[propName] = {};
             }
             deepReplace(target[propName], source[propName]);
         }
