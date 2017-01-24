@@ -39,6 +39,7 @@
         //= include "processes/redistribute-space.js"
         //= include "processes/sort.js"
         //= include "processes/sort-indicators.js"
+        //= include "processes/index-columns-by-id.js"
         //= include "processes/update-bindings-columns.js"
         //= include "processes/update-bindings-data.js"
         //= include "processes/update-bindings-paging.js"

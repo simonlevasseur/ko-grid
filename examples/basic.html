@@ -44,7 +44,7 @@
                         var promise = $.Deferred();
 
                         $.getJSON('data.json').done(function (data) {
-                            promise.resolve(data);
+                            promise.resolve(data.data);
                         });
 
                         return promise;

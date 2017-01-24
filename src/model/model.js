@@ -48,10 +48,10 @@ function createInitialGridState()
         data_ChangeMode: 'Identity',
         processors: {
             'start': ['pre-process', 'process', 'post-process'],
-            'pre-process': [],
+            'pre-process': ['check-columns-valid', 'index-columns-by-id'],
             'process': 'local',
             'post-process': ['redistribute-space', 'sort-indicators', 'update-bindings-data', 'update-bindings-paging', 'update-bindings-columns'],
-            'local': [{ watches: 'time', runs: 'fetch-data' }, 'last-updated', 'filter', 'sort', 'check-columns-valid', 'check-paging-valid', 'paging'],
+            'local': [{ watches: 'time', runs: 'fetch-data' }, 'last-updated', 'filter', 'sort', 'check-paging-valid', 'paging'],
             'remote': [{ watches:['time','sort','filter','paging','columns'], runs:'fetch-data'}, 'last-updated'],
 
             'fetch-data': function () {

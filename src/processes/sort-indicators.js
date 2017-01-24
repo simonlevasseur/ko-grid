@@ -13,7 +13,7 @@ gridState.processors["sort-indicators"] = {
             column.isSortedAsc = false;
         });
         options.model.sort.forEach(function(sort){
-            var column = findFirst(options.model.columns, {id:sort.sortBy});
+            var column = options.model.columnsById[sort.sortBy];
             if (column){
                 column.isSorted = true;
                 column.isSortedAsc = sort.sortAsc;

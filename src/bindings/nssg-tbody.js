@@ -7,7 +7,7 @@ ko.bindingHandlers.nssgTbody = {
         /************************/
         ko.applyBindingsToNode(element, {
             foreach: {
-                data: gridVM.data().data,
+                data: gridVM.data,
                 as: 'row'
             }
         }, bindingContext);
