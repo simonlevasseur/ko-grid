@@ -96,23 +96,19 @@ function walkObject(obj, condition, predicate) {
     }
 }
 
-/** 
+/**
  * This is a standin for lodash _.first(_.filter(array, obj))
  */
-function findFirst(array, obj)
-{
-    for(var i=0;i<array.length;i++)
-    {
+function findFirst(array, obj) {
+    for (var i = 0; i < array.length; i++) {
         var found = true;
-        for(var key in obj)
-        {
-            if (array[i][key] !== obj[key])
-            {
+        for (var key in obj) {
+            if (array[i][key] !== obj[key]) {
                 found = false;
                 break;
             }
         }
-        if (found){
+        if (found) {
             return array[i];
         }
     }

@@ -17,7 +17,7 @@ gridState.processors['check-paging-valid'] = {
         }
         if (options.changed.data) {
             if (options.model.logging) {
-                console.log("Data changed, updating page Count")
+                console.log('Data changed, updating page Count');
             }
             paging.pageCount = Math.ceil(Math.max(1, data.length / paging.pageSize));
         }

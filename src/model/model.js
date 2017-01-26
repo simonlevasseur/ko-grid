@@ -4,8 +4,7 @@
 /** Initial Grid State  **/
 /*************************/
 
-function createInitialGridState()
-{
+function createInitialGridState() {
     var gridState = {
         filter: '',
         sort: [
@@ -45,19 +44,19 @@ function createInitialGridState()
             width: 0,
             height: 0
         },
-        ui:{
+        ui: {
             allowResizing: true,
             allowSorting: true
         },
         data: [],
         data_ChangeMode: 'Identity',
         processors: {
-            'start': ['pre-process', 'process', 'post-process'],
-            'pre-process': ['check-columns-valid', 'index-columns-by-id', 'filter-change-resets-currentpage','sort-change-resets-currentpage'],
-            'process': 'local',
-            'post-process': ['redistribute-space', 'sort-indicators', 'update-bindings-data', 'update-bindings-paging', 'update-bindings-columns','update-bindings-ui'],
-            'local': [{ watches: 'time', runs: 'fetch-data' }, 'last-updated', 'check-data-valid', 'filter', 'sort', 'check-paging-valid','pagesize-change-resets-currentpage', 'paging'],
-            'remote': ['pagesize-change-resets-currentpage', { watches:['time','sort','filter','paging','columns'], runs:'fetch-data'}, 'last-updated', 'check-data-valid'],
+            start: ['pre-process', 'process', 'post-process'],
+            'pre-process': ['check-columns-valid', 'index-columns-by-id', 'filter-change-resets-currentpage', 'sort-change-resets-currentpage'],
+            process: 'local',
+            'post-process': ['redistribute-space', 'sort-indicators', 'update-bindings-data', 'update-bindings-paging', 'update-bindings-columns', 'update-bindings-ui'],
+            local: [{ watches: 'time', runs: 'fetch-data' }, 'last-updated', 'check-data-valid', 'filter', 'sort', 'check-paging-valid', 'pagesize-change-resets-currentpage', 'paging'],
+            remote: ['pagesize-change-resets-currentpage', { watches: ['time', 'sort', 'filter', 'paging', 'columns'], runs: 'fetch-data' }, 'last-updated', 'check-data-valid'],
 
             'fetch-data': function () {
                 throw new Error("Grids must specifiy a 'fetchdata' function or override the definition of 'process'");

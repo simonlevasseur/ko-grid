@@ -13,8 +13,8 @@
             $(element).on('click', '.nssg-th', function (e) {
                 var column = ko.dataFor(e.target);
                 var isAsc = !column.isSortedAsc;
-                
-                gridVM.process({sort:[{sortBy:column.id, sortAsc:isAsc}]});
+
+                gridVM.process({ sort: [{ sortBy: column.id, sortAsc: isAsc }] });
             });
 
             /************************/

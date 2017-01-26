@@ -6,14 +6,14 @@
 gridState.processors['filter-change-resets-currentpage'] = {
     watches: ['filter'],
     runs: function (options) {
-        if (!options.cache.ranOnce){
+        if (!options.cache.ranOnce) {
             options.cache.ranOnce = true;
             return;
         }
 
         options.model.paging.currentPage = 1;
         if (options.model.logging) {
-            console.log("Filter changed so the currentPage was reset");
+            console.log('Filter changed so the currentPage was reset');
         }
     }
 };

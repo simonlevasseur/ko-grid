@@ -9,7 +9,7 @@ gridState.processors['update-bindings-columns'] = {
         if (options.model.logging) {
             console.log('Updating the column bindings');
         }
-        
+
         var columns = options.model.columns;
         var temp = options.model.vm.columns();
         var numBefore = temp.length;
@@ -18,22 +18,21 @@ gridState.processors['update-bindings-columns'] = {
             temp = temp.slice(0, numNow);
         }
         else if (numBefore < numNow) {
-            for(var i= numBefore;i<numNow;i++){
-                temp [i] = ko.observable();
+            for (var i = numBefore; i < numNow; i++) {
+                temp[i] = ko.observable();
             }
         }
-        
-        for (var i=0;i<numNow;i++) {
+
+        for (var i = 0; i < numNow; i++) {
             var column = columns[i];
-            var colBefore = options.cache[column.id]
+            var colBefore = options.cache[column.id];
             var colNow = JSON.stringify(column);
             if (colBefore !== colNow) {
                 temp[i](JSON.parse(colNow));
                 options.cache[column.id] = colNow;
             }
         }
-        if (numBefore !== numNow)
-        {
+        if (numBefore !== numNow) {
             options.model.vm.columns(temp);
         }
     }

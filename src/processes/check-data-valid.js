@@ -11,22 +11,21 @@ gridState.processors['check-data-valid'] = {
         }
 
         var valid = true;
-        if (!Array.isArray(options.model.data))
-        {
+        if (!Array.isArray(options.model.data)) {
             valid = false;
             options.model.data = [];
         }
-        
-        if (options.model.data.filter(notNullObject).length !== options.model.data.length){
+
+        if (options.model.data.filter(notNullObject).length !== options.model.data.length) {
             valid = false;
         }
-        
-        if (!valid){
-            throw new Error("Data must be an array of non-null objects")
+
+        if (!valid) {
+            throw new Error('Data must be an array of non-null objects');
         }
     }
 };
 
-function notNullObject(row){
-    return row && typeof row === "object";
+function notNullObject(row) {
+    return row && typeof row === 'object';
 }

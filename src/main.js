@@ -28,9 +28,8 @@
     //= include "other/utils.js"
 
     //= include "other/defaults.js"
-    
-    function AddInitialProcesses(gridState)
-    {
+
+    function AddInitialProcesses(gridState) {
         //= include "processes/check-paging-valid.js"
         //= include "processes/check-columns-valid.js"
         //= include "processes/check-data-valid.js"
