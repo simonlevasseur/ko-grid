@@ -28,6 +28,7 @@ function createInitialGridState()
             //    dataAccessor: '' || function(){}
             // }
         ],
+        logging: true,
         paging: {
             pageSize: 99999999,
             pageCount: 1,

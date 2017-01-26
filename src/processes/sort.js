@@ -9,7 +9,9 @@ gridState.processors.sort = {
         var originalData = options.changed.data ? options.model.data : options.cache.data;
         options.cache.data = originalData;
         
-        console.log('Sorting the data');
+        if (options.model.logging) {
+            console.log('Sorting the data');
+        }
         
         var sort = options.model.sort;
         var columnsById = options.model.columnsById;

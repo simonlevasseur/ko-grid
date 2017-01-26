@@ -6,7 +6,9 @@
 gridState.processors['last-updated'] = {
     watches: 'data',
     runs: function (options) {
-        console.log("Updating the lastFetch'd timestamp");
+        if (options.model.logging) {
+            console.log("Updating the lastFetch'd timestamp");
+        }
 
         options.model.time.lastFetch = Date.now();
     }

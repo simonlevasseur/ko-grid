@@ -9,7 +9,9 @@ gridState.processors.filter = {
         var originalData = options.changed.data ? options.model.data : options.cache.data;
         options.cache.data = originalData;
         
-        console.log('Filtering the data');
+        if (options.model.logging) {
+            console.log('Filtering the data');
+        }
         
         if (options.model.filter !== '') {
             throw new Error("Filtering is just a placeholder for now");

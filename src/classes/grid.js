@@ -5,7 +5,7 @@ var Grid = function (userOptions) {
     var internalVM = {};
     internalVM.data = ko.observableArray();
     internalVM.data.loaded = ko.observable(false);
-    internalVM.paging = ko.observable();
+    internalVM.paging = ko.observable({});
 
     //These three lines are here temporarily as the number of errors 
     // without them is disruptive to testing.  Eventually they'll be removed
@@ -68,6 +68,7 @@ var Grid = function (userOptions) {
         extendProperty(gridState, options, "time");
         extendProperty(gridState, options, "space");
         extendProperty(gridState, options, "processors");
+        extendProperty(gridState, options, "logging");
         
         // The data property must be handled seperatly as we
         // actually need to transform it on import
@@ -98,10 +99,35 @@ var Grid = function (userOptions) {
         {
             gridState.data = options.data;
         }
-        pipeline.process(gridState, "start");
+        var loggingEnabled = gridState.logging;
+        if (loggingEnabled)
+        {
+            console.group("Processing grid state change");
+            console.log("Applying change", JSON.stringify(options, filterUninterestingProperties));
+        }
+        var cleanup = function(){
+            if (loggingEnabled)
+            {
+                console.log("Final grid state", JSON.stringify(gridState, filterUninterestingProperties));
+                console.groupEnd();
+            }
+        }
+        var promise = pipeline.process(gridState, "start");
+        promise.then(cleanup, cleanup);
     }
     
     /////////////////////
 
 };
 
+function filterUninterestingProperties(key, value)
+{
+    if (key==="data"){return undefined;}
+    if (key==="processors"){return undefined;}
+    if (key==="vm"){return undefined;}
+    if (key==="columns"){return value.length;}
+    if (key==="columnsById"){return undefined;}
+    if (key==="data_ChangeMode"){return undefined;}
+    if (key==="logging"){return undefined;}
+    return value;
+}

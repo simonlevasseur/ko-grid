@@ -12,8 +12,6 @@ gridState.processors['pagesize-change-resets-currentpage'] = {
             return;
         }
         
-        console.log('Checking if pagesize changed');
-
         var paging = options.model.paging;
         var before = options.cache.pageSize;
         var now = paging.pageSize;
@@ -22,7 +20,9 @@ gridState.processors['pagesize-change-resets-currentpage'] = {
         {
             options.cache.pageSize = now;
             paging.currentPage = 1;
-            console.log("Pagesize changed so the currentPage was reset");
+            if (options.model.logging) {
+                console.log("Pagesize changed so the currentPage was reset");
+            }
         }
     }
 };

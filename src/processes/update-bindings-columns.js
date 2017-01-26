@@ -6,7 +6,9 @@
 gridState.processors['update-bindings-columns'] = {
     watches: ['sort', 'columns'],
     runs: function (options) {
-        console.log('Updating the column bindings');
+        if (options.model.logging) {
+            console.log('Updating the column bindings');
+        }
         
         var columns = options.model.columns;
         var temp = options.model.vm.columns();

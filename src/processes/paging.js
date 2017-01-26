@@ -11,7 +11,9 @@ gridState.processors.paging = {
         var originalData = options.changed.data ? options.model.data : options.cache.data;
         options.cache.data = originalData;
         
-        console.log('Splitting data into pages');
+        if (options.model.logging) {
+            console.log('Splitting data into pages');
+        }
         
         var minIndex = paging.pageSize * (paging.currentPage - 1);
         var maxIndex = minIndex + paging.pageSize;

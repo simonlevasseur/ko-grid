@@ -10,9 +10,9 @@ gridState.processors['sort-change-resets-currentpage'] = {
             options.cache.ranOnce = true;
             return;
         }
-        console.log('Checking if sort changed');
-
         options.model.paging.currentPage = 1;
-        console.log("sort changed so the currentPage was reset");
+        if (options.model.logging) {
+            console.log("sort changed so the currentPage was reset");
+        }
     }
 };

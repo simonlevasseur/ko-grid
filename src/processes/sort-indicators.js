@@ -6,7 +6,9 @@
 gridState.processors["sort-indicators"] = {
     watches: ['sort', 'columns'],
     runs: function (options) {
-        console.log('Updating the sort indicators');
+        if (options.model.logging) {
+            console.log('Updating the sort indicators');
+        }
 
         options.model.columns.forEach(function(column){
             column.isSorted = false;

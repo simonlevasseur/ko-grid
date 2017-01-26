@@ -6,7 +6,9 @@
 gridState.processors['check-paging-valid'] = {
     watches: ['paging', 'data'],
     runs: function (options) {
-        console.log('Validating paging options');
+        if (options.model.logging) {
+            console.log('Validating paging options');
+        }
 
         var paging = options.model.paging;
         var data = options.model.data;
@@ -14,7 +16,9 @@ gridState.processors['check-paging-valid'] = {
             paging.pageSize = 1;
         }
         if (options.changed.data) {
-            console.log("Data changed, updating page Count")
+            if (options.model.logging) {
+                console.log("Data changed, updating page Count")
+            }
             paging.pageCount = Math.ceil(Math.max(1, data.length / paging.pageSize));
         }
         if (paging.currentPage < 1 || isNaN(paging.currentPage)) {

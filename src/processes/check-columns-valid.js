@@ -6,7 +6,10 @@
 gridState.processors['check-columns-valid'] = {
     watches: ['columns'],
     runs: function (options) {
-        console.log('Validating column options');
+        if (options.model.logging)
+        {
+            console.log('Validating column options');
+        }
 
         if (!Array.isArray(options.model.columns))
         {
