@@ -21,9 +21,18 @@ gridState.processors['update-bindings-columns'] = {
             }
         }
         
-        for (var i=0;i<numNow;i++){
-            temp[i](columns[i]);
+        for (var i=0;i<numNow;i++) {
+            var column = columns[i];
+            var colBefore = options.cache[column.id]
+            var colNow = JSON.stringify(column);
+            if (colBefore !== colNow) {
+                temp[i](JSON.parse(colNow));
+                options.cache[column.id] = colNow;
+            }
         }
-        options.model.vm.columns(temp);
+        if (numBefore !== numNow)
+        {
+            options.model.vm.columns(temp);
+        }
     }
 };
