@@ -4,7 +4,7 @@
 /** Check Paging Valid **/
 /************************/
 gridState.processors['check-columns-valid'] = {
-    watches: ['paging', 'data'],
+    watches: ['columns'],
     runs: function (options) {
         console.log('Validating column options');
 

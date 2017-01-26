@@ -7,7 +7,6 @@ gridState.processors['update-bindings-paging'] = {
     watches: 'paging',
     runs: function (options) {
         console.log('Updating the page bindings');
-
-        // update the bindings
+        options.model.vm.paging(options.model.paging);
     }
 };

@@ -26,7 +26,7 @@
     </head>
     <body>
         <!-- ko if: gridVM -->
-            <grid-paging params="vm: gridVM().pager"></grid-paging>
+            <grid-paging params="vm: pager"></grid-paging>
             <grid params="vm: gridVM"></grid>
         <!-- /ko -->
 
@@ -38,10 +38,7 @@
         <script type="text/javascript">
             var vm = function () {
                 var self = this;
-                window.grid = this.gridVM = ko.observable();
-
-                setTimeout(function () {
-                    self.gridVM(new ko.Grid({
+                self.gridVM = ko.observable(new ko.Grid({
                         columns: [
                             {
                                 id: 'name',
@@ -60,25 +57,19 @@
                             { id: 'date', heading: 'Date', dataAccessor: 'date', sortable: false },
                             { id: 'company', heading: 'Company', dataAccessor: 'company' }
                         ],
-                        data: function (args) {
+                        data: function () {
                             var promise = $.Deferred();
 
-                            $.getJSON('data.json').done(function (data) {
-                                var start = args.start,
-                                    count = args.count,
-                                    retData = data.data;
-
-                                promise.resolve({
-                                    data: retData.slice(start, start + retData.length),
-                                    total: retData.length
-                                });
+                            $.getJSON('data.json').done(function (data) {   
+                                promise.resolve(data.data);
                             });
 
                             return promise;
                         },
                         deletable: true,
                         invokable: true,
-                        pageable: {
+                        paging:{
+                            pageSize: 10,
                             pageSizes: [10, 20]
                         },
                         resizable: true,
@@ -89,7 +80,7 @@
                             defaultSortDir: 'asc'
                         }
                     }));
-                }, 1000);
+                    self.pager = new ko.Grid.Pager({}, self.gridVM());
             };
 
             ko.applyBindings(new vm());

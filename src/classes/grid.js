@@ -5,6 +5,7 @@ var Grid = function (userOptions) {
     var internalVM = {};
     internalVM.data = ko.observableArray();
     internalVM.data.loaded = ko.observable(false);
+    internalVM.paging = ko.observable();
 
     //These three lines are here temporarily as the number of errors 
     // without them is disruptive to testing.  Eventually they'll be removed
