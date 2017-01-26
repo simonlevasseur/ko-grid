@@ -44,6 +44,7 @@
         //= include "processes/update-bindings-columns.js"
         //= include "processes/update-bindings-data.js"
         //= include "processes/update-bindings-paging.js"
+        //= include "processes/update-bindings-ui.js"
         //= include "processes/filter-change-resets-currentpage.js"
         //= include "processes/pagesize-change-resets-currentpage.js"
         //= include "processes/sort-change-resets-currentpage.js"

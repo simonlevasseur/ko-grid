@@ -6,11 +6,10 @@ var Grid = function (userOptions) {
     internalVM.data = ko.observableArray();
     internalVM.data.loaded = ko.observable(false);
     internalVM.paging = ko.observable({});
+    internalVM.ui = ko.observable({});
 
     //These three lines are here temporarily as the number of errors 
     // without them is disruptive to testing.  Eventually they'll be removed
-    internalVM.options = {};
-    internalVM.pager = {};
     
     internalVM.columns = ko.observableArray();
     var thisGridSymbol = Symbol("Grid Instance");
@@ -69,6 +68,7 @@ var Grid = function (userOptions) {
         extendProperty(gridState, options, "space");
         extendProperty(gridState, options, "processors");
         extendProperty(gridState, options, "logging");
+        extendProperty(gridState, options, "ui");
         
         // The data property must be handled seperatly as we
         // actually need to transform it on import

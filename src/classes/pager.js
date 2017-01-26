@@ -11,7 +11,7 @@
 Grid.Pager = function (options, gridVM) {
     // Options
     this.enabled = ko.observable(true);
-    this.pageSizes = propertyAsObservable(gridVM.paging, "pageSizes");
+    this.pageSizes = propertyAsObservable(gridVM.ui, "pageSizes");
     this.maxPageIndex = propertyAsObservable(gridVM.paging, "pageCount");
     this.firstItem = propertyAsObservable(gridVM.paging, "firstItem");
     this.totalItems = propertyAsObservable(gridVM.paging, "totalItems");

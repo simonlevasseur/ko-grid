@@ -39,7 +39,7 @@
             /***************************/
             /**     COLUMN RESIZING   **/
             /***************************/
-            if (gridVM.options.resizable) {
+            if (gridVM.ui().allowResizing) {
                 containerWidth = $container.width(); // Without borders
                 allColWidths = defineColWidths(cols, containerWidth);
 
