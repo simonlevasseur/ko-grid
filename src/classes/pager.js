@@ -13,9 +13,13 @@ Grid.Pager = function (options, gridVM) {
     this.enabled = ko.observable(true);
     this.pageSizes = propertyAsObservable(gridVM.paging, "pageSizes");
     this.maxPageIndex = propertyAsObservable(gridVM.paging, "pageCount");
-    this.currentPageIndex = propertyAsObservable(gridVM.paging, "currentPage");
     this.firstItem = propertyAsObservable(gridVM.paging, "firstItem");
     this.totalItems = propertyAsObservable(gridVM.paging, "totalItems");
+    this.currentPageIndex = ko.pureComputed({read:function(){
+        return gridVM.paging().currentPage;
+    },write:function(newValue){
+        gridVM.process({paging:{currentPage:newValue}});
+    }});
     this.pageSize = ko.pureComputed({read:function(){
         return gridVM.paging().pageSize;
     },write:function(newValue){
