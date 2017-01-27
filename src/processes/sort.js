@@ -1,4 +1,4 @@
-/* eslint no-unused-vars: 0 */
+    /* eslint no-unused-vars: 0 */
 
 /***************/
 /** Sort Data **/
@@ -16,7 +16,7 @@ gridState.processors.sort = {
         var sort = options.model.sort;
         var columnsById = options.model.columnsById;
 
-        options.model.data = sort.length == 0 ? originalData : originalData.slice().sort(function (rowA, rowB) {
+        options.model.data = sort.length === 0 ? originalData : originalData.slice().sort(function (rowA, rowB) {
             for (var i = 0; i < sort.length; i++) {
                 var criteria = sort[i];
                 var column = columnsById[criteria.sortBy];
@@ -42,7 +42,12 @@ gridState.processors.sort = {
 };
 
 function genericCompare(valueA, valueB) {
-    return valueA === valueB ? 0 : (valueA < valueB ? -1 : 1);
+    if (valueA === valueB) {
+        return 0;
+    }
+    else {
+        return valueA < valueB ? -1 : 1;
+    }
 }
 
 gridState.sortFunctions = {

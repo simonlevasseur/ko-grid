@@ -8,7 +8,7 @@
         "semi": ["error", "always"],
         "spaced-comment": ["warn", "always", {"exceptions": ["*"], "markers":["="]}],
         "no-use-before-define": ["error", {"functions": false}],
-        "no-console":["warn", {"allow":["error","warn"]}],
+        "no-console":"off",
         "brace-style": ["warn","stroustrup"],
         "no-else-return": "off",
         "vars-on-top":"off",
@@ -55,7 +55,12 @@
         "beforeAll": true,
         "columns": true,
         "mockGridInstance": true,
-        "gridState": true
+        "gridState": true,
+        "PipelineFactory":true,
+        "AddInitialProcesses": true,
+        "gridState":true,
+        "gridVM":true,
+        "createInitialGridState":true
     },
     "env":{
         "mocha": true,

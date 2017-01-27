@@ -40,7 +40,7 @@ gridState.processors['check-columns-valid'] = {
 };
 
 function setDefault(obj, prop, type, defaultValue) {
-    if (typeof obj[prop] !== type || (type === 'object' && !type)) {
+    if (typeof obj[prop] !== type || (type === 'object' && !type)) { // eslint-disable-line valid-typeof
         obj[prop] = defaultValue;
     }
 }

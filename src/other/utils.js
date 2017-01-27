@@ -112,6 +112,7 @@ function findFirst(array, obj) {
             return array[i];
         }
     }
+    return undefined;
 }
 
 /************************/

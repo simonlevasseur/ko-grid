@@ -1,3 +1,4 @@
+/* eslint no-unused-vars :0 */
 /* istanbul ignore next */
 (function (factory) {
     'use strict';
@@ -12,8 +13,6 @@
         factory(ko, $, PipelineFactory); // eslint-disable-line no-undef
     }
 }(function (ko, $, PipelineFactory) {
- // eslint-disable-line no-unused-vars
-
     'use strict';
 
     //= include "other/symbolPolyfill.js"

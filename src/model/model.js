@@ -52,12 +52,37 @@ function createInitialGridState() {
         data_ChangeMode: 'Identity',
         processors: {
             start: ['pre-process', 'process', 'post-process'],
-            'pre-process': ['check-columns-valid', 'index-columns-by-id', 'filter-change-resets-currentpage', 'sort-change-resets-currentpage'],
+            'pre-process': [
+                'check-columns-valid',
+                'index-columns-by-id',
+                'filter-change-resets-currentpage',
+                'sort-change-resets-currentpage'
+            ],
             process: 'local',
-            'post-process': ['redistribute-space', 'sort-indicators', 'update-bindings-data', 'update-bindings-paging', 'update-bindings-columns', 'update-bindings-ui'],
-            local: [{ watches: 'time', runs: 'fetch-data' }, 'last-updated', 'check-data-valid', 'filter', 'sort', 'check-paging-valid', 'pagesize-change-resets-currentpage', 'paging'],
-            remote: ['pagesize-change-resets-currentpage', { watches: ['time', 'sort', 'filter', 'paging', 'columns'], runs: 'fetch-data' }, 'last-updated', 'check-data-valid'],
-
+            local: [
+                { watches: 'time', runs: 'fetch-data' },
+                'last-updated',
+                'check-data-valid',
+                'filter',
+                'sort',
+                'check-paging-valid',
+                'pagesize-change-resets-currentpage',
+                'paging'
+            ],
+            remote: [
+                'pagesize-change-resets-currentpage',
+                { watches: ['time', 'sort', 'filter', 'paging', 'columns'], runs: 'fetch-data' },
+                'last-updated',
+                'check-data-valid'
+            ],
+            'post-process': [
+                'redistribute-space',
+                'sort-indicators',
+                'update-bindings-data',
+                'update-bindings-paging',
+                'update-bindings-columns',
+                'update-bindings-ui'
+            ],
             'fetch-data': function () {
                 throw new Error("Grids must specifiy a 'fetchdata' function or override the definition of 'process'");
             }

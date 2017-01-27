@@ -1,3 +1,5 @@
+/* eslint no-unused-vars :0 */
+
 /**********************/
 /**    GRID CLASS    **/
 /**********************/
@@ -42,7 +44,7 @@ var Grid = function (userOptions) {
             deepReplace(target[propName], source[propName]);
         }
         else if (typeof rootValue === 'undefined') {
-
+            delete target[propName];
         }
         else {
             target[propName] = rootValue;
