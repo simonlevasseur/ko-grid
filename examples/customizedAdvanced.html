@@ -32,12 +32,12 @@
         </style>
     </head>
     <body>
-        <div class="smallGrid" data-bind="if: smallGridVM">
-            <grid-paging params="vm: smallGridVM().pager"></grid-paging>
+        <div class="smallGrid">
+            <grid-paging params="vm: smallPager"></grid-paging>
             <grid params="vm: smallGridVM"></grid>
         </div>
-        <div class="bigGrid" data-bind="if: bigGridVM">
-            <grid-paging params="vm: bigGridVM().pager"></grid-paging>
+        <div class="bigGrid">
+            <grid-paging params="vm: bigPager"></grid-paging>
             <grid params="vm: bigGridVM"></grid>
         </div>
 
@@ -70,20 +70,17 @@
                 data: function (args) {
                     return new Promise(function(resolve, reject){
                         $.getJSON('data.json').then(function (data) {
-                            var start = args.start,
-                                count = args.count,
-                                retData = data.data;
-                            resolve({
-                                data: retData.slice(start, start + retData.length),
-                                total: retData.length
-                            });
+                            resolve(data.data);
                         });
                     })
                 },
+                paging:{
+                    pageSize: 10
+                },
                 deletable: true,
                 invokable: true,
-                pageable: {
-                    pageSizes: [10, 20]
+                ui: {
+                    pageSizes: [5, 10, 20]
                 },
                 resizable: true,
                 selectable: true,
@@ -97,37 +94,45 @@
                         setTimeout(function(){
                             console.log("pretending complete, now continuing to load the grid");
                             resolve("<img data-bind=\"attr:{src:'http://lorempixel.com/60/60/abstract/'+$parent[dataAccessor].replace(/[\\s\\.]*/g, '')}\">");
-                        },5000);//simulated load time
+                        },500);//simulated load time
                         console.log("It's not actually this slow, we're just pretending to show that properties can be promises")
                     })
                 }
             });
         
-            var vm = function () {
-                this.smallGridVM = myCustomizedGrid({
-                    pageable : {
-                        pageSizes: [5]
+            
+                var smallGridVMPromise = myCustomizedGrid({
+                    paging : {
+                        pageSize: [5]
                     }
                 });
-                this.bigGridVM = myCustomizedGrid({
-                    pageable : {
-                        pageSizes: [20]
+                var bigGridVMPromise = smallGridVMPromise.then(function() {
+                    return myCustomizedGrid({
+                        paging : {
+                            pageSize: [20]
+                        }
+                    }, function(options) {
+                        //removing the age or email column just to show that we can
+
+                        if (Math.random() < 0.5)
+                        {
+                           options.columns.splice(1,1);
+                        }
+                        else
+                        {
+                           options.columns.splice(2,1);
+                        }
                     }
-                }, function(options){
-                    //removing the age or email column just to show that we can
-                    console.log(JSON.stringify(options.columns));
-                    if (Math.random() < 0.5)
-                    {
-                       options.columns.splice(1,1);
-                    }
-                    else
-                    {
-                       options.columns.splice(2,1);
-                    }
-                
-                })
-            };
-            ko.applyBindings(new vm());
+                )});
+
+            Promise.all([smallGridVMPromise, bigGridVMPromise]).then(function(vms) {
+                var vm = {};
+                vm.smallGridVM = vms[0];
+                vm.bigGridVM = vms[1];
+                vm.smallPager = new ko.Grid.Pager({}, vm.smallGridVM)
+                vm.bigPager = new ko.Grid.Pager({}, vm.bigGridVM)
+                ko.applyBindings(vm);
+            });
         </script>
     </body>
 </html>
