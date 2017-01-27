@@ -44,7 +44,7 @@ var Grid = function (userOptions) {
             deepReplace(target[propName], source[propName]);
         }
         else if (typeof rootValue === 'undefined') {
-            delete target[propName];
+            // do nothing
         }
         else {
             target[propName] = rootValue;
