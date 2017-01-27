@@ -23,7 +23,7 @@ var Grid = function (userOptions) {
     gridState.vm = internalVM;
 
     if (userOptions) {
-        process(userOptions);
+        internalVM.ready = process(userOptions);
     }
 
     internalVM.process = process;
@@ -102,7 +102,7 @@ var Grid = function (userOptions) {
             }
         };
         var promise = pipeline.process(gridState, 'start');
-        promise.then(cleanup, cleanup);
+        return promise.then(cleanup, cleanup);
     }
 
     // ///////////////////

@@ -33,11 +33,11 @@
     </head>
     <body>
         <div class="smallGrid" data-bind="if: smallGridVM">
-            <grid-paging params="vm: smallGridVM().pager"></grid-paging>
+            <grid-paging params="vm: smallPager"></grid-paging>
             <grid params="vm: smallGridVM"></grid>
         </div>
         <div class="bigGrid" data-bind="if: bigGridVM">
-            <grid-paging params="vm: bigGridVM().pager"></grid-paging>
+            <grid-paging params="vm: bigPager"></grid-paging>
             <grid params="vm: bigGridVM"></grid>
         </div>
 
@@ -69,43 +69,43 @@
                 data: function (args) {
                     return new Promise(function(resolve, reject){
                         $.getJSON('data.json').then(function (data) {
-                            var start = args.start,
-                                count = args.count,
-                                retData = data.data;
-                            resolve({
-                                data: retData.slice(start, start + retData.length),
-                                total: retData.length
-                            });
+                            resolve(data.data);
                         });
                     })
                 },
                 deletable: true,
                 invokable: true,
-                pageable: {
-                    pageSizes: [10, 20]
+                ui: {
+                    pageSizes: [5, 10, 20],
+                    isResizable: true,
+                    isSelectable: true
                 },
-                resizable: true,
-                selectable: true,
-                sortable: {
-                    enabled: ko.observable(true),
-                    defaultSortCol: 'age',
-                    defaultSortDir: 'asc'
-                }            
+                sort: [{
+                    sortBy: 'age',
+                    sortAsc: true
+                }]
             });
         
-            var vm = function () {
-                this.smallGridVM = myCustomizedGrid({
-                    pageable : {
-                        pageSizes: [5]
+                var smallGridVMPromise = myCustomizedGrid({
+                    paging : {
+                        pageSize: 5
                     }
                 });
-                this.bigGridVM = myCustomizedGrid({
-                    pageable : {
-                        pageSizes: [20]
-                    }
-                })
-            };
-            ko.applyBindings(new vm());
+                var bigGridVMPromise = smallGridVMPromise.then(function(){ 
+                    return myCustomizedGrid({
+                        paging : {
+                            pageSize: 20
+                        }
+                    });
+                });
+                Promise.all([smallGridVMPromise, bigGridVMPromise]).then(function(vms) {
+                    var vm = {};
+                    vm.smallGridVM = vms[0];
+                    vm.bigGridVM = vms[1];
+                    vm.smallPager = new ko.Grid.Pager({}, vm.smallGridVM)
+                    vm.bigPager = new ko.Grid.Pager({}, vm.bigGridVM)
+                    ko.applyBindings(vm);
+                });
         </script>
     </body>
 </html>
