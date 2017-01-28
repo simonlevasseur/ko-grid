@@ -57,6 +57,7 @@ var Grid = function (userOptions) {
         extendProperty(gridState, options, 'filter');
         extendProperty(gridState, options, 'sort');
         extendProperty(gridState, options, 'columns');
+        extendProperty(gridState, options, 'columnsById');
         extendProperty(gridState, options, 'paging');
         extendProperty(gridState, options, 'selection');
         extendProperty(gridState, options, 'time');
@@ -93,7 +94,11 @@ var Grid = function (userOptions) {
         var loggingEnabled = gridState.logging;
         if (loggingEnabled) {
             console.group('Processing grid state change');
-            console.log('Applying change', JSON.stringify(options, filterUninterestingProperties));
+            var whatChanged = JSON.stringify(options, filterUninterestingProperties);
+            if (whatChanged.length === 2){
+                whatChanged = JSON.stringify(options)
+            }
+            console.log('Applying change', whatChanged);
         }
         var cleanup = function () {
             if (loggingEnabled) {
