@@ -40,7 +40,6 @@
                 
                 var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth));
                 $('.nssg-table', $container).width(fixedWidth);
-                console.log("fixing outer width", allColWidths, containerWidth, fixedWidth);
             });
 
             return { controlsDescendantBindings: true };

@@ -29,6 +29,13 @@ gridState.processors['redistribute-space'] = {
         var availableWidth;
         var previousAvailableWidth;
         var usedWidth;
+        
+        applyMinMax(columnsArray);
+        
+        //min, max width and non-resizable columns can leave small amounts of space left over.
+        //we run this in an iteration so that should those edge cases occur we still mostly fill the space
+        //The limit of 10 is just to ensure we don't end up looping forever
+        //usually this will exit after the second iteration
         for(var iterations =0; iterations<10; iterations++)
         {
             previousAvailableWidth = availableWidth;
@@ -36,7 +43,6 @@ gridState.processors['redistribute-space'] = {
             usedWidth = calculateUsedWidth(columnsArray);
             
             availableWidth = Math.max(0, containerWidth - usedWidth);
-            availableWidth = Math.floor(Math.min(availableWidth, containerWidth / 5));
             
             distributeAvailableSpace(columnsArray, availableWidth);
             
@@ -47,14 +53,6 @@ gridState.processors['redistribute-space'] = {
         
         tempToWidth(columnsArray);
         removeTemp(columnsArray);
-        
-        if (options.model.logging){
-            console.log("container width", containerWidth)
-            console.log("available width", availableWidth);
-            columnsArray.forEach(function(col){
-                console.log(col.id, col.width)
-            });
-        }
     }
 };
 
@@ -107,6 +105,9 @@ function distributeAvailableSpace(columnsArray, space){
     },0);
     
     var spacePerColumn = Math.floor(space / resizableColumns);
+    if (spacePerColumn <= 0){
+        return;
+    }
     
     columnsArray.forEach(function(col){
         if (col.isResizable){

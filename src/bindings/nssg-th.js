@@ -41,6 +41,7 @@
             function onDocumentMouseMove(e) {
                 var currentWidth = $th.outerWidth();
                 var newWidth = startWidth + (e.pageX - startX);
+                newWidth = Math.max(80, newWidth);
                 var difference = newWidth - currentWidth;
 
                 var $table = $('.nssg-table', $container);
@@ -58,7 +59,7 @@
                 $document.off('.' + NAMESPACE);
                 
                 var update = {};
-                update[col.id] = {width:colWidth};
+                update[col.id] = {width:Math.max(80,colWidth)};
                 gridVM.process({columnsById:update});
             }
 
