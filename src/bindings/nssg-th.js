@@ -49,14 +49,12 @@
 
                 if (newTableWidth >= $container.width()) {
                     $table.outerWidth(newTableWidth);
-                    $th.outerWidth(newWidth);
                 }
+                $th.outerWidth(newWidth);
             }
 
             function onDocumentMouseUp(e) {
                 var colWidth = startWidth + (e.pageX - startX);
-                col.width = colWidth;
-
                 $document.off('.' + NAMESPACE);
                 
                 var update = {};

@@ -9,9 +9,7 @@ var Grid = function (userOptions) {
     internalVM.data.loaded = ko.observable(false);
     internalVM.paging = ko.observable({});
     internalVM.ui = ko.observable({});
-
-    // These three lines are here temporarily as the number of errors
-    // without them is disruptive to testing.  Eventually they'll be removed
+    internalVM.size = ko.observable()
 
     internalVM.columns = ko.observableArray();
     var thisGridSymbol = Symbol('Grid Instance');
@@ -27,6 +25,13 @@ var Grid = function (userOptions) {
     }
 
     internalVM.process = process;
+    
+    ko.computed(function(){
+        var size = internalVM.size();
+        if (size){
+            process({space:size})
+        }
+    });
 
     return internalVM;
 

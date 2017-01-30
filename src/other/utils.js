@@ -132,3 +132,53 @@ ko.extenders.nssgSingleSelect = function (target, option) {
         }
     });
 };
+
+function throttle(options){
+    if (typeof options !== "object" || !options){
+        throw new Error("throttle expects a configuration object")
+    }
+    var invoke = options.callback;
+    var frequency = options.frequency;
+    var leading = options.leading;
+    var trailing = options.trailing;
+    if (typeof invoke !== "function"){
+        throw new Error("callback must be a function");
+    }
+    if (typeof frequency !== "number" || frequency <= 0){
+        throw new Error("frequency must be a number greater than 0");
+    }
+    if (!leading && !trailing){
+        leading = true;
+        trailing = true;
+    }
+    
+    function doLeading(){
+        if (leading){
+            invoke();
+        }
+    }
+    function doTrailing(){
+        invokeTimer = null;
+        if (trailing){
+            invoke();
+        }
+    }
+    
+    var invokeTimer;
+    function requestInvoke(){
+        if (invokeTimer) {
+            return;
+        }
+        doLeading();
+        invokeTimer = setTimeout(doTrailing, frequency)
+    }
+    function dispose(){
+        options = null;
+        cb = null;
+        if (invokeTimer){
+            clearTimeout(invokeTimer);
+        }
+    }
+    requestInvoke.dispose = dispose;
+    return requestInvoke;
+}

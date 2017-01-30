@@ -26,6 +26,22 @@
                     as: 'col'
                 }
             }, bindingContext);
+            
+            var gutter = document.createElement("th");
+            gutter.className = "gutter nssg-th";
+            $(element).append(gutter);
+            
+            ko.computed(function(){
+                var allColWidths = null;
+
+                var allColWidths = ko.unwrap(cols).reduce(function(total, col){return total + col().width;}, 0);
+                var containerWidth = $container.width();
+                if (typeof allColWidths !== "number" || isNaN(allColWidths)){allColWidths = 0;}
+                
+                var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth));
+                $('.nssg-table', $container).width(fixedWidth);
+                console.log("fixing outer width", allColWidths, containerWidth, fixedWidth);
+            });
 
             return { controlsDescendantBindings: true };
         },
@@ -34,48 +50,6 @@
             var cols = gridVM.columns;
             var $container = $(element).closest('.nssg-container');
             var containerWidth = null;
-            var allColWidths = null;
-
-            /***************************/
-            /**     COLUMN RESIZING   **/
-            /***************************/
-            if (gridVM.ui().allowResizing) {
-                containerWidth = $container.width(); // Without borders
-                allColWidths = defineColWidths(cols, containerWidth);
-
-                // Set table width
-                $('.nssg-table', $container).width(allColWidths);
-            }
         }
     };
-    function defineColWidths(columns, containerWidth) {
-        var cols = ko.unwrap(columns);
-        var cumulativeWidths = 0;
-        var difference = null;
-
-        // Set all column width and minWidth
-        ko.utils.arrayForEach(cols, function (col) {
-            if (col.minWidth === undefined) {
-                col.minWidth = 80; // eslint-disable-line no-param-reassign
-            }
-
-            if (col.width === undefined) {
-                col.width = col.minWidth; // eslint-disable-line no-param-reassign
-            }
-
-            cumulativeWidths += col.width;
-        });
-
-        // Our columns don't fill the container :(
-        if (cumulativeWidths < containerWidth) {
-            difference = containerWidth - cumulativeWidths;
-
-            // Make the last column take up the remaining space
-            cols[cols.length - 1].width += difference;
-
-            cumulativeWidths += difference;
-        }
-
-        return cumulativeWidths;
-    }
 }());

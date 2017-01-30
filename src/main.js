@@ -69,6 +69,7 @@
     //= include "bindings/nssg-td.js"
     //= include "bindings/nssg-tbody.js"
     //= include "bindings/nssg-tbody-tr.js"
+    //= include "bindings/nssg-container-size.js"
 
     ko.Grid = Grid; // eslint-disable-line no-undef, no-param-reassign
     ko.Grid.customize = gridCustomizer; // eslint-disable-line no-undef, no-param-reassign

@@ -2,6 +2,22 @@
 @import "columns/select";
 @import "columns/text";
 
+.nssg-table .gutter {
+  // This gutter is to allow the browser to self adjust when the combined width of the collums is less than the container
+  // In order for this to work the gutter MUST have width:auto
+  // See PR 27429
+  width: auto;
+  font-size: 0px;
+  padding:0px;
+  margin:0px;
+  height:0px;
+  border-bottom: $tableBorderWidth solid #cfe2e4;
+}
+
+.nssg-table th:nth-last-child(2){
+  border-right: none;
+}
+
 .nssg-table .nssg-th.animate {
     transition: all .1s ease-in-out;
 }
