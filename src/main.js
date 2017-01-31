@@ -49,6 +49,7 @@
         //= include "processes/sort-change-resets-currentpage.js"
         //= include "processes/ui-enable-selection-column.js"
         //= include "processes/calculate-row-identities.js"
+        //= include "processes/disable-multi-page-selection.js"
     }
     //= include "model/model.js"
 
