@@ -14,7 +14,9 @@
                 var column = ko.dataFor(e.target);
                 var isAsc = !column.isSortedAsc;
 
-                gridVM.process({ sort: [{ sortBy: column.id, sortAsc: isAsc }] });
+                if (column.isSortable) {
+                    gridVM.process({ sort: [{ sortBy: column.id, sortAsc: isAsc }] });
+                }
             });
 
             /************************/

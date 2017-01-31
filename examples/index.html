@@ -66,16 +66,16 @@
 
                             return promise;
                         },
-                        deletable: true,
-                        invokable: true,
                         paging:{
                             pageSize: 10,
                         },
                         ui:{
-                            pageSizes: [10, 20]
+                            pageSizes: [10, 20],
+                            resizable: true,
+                            selectable: true,
+                            deletable: true,
+                            invokable: true,
                         },
-                        resizable: true,
-                        selectable: true,
                         sortable: {
                             enabled: ko.observable(true),
                             defaultSortCol: 'age',
@@ -83,6 +83,7 @@
                         }
                     }));
                     self.pager = new ko.Grid.Pager({}, self.gridVM());
+                    window.gridVM = self.gridVM();
             };
 
             ko.applyBindings(new vm());

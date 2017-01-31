@@ -38,6 +38,7 @@
         //= include "processes/redistribute-space.js"
         //= include "processes/sort.js"
         //= include "processes/sort-indicators.js"
+        //= include "processes/row-selection.js"
         //= include "processes/index-columns-by-id.js"
         //= include "processes/update-bindings-columns.js"
         //= include "processes/update-bindings-data.js"
@@ -46,6 +47,8 @@
         //= include "processes/filter-change-resets-currentpage.js"
         //= include "processes/pagesize-change-resets-currentpage.js"
         //= include "processes/sort-change-resets-currentpage.js"
+        //= include "processes/ui-enable-selection-column.js"
+        //= include "processes/calculate-row-identities.js"
     }
     //= include "model/model.js"
 

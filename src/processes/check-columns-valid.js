@@ -13,6 +13,8 @@ gridState.processors['check-columns-valid'] = {
         if (!Array.isArray(options.model.columns)) {
             throw new Error('Columns must be an array of objects');
         }
+        
+        var identityColPresent = !!findFirst(options.model.columns, {isIdentity: true});
         var columnIds = {};
         options.model.columns.forEach(function (column) {
             if (!column.id && !column.dataAccessor) {
@@ -26,7 +28,7 @@ gridState.processors['check-columns-valid'] = {
             setDefault(column, 'id', 'string', column.dataAccessor);
             setDefault(column, 'dataAccessor', 'string', column.id);
             setDefault(column, 'heading', 'string', column.id);
-            setDefault(column, 'isIdentity', 'boolean', false);
+            setDefault(column, 'isIdentity', 'boolean', !identityColPresent);
             setDefault(column, 'isSortable', 'boolean', true);
             setDefault(column, 'isResizable', 'boolean', true);
             setDefault(column, 'visible', 'boolean', true);

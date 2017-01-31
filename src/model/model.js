@@ -53,6 +53,7 @@ function createInitialGridState() {
         processors: {
             start: ['pre-process', 'process', 'post-process'],
             'pre-process': [
+                'ui-enable-selection-column',
                 'check-columns-valid',
                 'index-columns-by-id',
                 'filter-change-resets-currentpage',
@@ -78,6 +79,8 @@ function createInitialGridState() {
             'post-process': [
                 'redistribute-space',
                 'sort-indicators',
+                'calculate-row-identities',
+                'row-selection',
                 'update-bindings-data',
                 'update-bindings-paging',
                 'update-bindings-columns',
