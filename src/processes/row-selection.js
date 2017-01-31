@@ -13,7 +13,7 @@ gridState.processors['row-selection'] = {
             console.log('Updating row selection');
         }
         options.model.data.forEach(function(row){
-            row.isSelected = options.model.selection[row.$identity];
+            row.isSelected = !!options.model.selection[row.$identity];
         });
     }
 };

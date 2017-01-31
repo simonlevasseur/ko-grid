@@ -83,6 +83,7 @@ function createInitialGridState() {
                 'select-all',
                 'disable-multi-page-selection',
                 'row-selection',
+                'ui-selected-all-indicator',
                 'update-bindings-data',
                 'update-bindings-paging',
                 'update-bindings-columns',
