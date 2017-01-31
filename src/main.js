@@ -50,6 +50,7 @@
         //= include "processes/ui-enable-selection-column.js"
         //= include "processes/calculate-row-identities.js"
         //= include "processes/disable-multi-page-selection.js"
+        //= include "processes/select-all.js"
     }
     //= include "model/model.js"
 

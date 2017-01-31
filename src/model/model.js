@@ -80,6 +80,7 @@ function createInitialGridState() {
                 'redistribute-space',
                 'sort-indicators',
                 'calculate-row-identities',
+                'select-all',
                 'disable-multi-page-selection',
                 'row-selection',
                 'update-bindings-data',

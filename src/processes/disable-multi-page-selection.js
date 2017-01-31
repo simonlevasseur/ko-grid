@@ -15,7 +15,7 @@ gridState.processors['disable-multi-page-selection'] = {
             var toBeRemoved = [];
             
             for(var key in options.model.selection){
-                if (!rowsPresent[key]){
+                if (!rowsPresent[key] && key !== "all"){
                     toBeRemoved.push(key);
                 }
             }
