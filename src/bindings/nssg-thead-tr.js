@@ -40,7 +40,7 @@
                 var containerWidth = $container.width();
                 if (typeof allColWidths !== "number" || isNaN(allColWidths)){allColWidths = 0;}
                 
-                var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth));
+                var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth)) - 1;
                 $('.nssg-table', $container).width(fixedWidth);
             });
 

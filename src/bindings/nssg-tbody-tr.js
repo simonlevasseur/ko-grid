@@ -1,14 +1,20 @@
 ko.bindingHandlers.nssgTbodyTr = {
     init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         var gridVM = ko.unwrap(bindingContext.$component);
-        var cols = gridVM.columns;
 
+        var colsWithGutter = ko.pureComputed(function(){
+            var cols = ko.unwrap(gridVM.columns);
+            var temp = cols.slice();
+            temp.push({id:"$gutter",type:"gutter",isSortable:false, isResizable:false});
+            return temp;
+        });
+        
         /************************/
         /**    DATA BINDING    **/
         /************************/
         ko.applyBindingsToNode(element, {
             foreach: {
-                data: cols,
+                data: colsWithGutter,
                 as: 'col'
             }
         }, bindingContext);
