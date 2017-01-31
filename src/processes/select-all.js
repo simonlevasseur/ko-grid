@@ -18,6 +18,7 @@ gridState.processors['select-all'] = {
             options.model.data.forEach(function(row){
                 options.model.selection[row.$identity] = true;
             });
+            delete options.model.selection.all;
         } else {
             if (options.model.logging) {
                 console.log('Clearing all selected rows');
