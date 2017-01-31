@@ -28,18 +28,22 @@
                     as: 'col'
                 }
             }, bindingContext);
-            
-            var gutter = document.createElement("th");
-            gutter.className = "gutter nssg-th";
+
+            var gutter = document.createElement('th');
+            gutter.className = 'gutter nssg-th';
             $(element).append(gutter);
-            
-            ko.computed(function(){
+
+            ko.computed(function () {
                 var allColWidths = null;
 
-                var allColWidths = ko.unwrap(cols).reduce(function(total, col){return total + col().width;}, 0);
+                var allColWidths = ko.unwrap(cols).reduce(function (total, col) {
+                    return total + col().width;
+                }, 0);
                 var containerWidth = $container.width();
-                if (typeof allColWidths !== "number" || isNaN(allColWidths)){allColWidths = 0;}
-                
+                if (typeof allColWidths !== 'number' || isNaN(allColWidths)) {
+                    allColWidths = 0;
+                }
+
                 var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth)) - 1;
                 $('.nssg-table', $container).width(fixedWidth);
             });

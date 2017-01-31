@@ -13,8 +13,8 @@ gridState.processors['check-columns-valid'] = {
         if (!Array.isArray(options.model.columns)) {
             throw new Error('Columns must be an array of objects');
         }
-        
-        var identityColPresent = !!findFirst(options.model.columns, {isIdentity: true});
+
+        var identityColPresent = !!findFirst(options.model.columns, { isIdentity: true });
         var columnIds = {};
         options.model.columns.forEach(function (column) {
             if (!column.id && !column.dataAccessor) {

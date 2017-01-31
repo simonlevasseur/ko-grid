@@ -10,8 +10,8 @@ gridState.processors['ui-selected-all-indicator'] = {
             console.log('Updating the selection indicators');
         }
 
-        var allSelected = !findFirst(options.model.data, {isSelected: false});
-        
+        var allSelected = !findFirst(options.model.data, { isSelected: false });
+
         options.model.ui.allSelected = allSelected;
     }
 };

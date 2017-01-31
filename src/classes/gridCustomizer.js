@@ -6,16 +6,16 @@ gridCustomizer = function (baseOptions, baseInitializer) {
     return function CustomizedGrid(overrideOptions, overrideInitializer) {
         var realOptions = {};
         var result;
-        
+
         return loadBaseOptions()
             .then(loadOverrideOptions)
             .then(addTemplates)
-            .then(function(){
+            .then(function () {
                 result = new Grid(realOptions);
                 return result.ready;
             })
-            .then(function(){
-                return result;  
+            .then(function () {
+                return result;
             })
             .catch(function (err) {
                 console.error('Failed to initialize grid', (err && err.message ? err.message : err));

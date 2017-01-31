@@ -41,13 +41,13 @@ gridState.processors['update-bindings-columns'] = {
     }
 };
 
-function addColumnFunctions(col, options){
-    if (col.type === "select"){
-        col.toggleSelectAll = function(grid){
-            return function(){
-                grid.process({selection:{all:!options.model.ui.allSelected}});
+function addColumnFunctions(col, options) {
+    if (col.type === 'select') {
+        col.toggleSelectAll = function (grid) {
+            return function () {
+                grid.process({ selection: { all: !options.model.ui.allSelected } });
                 return true;
-            }
-        }
+            };
+        };
     }
 }

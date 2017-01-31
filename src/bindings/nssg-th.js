@@ -20,7 +20,7 @@
             /***************************/
             /**     COLUMN RESIZING   **/
             /***************************/
-            
+
             var startX;
             var startWidth;
 
@@ -57,14 +57,13 @@
             function onDocumentMouseUp(e) {
                 var colWidth = startWidth + (e.pageX - startX);
                 $document.off('.' + NAMESPACE);
-                
+
                 var update = {};
-                update[col.id] = {width:Math.max(80,colWidth)};
-                gridVM.process({columnsById:update});
+                update[col.id] = { width: Math.max(80, colWidth) };
+                gridVM.process({ columnsById: update });
             }
 
-            if ($(".nssg-col-grip", $th).length == 0)
-            {
+            if ($('.nssg-col-grip', $th).length == 0) {
                 if (gridVM.ui().isResizable !== false && col.resizable !== false) {
                     $colGrip = $('<div></div>')
                         .addClass('nssg-col-grip')
@@ -77,26 +76,26 @@
             /***************************/
             /**     COLUMN TEMPLATE   **/
             /***************************/
-            
-            var $template = $(".nssg-th-content", $th);
-            if ($template.length ==0){
+
+            var $template = $('.nssg-th-content', $th);
+            if ($template.length == 0) {
                 $template = $("<div class='nssg-th-content'></div>", $th);
                 $template.append(templates[col.type + '-th']);
                 $th.append($template);
             }
-            
+
             $th
                 .addClass('nssg-th-' + col.type)
-                .addClass('animate')
-                $th.outerWidth(col.width);
+                .addClass('animate');
+            $th.outerWidth(col.width);
 
-            setTimeout(function(){
+            setTimeout(function () {
                 $th.removeClass('animate');
             }, 200);
             /*********************/
             /**     DISPLOSAL   **/
             /*********************/
-            
+
             ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
                 if ($colGrip) {
                     $colGrip.off('.' + NAMESPACE);

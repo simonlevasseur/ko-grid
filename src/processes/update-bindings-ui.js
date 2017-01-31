@@ -12,15 +12,15 @@ gridState.processors['update-bindings-ui'] = {
         var ui = options.model.ui;
         var clone = {};
         deepReplace(clone, ui);
-        
-        if (!options.cache.allSelected){
+
+        if (!options.cache.allSelected) {
             options.cache.allSelected = ko.observable();
         }
         clone.allSelected = options.cache.allSelected;
-        if (clone.allSelected.peek() !== ui.allSelected){
+        if (clone.allSelected.peek() !== ui.allSelected) {
             clone.allSelected(ui.allSelected);
         }
-        
+
         options.model.vm.ui(clone);
     }
 };

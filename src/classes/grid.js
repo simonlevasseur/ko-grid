@@ -9,7 +9,7 @@ var Grid = function (userOptions) {
     internalVM.data.loaded = ko.observable(false);
     internalVM.paging = ko.observable({});
     internalVM.ui = ko.observable({});
-    internalVM.size = ko.observable()
+    internalVM.size = ko.observable();
 
     internalVM.columns = ko.observableArray();
     var thisGridSymbol = Symbol('Grid Instance');
@@ -25,11 +25,11 @@ var Grid = function (userOptions) {
     }
 
     internalVM.process = process;
-    
-    ko.computed(function(){
+
+    ko.computed(function () {
         var size = internalVM.size();
-        if (size){
-            process({space:size})
+        if (size) {
+            process({ space: size });
         }
     });
 
@@ -100,8 +100,8 @@ var Grid = function (userOptions) {
         if (loggingEnabled) {
             console.group('Processing grid state change');
             var whatChanged = JSON.stringify(options, filterUninterestingProperties);
-            if (whatChanged.length === 2){
-                whatChanged = JSON.stringify(options)
+            if (whatChanged.length === 2) {
+                whatChanged = JSON.stringify(options);
             }
             console.log('Applying change', whatChanged);
         }
