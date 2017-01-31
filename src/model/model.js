@@ -29,7 +29,7 @@ function createInitialGridState() {
         ],
         logging: true,
         paging: {
-            pageSize: 99999999,
+            pageSize: 100,
             pageCount: 1,
             currentPage: 1
         },
