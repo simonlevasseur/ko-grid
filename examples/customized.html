@@ -47,7 +47,7 @@
         <script type="application/javascript" src="../bower_components/processing-pipeline/dist/processing-pipeline.js"></script>
         <script type="application/javascript" src="../build/not-so-simple-grid.js"></script>
         <script type="text/javascript">
-            var myCustomizedGrid = ko.Grid.customize({
+            var myCustomizedGrid = ko.NewGrid.customize({
                 columns: [
                     {
                         id: 'name',
@@ -102,8 +102,8 @@
                     var vm = {};
                     vm.smallGridVM = vms[0];
                     vm.bigGridVM = vms[1];
-                    vm.smallPager = new ko.Grid.Pager({}, vm.smallGridVM)
-                    vm.bigPager = new ko.Grid.Pager({}, vm.bigGridVM)
+                    vm.smallPager = new ko.NewGrid.Pager({}, vm.smallGridVM)
+                    vm.bigPager = new ko.NewGrid.Pager({}, vm.bigGridVM)
                     ko.applyBindings(vm);
                 });
         </script>

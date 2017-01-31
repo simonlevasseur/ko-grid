@@ -1,5 +1,5 @@
 (function () {
-    ko.bindingHandlers.nssgTh = {
+    ko.bindingHandlers.newnssgTh = {
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var NAMESPACE = 'nssgTh';
             var col = valueAccessor();

@@ -1,4 +1,4 @@
-ko.bindingHandlers.nssgTbodyTr = {
+ko.bindingHandlers.newnssgTbodyTr = {
     init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         var gridVM = ko.unwrap(bindingContext.$component);
 

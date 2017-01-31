@@ -1,4 +1,4 @@
-ko.bindingHandlers.nssgTd = {
+ko.bindingHandlers.newnssgTd = {
     init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         var col = valueAccessor();
         var $td = $(element);

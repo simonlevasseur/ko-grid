@@ -77,6 +77,6 @@
     //= include "bindings/nssg-tbody-tr.js"
     //= include "bindings/nssg-container-size.js"
 
-    ko.Grid = Grid; // eslint-disable-line no-undef, no-param-reassign
-    ko.Grid.customize = gridCustomizer; // eslint-disable-line no-undef, no-param-reassign
+    ko.NewGrid = Grid; // eslint-disable-line no-undef, no-param-reassign
+    ko.NewGrid.customize = gridCustomizer; // eslint-disable-line no-undef, no-param-reassign
 }));

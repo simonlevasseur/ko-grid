@@ -38,7 +38,7 @@
         <script type="text/javascript">
             var vm = function () {
                 var self = this;
-                self.gridVM = ko.observable(new ko.Grid({
+                self.gridVM = ko.observable(new ko.NewGrid({
                         columns: [
                             {
                                 id: 'name',
@@ -82,7 +82,7 @@
                             defaultSortDir: 'asc'
                         }
                     }));
-                    self.pager = new ko.Grid.Pager({}, self.gridVM());
+                    self.pager = new ko.NewGrid.Pager({}, self.gridVM());
                     window.gridVM = self.gridVM();
             };
 

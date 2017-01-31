@@ -1,5 +1,5 @@
 (function () {
-    ko.bindingHandlers.nssgTheadTr = {
+    ko.bindingHandlers.newnssgTheadTr = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var gridVM = ko.unwrap(bindingContext.$component);
             var cols = gridVM.columns;
