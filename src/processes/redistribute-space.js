@@ -25,7 +25,7 @@ gridState.processors['redistribute-space'] = {
         
         widthToTemp(columnsArray);
         
-        var containerWidth = Math.floor(options.model.space.width);
+        var containerWidth = Math.floor(options.model.space.width) - 2;
         var availableWidth;
         var previousAvailableWidth;
         var usedWidth;
