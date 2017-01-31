@@ -78,10 +78,16 @@
             /**     COLUMN TEMPLATE   **/
             /***************************/
             
+            var $template = $(".nssg-th-content", $th);
+            if ($template.length ==0){
+                $template = $("<div class='nssg-th-content'></div>", $th);
+                $template.append(templates[col.type + '-th']);
+                $th.append($template);
+            }
+            
             $th
                 .addClass('nssg-th-' + col.type)
                 .addClass('animate')
-                .append(templates[col.type + '-th']);
                 $th.outerWidth(col.width);
 
             setTimeout(function(){
