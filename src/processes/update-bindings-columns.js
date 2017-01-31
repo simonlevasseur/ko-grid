@@ -29,7 +29,9 @@ gridState.processors['update-bindings-columns'] = {
             var colBefore = options.cache[column.id];
             var colNow = JSON.stringify(column);
             if (colBefore !== colNow) {
-                temp[i](JSON.parse(colNow));
+                var newObj = JSON.parse(colNow);
+                addColumnFunctions(newObj, options);
+                temp[i](newObj);
                 options.cache[column.id] = colNow;
             }
         }
@@ -38,3 +40,14 @@ gridState.processors['update-bindings-columns'] = {
         }
     }
 };
+
+function addColumnFunctions(col, options){
+    if (col.type === "select"){
+        col.toggleSelectAll = function(grid){
+            return function(){
+                grid.process({selection:{all:!options.model.ui.allSelected}});
+                return true;
+            }
+        }
+    }
+}
