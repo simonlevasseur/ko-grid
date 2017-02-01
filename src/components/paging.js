@@ -1,4 +1,4 @@
-ko.components.register('grid-paging', {
+ko.components.register('newgrid-paging', {
     viewModel: {
         createViewModel: function (params) {
             return params.vm;

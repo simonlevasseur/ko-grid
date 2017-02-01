@@ -1,4 +1,4 @@
-ko.components.register('grid', {
+ko.components.register('newgrid', {
     viewModel: {
         createViewModel: function (params) {
             return params.vm;

@@ -58,12 +58,12 @@
     var templates = {};
 templates["grid"] = "<div class=nssg-container data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=nssg-table><thead class=nssg-thead><tr class=nssg-thead-tr data-bind=\"newnssgTheadTr: true\"><th class=nssg-th data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=nssg-tobdy data-bind=\"newnssgTbody: true\"><tr class=nssg-tbody-tr data-bind=\"newnssgTbodyTr: true\"><td class=nssg-td data-bind=\"newnssgTd: col\"></td></tr></tbody></table></div>";
 templates["paging"] = "<div class=nssg-paging><div class=nssg-paging-selector-container data-bind=\"visible: true\"><span class=nssg-paging-view>View</span><select class=nssg-paging-pages data-bind=\"options: pageSizes, value: pageSize\"></select></div><span class=nssg-paging-count>Now Showing <span data-bind=text:firstItem></span> of <span data-bind=text:totalItems></span></span><div class=nssg-paging-controls data-bind=\"visible: true\"><a href=# class=\"nssg-paging-arrow nssg-paging-first\" data-bind=\"click: goToFirstPage, visible: currentPageIndex() !== 1\"></a> <a href=# class=\"nssg-paging-arrow nssg-paging-prev\" data-bind=\"click: goToPrevPage, visible: currentPageIndex() !== 1\"></a> <input type=text class=nssg-paging-current data-bind=\"value: currentPageIndex\"> <span class=nssg-paging-total data-bind=\"text: 'of ' + maxPageIndex()\"></span> <a href=# class=\"nssg-paging-arrow nssg-paging-next\" data-bind=\"click: goToNextPage, visible: currentPageIndex() !== maxPageIndex()\"></a> <a href=# class=\"nssg-paging-arrow nssg-paging-last\" data-bind=\"click: goToLastPage, visible: currentPageIndex() !== maxPageIndex()\"></a></div></div>";
-templates["select-th"] = "<input type=checkbox data-bind=\"checked: $component().ui().allSelected, visible: $parent.ui().selectMode === 'multi', click: col.toggleSelectAll($component())\">";
-templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, attr: { title: col.heading }\"></div>";
 templates["actions"] = "<div class=nssg-actions-container data-bind=\"foreach: $component().options.actions\"><a href=# class=nssg-action data-bind=\"click: $component().onRowActionClick, css: css\"></a></div>";
 templates["gutter"] = "";
 templates["select"] = "<input type=checkbox data-bind=\"checked: row.isSelected, checkedValue: row, click: row.toggleSelection($component())\">";
 templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAccessor === 'function') ? dataAccessor($parent) : $parent[dataAccessor], attr: { title: (typeof dataAccessor === 'function') ? dataAccessor($parent) : $parent[dataAccessor] }\"></div>";
+templates["select-th"] = "<input type=checkbox data-bind=\"checked: $component().ui().allSelected, visible: $parent.ui().selectMode === 'multi', click: col.toggleSelectAll($component())\">";
+templates["text-th"] = "<div class=nssg-th-text data-bind=\"text: col.heading, attr: { title: col.heading }\"></div>";
 
     /* eslint no-unused-vars: "off" */
     
@@ -200,55 +200,56 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
         });
     };
     
-    function throttle(options){
-        if (typeof options !== "object" || !options){
-            throw new Error("throttle expects a configuration object")
+    function throttle(options) {
+        if (typeof options !== 'object' || !options) {
+            throw new Error('throttle expects a configuration object');
         }
         var invoke = options.callback;
         var frequency = options.frequency;
         var leading = options.leading;
         var trailing = options.trailing;
-        if (typeof invoke !== "function"){
-            throw new Error("callback must be a function");
+        if (typeof invoke !== 'function') {
+            throw new Error('callback must be a function');
         }
-        if (typeof frequency !== "number" || frequency <= 0){
-            throw new Error("frequency must be a number greater than 0");
+        if (typeof frequency !== 'number' || frequency <= 0) {
+            throw new Error('frequency must be a number greater than 0');
         }
-        if (!leading && !trailing){
+        if (!leading && !trailing) {
             leading = true;
             trailing = true;
         }
-        
-        function doLeading(){
-            if (leading){
+    
+        function doLeading() {
+            if (leading) {
                 invoke();
             }
         }
-        function doTrailing(){
+        function doTrailing() {
             invokeTimer = null;
-            if (trailing){
+            if (trailing) {
                 invoke();
             }
         }
-        
+    
         var invokeTimer;
-        function requestInvoke(){
+        function requestInvoke() {
             if (invokeTimer) {
                 return;
             }
             doLeading();
-            invokeTimer = setTimeout(doTrailing, frequency)
+            invokeTimer = setTimeout(doTrailing, frequency);
         }
-        function dispose(){
+        function dispose() {
             options = null;
             cb = null;
-            if (invokeTimer){
+            if (invokeTimer) {
                 clearTimeout(invokeTimer);
             }
         }
         requestInvoke.dispose = dispose;
         return requestInvoke;
     }
+    
 
     /********************/
     /**     DEFAULTS   **/
@@ -350,8 +351,8 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
                 if (!Array.isArray(options.model.columns)) {
                     throw new Error('Columns must be an array of objects');
                 }
-                
-                var identityColPresent = !!findFirst(options.model.columns, {isIdentity: true});
+        
+                var identityColPresent = !!findFirst(options.model.columns, { isIdentity: true });
                 var columnIds = {};
                 options.model.columns.forEach(function (column) {
                     if (!column.id && !column.dataAccessor) {
@@ -500,82 +501,76 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
         gridState.processors['redistribute-space'] = {
             watches: ['columns', 'space'],
             runs: function (options) {
-                if (!options.model.space || options.model.space.width <= 0){
+                if (!options.model.space || options.model.space.width <= 0) {
                     return;
                 }
                 if (options.model.logging) {
                     console.log('Redistributing exta space amoung the columns');
                 }
                 var columnsArray = options.model.columns;
-                
+        
                 widthToTemp(columnsArray);
-                
+        
                 var containerWidth = Math.floor(options.model.space.width) - 2;
                 var availableWidth;
                 var previousAvailableWidth;
                 var usedWidth;
-                
+        
                 applyMinMax(columnsArray);
-                
-                //min, max width and non-resizable columns can leave small amounts of space left over.
-                //we run this in an iteration so that should those edge cases occur we still mostly fill the space
-                //The limit of 10 is just to ensure we don't end up looping forever
-                //usually this will exit after the second iteration
-                for(var iterations =0; iterations<10; iterations++)
-                {
+        
+                // min, max width and non-resizable columns can leave small amounts of space left over.
+                // we run this in an iteration so that should those edge cases occur we still mostly fill the space
+                // The limit of 10 is just to ensure we don't end up looping forever
+                // usually this will exit after the second iteration
+                for (var iterations = 0; iterations < 10; iterations++) {
                     previousAvailableWidth = availableWidth;
-                    
+        
                     usedWidth = calculateUsedWidth(columnsArray);
-                    
+        
                     availableWidth = Math.max(0, containerWidth - usedWidth);
-                    
+        
                     distributeAvailableSpace(columnsArray, availableWidth);
-                    
-                    if (availableWidth === previousAvailableWidth){
+        
+                    if (availableWidth === previousAvailableWidth) {
                         break;
                     }
                 }
-                
+        
                 tempToWidth(columnsArray);
                 removeTemp(columnsArray);
             }
         };
         
-        function widthToTemp(columnsArray)
-        {
-            columnsArray.forEach(function(col) {
+        function widthToTemp(columnsArray) {
+            columnsArray.forEach(function (col) {
                 col.tempWidth = col.width || ABSOLUTE_MIN_COL_WIDTH;
             });
         }
         
-        function tempToWidth(columnsArray)
-        {
-            columnsArray.forEach(function(col) {
+        function tempToWidth(columnsArray) {
+            columnsArray.forEach(function (col) {
                 col.width = col.tempWidth;
             });
         }
         
-        function removeTemp(columnsArray)
-        {
-            columnsArray.forEach(function(col) {
+        function removeTemp(columnsArray) {
+            columnsArray.forEach(function (col) {
                 delete col.tempWidth;
             });
         }
         
-        function calculateUsedWidth(columnsArray){
-            return columnsArray.reduce(function(total, col){
+        function calculateUsedWidth(columnsArray) {
+            return columnsArray.reduce(function (total, col) {
                 return total + (col.tempWidth ? col.tempWidth : 0);
-            },0);
+            }, 0);
         }
         
-        function applyMinMax(columnsArray){
-            columnsArray.forEach(function(col){
-                if (!!col.minWidth)
-                {
+        function applyMinMax(columnsArray) {
+            columnsArray.forEach(function (col) {
+                if (col.minWidth) {
                     col.tempWidth = Math.max(col.tempWidth, col.minWidth);
                 }
-                if (!!col.maxWidth)
-                {
+                if (col.maxWidth) {
                     col.tempWidth = Math.min(col.tempWidth, col.maxWidth);
                 }
                 if (col.tempWidth < ABSOLUTE_MIN_COL_WIDTH) {
@@ -584,24 +579,25 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
             });
         }
         
-        function distributeAvailableSpace(columnsArray, space){
-            var resizableColumns = columnsArray.reduce(function(total, col){
+        function distributeAvailableSpace(columnsArray, space) {
+            var resizableColumns = columnsArray.reduce(function (total, col) {
                 return total + (col.isResizable ? 1 : 0);
-            },0);
-            
+            }, 0);
+        
             var spacePerColumn = Math.floor(space / resizableColumns);
-            if (spacePerColumn <= 0){
+            if (spacePerColumn <= 0) {
                 return;
             }
-            
-            columnsArray.forEach(function(col){
-                if (col.isResizable){
+        
+            columnsArray.forEach(function (col) {
+                if (col.isResizable) {
                     col.tempWidth += spacePerColumn;
                 }
             });
-            
+        
             applyMinMax(columnsArray);
         }
+        
             /* eslint no-unused-vars: 0 */
         
         /***************/
@@ -692,15 +688,15 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
         /** Update row selection **/
         /**************************/
         gridState.processors['row-selection'] = {
-            watches: ['data','selection'],
+            watches: ['data', 'selection'],
             runs: function (options) {
-                if (!options.model.ui.selectable){
+                if (!options.model.ui.selectable) {
                     return;
                 }
                 if (options.model.logging) {
                     console.log('Updating row selection');
                 }
-                options.model.data.forEach(function(row){
+                options.model.data.forEach(function (row) {
                     row.isSelected = !!options.model.selection[row.$identity];
                 });
             }
@@ -767,16 +763,17 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
             }
         };
         
-        function addColumnFunctions(col, options){
-            if (col.type === "select"){
-                col.toggleSelectAll = function(grid){
-                    return function(){
-                        grid.process({selection:{all:!options.model.ui.allSelected}});
+        function addColumnFunctions(col, options) {
+            if (col.type === 'select') {
+                col.toggleSelectAll = function (grid) {
+                    return function () {
+                        grid.process({ selection: { all: !options.model.ui.allSelected } });
                         return true;
-                    }
-                }
+                    };
+                };
             }
         }
+        
         /* eslint no-unused-vars: 0 */
         
         var selectedObservables = {};
@@ -790,28 +787,28 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
                 if (options.model.logging) {
                     console.log('Updating the data bindings');
                 }
-                
+        
                 var uiData = options.model.data.slice();
-                uiData.forEach(function(row, index){
+                uiData.forEach(function (row, index) {
                     var clone = deepReplace({}, row);
                     uiData[index] = clone;
-                    
+        
                     var obs = selectedObservables[row.$identity];
-                    if (!obs){
+                    if (!obs) {
                         obs = ko.observable();
                         selectedObservables[row.$identity] = obs;
                     }
-                    
+        
                     clone.isSelected = obs;
-                    if (obs.peek() !== row.isSelected){
+                    if (obs.peek() !== row.isSelected) {
                         obs(row.isSelected);
                     }
-                    
-                    clone.toggleSelection = function(grid){
-                        var options = {selection:{}};
+        
+                    clone.toggleSelection = function (grid) {
+                        var options = { selection: {} };
                         options.selection[row.$identity] = !row.isSelected;
-                        return wrapped_process(grid, options)
-                    }
+                        return wrapped_process(grid, options);
+                    };
                 });
         
                 options.model.vm.data(uiData);
@@ -820,8 +817,11 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
         };
         
         function wrapped_process(grid, options) {
-            return function(){grid.process(options);}
+            return function () {
+                grid.process(options);
+            };
         }
+        
         /* eslint no-unused-vars: 0 */
         
         /*****************************/
@@ -851,18 +851,19 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
                 var ui = options.model.ui;
                 var clone = {};
                 deepReplace(clone, ui);
-                
-                if (!options.cache.allSelected){
+        
+                if (!options.cache.allSelected) {
                     options.cache.allSelected = ko.observable();
                 }
                 clone.allSelected = options.cache.allSelected;
-                if (clone.allSelected.peek() !== ui.allSelected){
+                if (clone.allSelected.peek() !== ui.allSelected) {
                     clone.allSelected(ui.allSelected);
                 }
-                
+        
                 options.model.vm.ui(clone);
             }
         };
+        
         /* eslint no-unused-vars: 0 */
         
         /**********************************************/
@@ -938,24 +939,25 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
         gridState.processors['ui-enable-selection-column'] = {
             watches: ['ui'],
             runs: function (options) {
-                if (options.model.ui.selectable){
-                    var selectCol = findFirst(options.model.columns, {id:"$$select"});
-                    if (!selectCol){
-                        console.log("Adding the row selection column");
+                if (options.model.ui.selectable) {
+                    var selectCol = findFirst(options.model.columns, { id: '$$select' });
+                    if (!selectCol) {
+                        console.log('Adding the row selection column');
                         selectCol = {
-                            id:"$$select",
-                            type:"select",
+                            id: '$$select',
+                            type: 'select',
                             isSortable: false,
                             isIdentity: false
-                        }
+                        };
                         options.model.columns.unshift(selectCol);
                     }
-                    if (typeof options.model.ui.selectMode === "undefined"){
-                        options.model.ui.selectMode = "multi";
+                    if (typeof options.model.ui.selectMode === 'undefined') {
+                        options.model.ui.selectMode = 'multi';
                     }
                 }
             }
         };
+        
         /* eslint no-unused-vars: 0 */
         
         /******************************/
@@ -964,86 +966,89 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
         gridState.processors['calculate-row-identities'] = {
             watches: ['data', 'columns'],
             runs: function (options) {
-                if (!options.model.ui.selectable){
+                if (!options.model.ui.selectable) {
                     return;
                 }
                 if (options.model.logging) {
-                    console.log("Calculating row identities");
+                    console.log('Calculating row identities');
                 }
         
-                var identityColumns = options.model.columns.filter(function(col){
+                var identityColumns = options.model.columns.filter(function (col) {
                     return col.isIdentity;
-                }).sort(function(colA, colB){
+                }).sort(function (colA, colB) {
                     return colA.id < colB.id ? -1 : 1;
                 });
-                
-                options.model.data.forEach(function(row){
-                    var identity = identityColumns.reduce(function(total, col){
-                        return total+"$"+getCellData(row, col);
-                    },"");
-                    row["$identity"] = identity;
+        
+                options.model.data.forEach(function (row) {
+                    var identity = identityColumns.reduce(function (total, col) {
+                        return total + '$' + getCellData(row, col);
+                    }, '');
+                    row.$identity = identity;
                 });
-                //todo calculate identities
+                // todo calculate identities
             }
         };
         
-        function getCellData(row, col){
-            return typeof col.dataAccessor === "string" ? row[col.dataAccessor] : col.dataAccessor(row);
+        function getCellData(row, col) {
+            return typeof col.dataAccessor === 'string' ? row[col.dataAccessor] : col.dataAccessor(row);
         }
+        
         /* eslint no-unused-vars: 0 */
         
         /*****************************/
         /** Enable Selection Column **/
         /*****************************/
         gridState.processors['disable-multi-page-selection'] = {
-            watches: ['data','selection'],
+            watches: ['data', 'selection'],
             runs: function (options) {
-                if (options.model.ui.selectable){
+                if (options.model.ui.selectable) {
                     var rowsPresent = {};
-                    options.model.data.forEach(function(row){
+                    options.model.data.forEach(function (row) {
                         rowsPresent[row.$identity] = true;
                     });
-                    
+        
                     var toBeRemoved = [];
-                    
-                    for(var key in options.model.selection){
-                        if (!rowsPresent[key] && key !== "all"){
+        
+                    for (var key in options.model.selection) {
+                        if (!rowsPresent[key] && key !== 'all') {
                             toBeRemoved.push(key);
                         }
                     }
-                    
-                    if (toBeRemoved.length > 0 && options.model.logging){
-                        console.log("Removing selected rows which are not present on the current page");
+        
+                    if (toBeRemoved.length > 0 && options.model.logging) {
+                        console.log('Removing selected rows which are not present on the current page');
                     }
-                    
-                    toBeRemoved.forEach(function(key){
+        
+                    toBeRemoved.forEach(function (key) {
                         delete options.model.selection[key];
                     });
                 }
             }
         };
+        
         /* eslint no-unused-vars: 0 */
         
         /****************/
         /** Select All **/
         /****************/
         gridState.processors['select-all'] = {
-            watches: ['selection','data'],
+            watches: ['selection', 'data'],
             runs: function (options) {
                 var all = options.model.selection.all;
-                if (typeof all !== "boolean") {
+                if (typeof all !== 'boolean') {
                     delete options.model.selection.all;
                     return;
                 }
-                if (all){
+                if (all) {
                     if (options.model.logging) {
                         console.log('Applying select all');
                     }
-                    options.model.data.forEach(function(row){
+                    options.model.data.forEach(function (row) {
                         options.model.selection[row.$identity] = true;
                     });
                     delete options.model.selection.all;
-                } else {
+                }
+                else {
                     if (options.model.logging) {
                         console.log('Clearing all selected rows');
                     }
@@ -1064,8 +1069,8 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
                     console.log('Updating the selection indicators');
                 }
         
-                var allSelected = !findFirst(options.model.data, {isSelected: false});
-                
+                var allSelected = !findFirst(options.model.data, { isSelected: false });
+        
                 options.model.ui.allSelected = allSelected;
             }
         };
@@ -1184,7 +1189,7 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
         internalVM.data.loaded = ko.observable(false);
         internalVM.paging = ko.observable({});
         internalVM.ui = ko.observable({});
-        internalVM.size = ko.observable()
+        internalVM.size = ko.observable();
     
         internalVM.columns = ko.observableArray();
         var thisGridSymbol = Symbol('Grid Instance');
@@ -1200,11 +1205,11 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
         }
     
         internalVM.process = process;
-        
-        ko.computed(function(){
+    
+        ko.computed(function () {
             var size = internalVM.size();
-            if (size){
-                process({space:size})
+            if (size) {
+                process({ space: size });
             }
         });
     
@@ -1275,8 +1280,8 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
             if (loggingEnabled) {
                 console.group('Processing grid state change');
                 var whatChanged = JSON.stringify(options, filterUninterestingProperties);
-                if (whatChanged.length === 2){
-                    whatChanged = JSON.stringify(options)
+                if (whatChanged.length === 2) {
+                    whatChanged = JSON.stringify(options);
                 }
                 console.log('Applying change', whatChanged);
             }
@@ -1409,16 +1414,16 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
         return function CustomizedGrid(overrideOptions, overrideInitializer) {
             var realOptions = {};
             var result;
-            
+    
             return loadBaseOptions()
                 .then(loadOverrideOptions)
                 .then(addTemplates)
-                .then(function(){
+                .then(function () {
                     result = new Grid(realOptions);
                     return result.ready;
                 })
-                .then(function(){
-                    return result;  
+                .then(function () {
+                    return result;
                 })
                 .catch(function (err) {
                     console.error('Failed to initialize grid', (err && err.message ? err.message : err));
@@ -1462,7 +1467,7 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
     /**********************/
     /**     COMPONENTS   **/
     /**********************/
-    ko.components.register('grid', {
+    ko.components.register('newgrid', {
         viewModel: {
             createViewModel: function (params) {
                 return params.vm;
@@ -1471,7 +1476,7 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
         template: templates.grid
     });
     
-    ko.components.register('grid-paging', {
+    ko.components.register('newgrid-paging', {
         viewModel: {
             createViewModel: function (params) {
                 return params.vm;
@@ -1514,18 +1519,22 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
                         as: 'col'
                     }
                 }, bindingContext);
-                
-                var gutter = document.createElement("th");
-                gutter.className = "gutter nssg-th";
+    
+                var gutter = document.createElement('th');
+                gutter.className = 'gutter nssg-th';
                 $(element).append(gutter);
-                
-                ko.computed(function(){
+    
+                ko.computed(function () {
                     var allColWidths = null;
     
-                    var allColWidths = ko.unwrap(cols).reduce(function(total, col){return total + col().width;}, 0);
+                    var allColWidths = ko.unwrap(cols).reduce(function (total, col) {
+                        return total + col().width;
+                    }, 0);
                     var containerWidth = $container.width();
-                    if (typeof allColWidths !== "number" || isNaN(allColWidths)){allColWidths = 0;}
-                    
+                    if (typeof allColWidths !== 'number' || isNaN(allColWidths)) {
+                        allColWidths = 0;
+                    }
+    
                     var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth)) - 1;
                     $('.nssg-table', $container).width(fixedWidth);
                 });
@@ -1563,7 +1572,7 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
                 /***************************/
                 /**     COLUMN RESIZING   **/
                 /***************************/
-                
+    
                 var startX;
                 var startWidth;
     
@@ -1600,14 +1609,13 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
                 function onDocumentMouseUp(e) {
                     var colWidth = startWidth + (e.pageX - startX);
                     $document.off('.' + NAMESPACE);
-                    
+    
                     var update = {};
-                    update[col.id] = {width:Math.max(80,colWidth)};
-                    gridVM.process({columnsById:update});
+                    update[col.id] = { width: Math.max(80, colWidth) };
+                    gridVM.process({ columnsById: update });
                 }
     
-                if ($(".nssg-col-grip", $th).length == 0)
-                {
+                if ($('.nssg-col-grip', $th).length == 0) {
                     if (gridVM.ui().isResizable !== false && col.resizable !== false) {
                         $colGrip = $('<div></div>')
                             .addClass('nssg-col-grip')
@@ -1620,26 +1628,26 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
                 /***************************/
                 /**     COLUMN TEMPLATE   **/
                 /***************************/
-                
-                var $template = $(".nssg-th-content", $th);
-                if ($template.length ==0){
+    
+                var $template = $('.nssg-th-content', $th);
+                if ($template.length == 0) {
                     $template = $("<div class='nssg-th-content'></div>", $th);
                     $template.append(templates[col.type + '-th']);
                     $th.append($template);
                 }
-                
+    
                 $th
                     .addClass('nssg-th-' + col.type)
-                    .addClass('animate')
-                    $th.outerWidth(col.width);
+                    .addClass('animate');
+                $th.outerWidth(col.width);
     
-                setTimeout(function(){
+                setTimeout(function () {
                     $th.removeClass('animate');
                 }, 200);
                 /*********************/
                 /**     DISPLOSAL   **/
                 /*********************/
-                
+    
                 ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
                     if ($colGrip) {
                         $colGrip.off('.' + NAMESPACE);
@@ -1701,13 +1709,13 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var gridVM = ko.unwrap(bindingContext.$component);
     
-            var colsWithGutter = ko.pureComputed(function(){
+            var colsWithGutter = ko.pureComputed(function () {
                 var cols = ko.unwrap(gridVM.columns);
                 var temp = cols.slice();
-                temp.push({id:"$gutter",type:"gutter",isSortable:false, isResizable:false});
+                temp.push({ id: '$gutter', type: 'gutter', isSortable: false, isResizable: false });
                 return temp;
             });
-            
+    
             /************************/
             /**    DATA BINDING    **/
             /************************/
@@ -1724,23 +1732,22 @@ templates["text"] = "<div class=nssg-td-text data-bind=\"text: (typeof dataAcces
     
     ko.bindingHandlers.nssgContainerSize = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-    
             function updateSize() {
                 var $element = $(element);
-                var size = {width: $element.outerWidth(), height:$element.outerHeight()};
+                var size = { width: $element.outerWidth(), height: $element.outerHeight() };
                 var oldSize = valueAccessor()();
                 if (!oldSize || oldSize.width !== size.width || oldSize.height !== size.height) {
                     valueAccessor()(size);
                 }
             }
-            
-            var throttledUpdate = throttle({callback: updateSize, frequency:100});
-            
+    
+            var throttledUpdate = throttle({ callback: updateSize, frequency: 100 });
+    
             $(window).on('resize', throttledUpdate);
-            setTimeout(throttledUpdate,50);
-            
+            setTimeout(throttledUpdate, 50);
+    
             ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
-                $(window).off("resize", throttledUpdate);
+                $(window).off('resize', throttledUpdate);
             });
         }
     };
