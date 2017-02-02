@@ -14,6 +14,9 @@ var Grid = function (userOptions) {
     internalVM.columns = ko.observableArray();
     var thisGridSymbol = Symbol('Grid Instance');
 
+    var inputPipeline = PipelineFactory.create();
+    inputPipeline.processors["process"] = processInput;
+    
     var pipeline = PipelineFactory.create();
 
     var gridState = createInitialGridState();
@@ -57,6 +60,10 @@ var Grid = function (userOptions) {
     }
 
     function process(options) {
+        return inputPipeline.process(options, "process");
+    }
+    function processInput(outerOptions){
+        var options = outerOptions.model;
         // Pull in only the recognized properties to discourage
         // devs from trying to hack the grid again
         extendProperty(gridState, options, 'filter');
@@ -96,6 +103,7 @@ var Grid = function (userOptions) {
         else if (Array.isArray(options.data)) {
             gridState.data = options.data;
         }
+        gridState.gridInput = options;
         return pipeline.process(gridState, 'start');
     }
 

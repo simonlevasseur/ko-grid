@@ -6,9 +6,9 @@
 gridState.processors['log-start'] = function (options) {
     if (options.model.logging) {
         console.group('Processing grid state change');
-        var whatChanged = JSON.stringify(options.model, filterUninterestingProperties);
+        var whatChanged = JSON.stringify(options.model.gridInput, filterUninterestingProperties);
         if (whatChanged.length === 2) {
-            whatChanged = JSON.stringify(options.model);
+            whatChanged = JSON.stringify(options.model.gridInput);
         }
         console.log('Applying change', whatChanged);
     }
