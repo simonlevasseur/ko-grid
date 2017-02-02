@@ -51,7 +51,7 @@ function createInitialGridState() {
         data: [],
         data_ChangeMode: 'Identity',
         processors: {
-            start: ['pre-process', 'process', 'post-process'],
+            start: ['log-start','pre-process', 'process', 'post-process', 'log-done'],
             'pre-process': [
                 'ui-enable-selection-column',
                 'check-columns-valid',

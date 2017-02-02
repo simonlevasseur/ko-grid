@@ -96,49 +96,8 @@ var Grid = function (userOptions) {
         else if (Array.isArray(options.data)) {
             gridState.data = options.data;
         }
-        var loggingEnabled = gridState.logging;
-        if (loggingEnabled) {
-            console.group('Processing grid state change');
-            var whatChanged = JSON.stringify(options, filterUninterestingProperties);
-            if (whatChanged.length === 2) {
-                whatChanged = JSON.stringify(options);
-            }
-            console.log('Applying change', whatChanged);
-        }
-        var cleanup = function () {
-            if (loggingEnabled) {
-                console.log('Final grid state', JSON.stringify(gridState, filterUninterestingProperties));
-                console.groupEnd();
-            }
-        };
-        var promise = pipeline.process(gridState, 'start');
-        return promise.then(cleanup, cleanup);
+        return pipeline.process(gridState, 'start');
     }
 
     // ///////////////////
 };
-
-function filterUninterestingProperties(key, value) {
-    if (key === 'data') {
-        return undefined;
-    }
-    if (key === 'processors') {
-        return undefined;
-    }
-    if (key === 'vm') {
-        return undefined;
-    }
-    if (key === 'columns') {
-        return value.length;
-    }
-    if (key === 'columnsById') {
-        return undefined;
-    }
-    if (key === 'data_ChangeMode') {
-        return undefined;
-    }
-    if (key === 'logging') {
-        return undefined;
-    }
-    return value;
-}
