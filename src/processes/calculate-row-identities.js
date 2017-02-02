@@ -30,5 +30,5 @@ gridState.processors['calculate-row-identities'] = {
 };
 
 function getCellData(row, col) {
-    return typeof col.dataAccessor === 'string' ? row[col.dataAccessor] : col.dataAccessor(row);
+    return row[col.id];
 }

@@ -26,7 +26,10 @@ gridState.processors['check-columns-valid'] = {
 
             setDefault(column, 'type', 'string', 'text');
             setDefault(column, 'id', 'string', column.dataAccessor);
-            setDefault(column, 'dataAccessor', 'string', column.id);
+            if (typeof column.dataAccessor !== "function")
+            {
+                setDefault(column, 'dataAccessor', 'string', column.id);
+            }
             setDefault(column, 'heading', 'string', column.id);
             setDefault(column, 'isIdentity', 'boolean', !identityColPresent);
             setDefault(column, 'isSortable', 'boolean', true);

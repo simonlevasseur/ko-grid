@@ -79,6 +79,7 @@ function createInitialGridState() {
             'post-process': [
                 'redistribute-space',
                 'sort-indicators',
+                'fetch-cell-values',
                 'calculate-row-identities',
                 'select-all',
                 'disable-multi-page-selection',

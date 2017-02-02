@@ -54,6 +54,7 @@
         //= include "processes/disable-multi-page-selection.js"
         //= include "processes/select-all.js"
         //= include "processes/ui-selected-all-indicator.js"
+        //= include "processes/fetch-cell-values.js"
     }
     //= include "model/model.js"
 
