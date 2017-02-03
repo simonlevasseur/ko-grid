@@ -20,10 +20,11 @@ gridState.processors['update-bindings-data'] = {
             var obs = selectedObservables[row.$identity];
             if (!obs) {
                 obs = ko.observable();
+                obs.readonly = readonly(obs);
                 selectedObservables[row.$identity] = obs;
             }
 
-            clone.isSelected = obs;
+            clone.isSelected = obs.readonly;
             if (obs.peek() !== row.isSelected) {
                 obs(row.isSelected);
             }
@@ -35,13 +36,22 @@ gridState.processors['update-bindings-data'] = {
             };
         });
 
-        options.model.vm.data(uiData);
-        options.model.vm.data.loaded(true);
+        if (options.changed.data) {
+            options.model.vm.data(uiData);
+            options.model.vm.data.loaded(true);
+        }
     }
 };
+
+function readonly(obs) {
+    return ko.pureComputed(function(){
+        return obs();
+    })
+}
 
 function wrapped_process(grid, options) {
     return function () {
         grid.process(options);
+        return true;
     };
 }
