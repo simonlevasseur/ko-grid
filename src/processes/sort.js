@@ -29,8 +29,8 @@ gridState.processors.sort = {
                     console.warn('No comparator available for the specified column type, using generic compare', column.type);
                     sortFn = gridState.sortFunctions.generic;
                 }
-                var valueA = rowA[column.dataAccessor];
-                var valueB = rowB[column.dataAccessor];
+                var valueA = rowA[column.id];
+                var valueB = rowB[column.id];
                 var result = sortFn(valueA, valueB);
                 if (result !== 0) {
                     return criteria.sortAsc ? result : 0 - result;

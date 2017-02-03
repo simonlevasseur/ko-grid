@@ -64,22 +64,23 @@ function createInitialGridState() {
                 { watches: 'time', runs: 'fetch-data' },
                 'last-updated',
                 'check-data-valid',
+                'fetch-cell-values',
                 'filter',
                 'sort',
                 'check-paging-valid',
                 'pagesize-change-resets-currentpage',
-                'paging'
+                'paging',
             ],
             remote: [
                 'pagesize-change-resets-currentpage',
                 { watches: ['time', 'sort', 'filter', 'paging', 'columns'], runs: 'fetch-data' },
                 'last-updated',
-                'check-data-valid'
+                'check-data-valid',
+                'fetch-cell-values',
             ],
             'post-process': [
                 'redistribute-space',
                 'sort-indicators',
-                'fetch-cell-values',
                 'calculate-row-identities',
                 'select-all',
                 'disable-multi-page-selection',
