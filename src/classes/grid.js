@@ -15,8 +15,8 @@ var Grid = function (userOptions) {
     var thisGridSymbol = Symbol('Grid Instance');
 
     var inputPipeline = PipelineFactory.create();
-    inputPipeline.processors["process"] = processInput;
-    
+    inputPipeline.processors.process = processInput;
+
     var pipeline = PipelineFactory.create();
 
     var gridState = createInitialGridState();
@@ -60,9 +60,9 @@ var Grid = function (userOptions) {
     }
 
     function process(options) {
-        return inputPipeline.process(options, "process");
+        return inputPipeline.process(options, 'process');
     }
-    function processInput(outerOptions){
+    function processInput(outerOptions) {
         var options = outerOptions.model;
         // Pull in only the recognized properties to discourage
         // devs from trying to hack the grid again

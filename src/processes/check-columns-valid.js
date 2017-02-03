@@ -26,8 +26,7 @@ gridState.processors['check-columns-valid'] = {
 
             setDefault(column, 'type', 'string', 'text');
             setDefault(column, 'id', 'string', column.dataAccessor);
-            if (typeof column.dataAccessor !== "function")
-            {
+            if (typeof column.dataAccessor !== 'function') {
                 setDefault(column, 'dataAccessor', 'string', column.id);
             }
             setDefault(column, 'heading', 'string', column.id);
