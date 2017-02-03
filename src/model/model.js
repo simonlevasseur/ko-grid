@@ -83,6 +83,7 @@ function createInitialGridState() {
                 'sort-indicators',
                 'calculate-row-identities',
                 'select-all',
+                'select-single',
                 'disable-multi-page-selection',
                 'row-selection',
                 'ui-selected-all-indicator',
