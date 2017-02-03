@@ -92,7 +92,7 @@ function createInitialGridState() {
                 'update-bindings-ui'
             ],
             'fetch-data': function () {
-                throw new Error("Grids must specifiy a 'fetchdata' function or override the definition of 'process'");
+                throw new Error("Grids must specifiy a 'fetch-data' function or override the definition of 'process'");
             }
 
         }
