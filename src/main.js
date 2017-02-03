@@ -56,6 +56,7 @@
         //= include "processes/select-single.js"
         //= include "processes/ui-selected-all-indicator.js"
         //= include "processes/fetch-cell-values.js"
+        //= include "processes/update-bindings-grid-state.js"
     }
     //= include "model/model.js"
 

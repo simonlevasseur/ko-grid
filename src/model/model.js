@@ -90,7 +90,8 @@ function createInitialGridState() {
                 'update-bindings-data',
                 'update-bindings-paging',
                 'update-bindings-columns',
-                'update-bindings-ui'
+                'update-bindings-ui',
+                'update-bindings-grid-state'
             ],
             'fetch-data': function () {
                 throw new Error("Grids must specifiy a 'fetch-data' function or override the definition of 'process'");

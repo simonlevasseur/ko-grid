@@ -10,6 +10,7 @@ var Grid = function (userOptions) {
     internalVM.paging = ko.observable({});
     internalVM.ui = ko.observable({});
     internalVM.size = ko.observable();
+    internalVM.gridState = ko.observable();
 
     internalVM.columns = ko.observableArray();
     var thisGridSymbol = Symbol('Grid Instance');
