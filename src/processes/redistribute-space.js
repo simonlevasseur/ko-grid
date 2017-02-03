@@ -21,7 +21,9 @@ gridState.processors['redistribute-space'] = {
         if (options.model.logging) {
             console.log('Redistributing exta space amoung the columns');
         }
-        var columnsArray = options.model.columns;
+        var columnsArray = options.model.columns.filter(function(col){
+            return col.isVisible;
+        });
 
         widthToTemp(columnsArray);
 
@@ -81,7 +83,7 @@ function calculateUsedWidth(columnsArray) {
 
 function applyMinMax(columnsArray) {
     columnsArray.forEach(function (col) {
-        if (col.isResizable === false) {
+        if (col.isResizable === false || !col.isVisible) {
             return;
         }
         if (col.minWidth) {

@@ -33,7 +33,7 @@ gridState.processors['check-columns-valid'] = {
             setDefault(column, 'isIdentity', 'boolean', !identityColPresent);
             setDefault(column, 'isSortable', 'boolean', true);
             setDefault(column, 'isResizable', 'boolean', true);
-            setDefault(column, 'visible', 'boolean', true);
+            setDefault(column, 'isVisible', 'boolean', true);
 
             if (columnIds[column.id]) {
                 throw new Error("Columns must have unique id's: " + column.id);

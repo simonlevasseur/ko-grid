@@ -2,7 +2,6 @@
     ko.bindingHandlers.newnssgTheadTr = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var gridVM = ko.unwrap(bindingContext.$component);
-            var cols = gridVM.columns;
             var $container = $(element).closest('.nssg-container');
             var containerWidth = null;
             var allColWidths = null;
@@ -22,9 +21,16 @@
             /************************/
             /**     DATA BINDING   **/
             /************************/
+            var visibleCols = ko.pureComputed(function(){
+                var cols = ko.unwrap(gridVM.columns);
+                return cols.filter(function(col){
+                    return col.peek().isVisible;
+                });
+            });
+            
             ko.applyBindingsToNode(element, {
                 foreach: {
-                    data: cols,
+                    data: visibleCols,
                     as: 'col'
                 }
             }, bindingContext);
@@ -36,7 +42,7 @@
             ko.computed(function () {
                 var allColWidths = null;
 
-                var allColWidths = ko.unwrap(cols).reduce(function (total, col) {
+                var allColWidths = visibleCols().reduce(function (total, col) {
                     return total + col().width;
                 }, 0);
                 var containerWidth = $container.width();
