@@ -64,7 +64,7 @@
             }
 
             if ($('.nssg-col-grip', $th).length == 0) {
-                if (gridVM.ui().isResizable !== false && col.resizable !== false) {
+                if (gridVM.ui().isResizable !== false && col.isResizable !== false) {
                     $colGrip = $('<div></div>')
                         .addClass('nssg-col-grip')
                         .appendTo($th)

@@ -81,6 +81,9 @@ function calculateUsedWidth(columnsArray) {
 
 function applyMinMax(columnsArray) {
     columnsArray.forEach(function (col) {
+        if (col.isResizable === false) {
+            return;
+        }
         if (col.minWidth) {
             col.tempWidth = Math.max(col.tempWidth, col.minWidth);
         }

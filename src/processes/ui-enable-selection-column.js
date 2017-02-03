@@ -14,7 +14,9 @@ gridState.processors['ui-enable-selection-column'] = {
                     id: '$$select',
                     type: 'select',
                     isSortable: false,
-                    isIdentity: false
+                    isIdentity: false,
+                    isResizable: false,
+                    width: 40
                 };
                 options.model.columns.unshift(selectCol);
             }
