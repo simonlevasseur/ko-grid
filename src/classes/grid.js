@@ -104,7 +104,7 @@ var Grid = function (userOptions) {
         else if (Array.isArray(options.data)) {
             gridState.data = options.data;
         }
-        gridState.gridInput = options;
+        gridState.lastInput = options;
         return pipeline.process(gridState, 'start');
     }
 
