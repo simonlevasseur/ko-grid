@@ -54,6 +54,7 @@ function createInitialGridState() {
             start: ['log-start', 'pre-process', 'process', 'post-process', 'log-done'],
             'pre-process': [
                 'ui-enable-selection-column',
+                'ui-enable-actions-column',
                 'check-columns-valid',
                 'index-columns-by-id',
                 'filter-change-resets-currentpage',

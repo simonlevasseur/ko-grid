@@ -36,14 +36,6 @@
     background: url('img/delete.png') center center no-repeat;
 
     &:hover {
-        background: url('img/delete-hover.png') center center no-repeat;
-    }
-}
-
-.nssg-action-invoke {
-    background: url('img/view.png') center center no-repeat;
-
-    &:hover {
-        background: url('img/view-hover.png') center center no-repeat;
+        background: url('img/deleteHover.png') center center no-repeat;
     }
 }

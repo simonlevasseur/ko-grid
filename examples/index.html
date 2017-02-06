@@ -75,6 +75,9 @@
                             selectable: true,
                             deletable: true,
                             invokable: true,
+                            actions: [
+                                {css:"nssg-action-delete", onClick:onDeleteClicked}
+                            ]
                         },
                         sortable: {
                             enabled: ko.observable(true),
@@ -85,6 +88,11 @@
                     self.pager = new ko.NewGrid.Pager({}, self.gridVM());
                     window.gridVM = self.gridVM();
             };
+            
+            function onDeleteClicked(row)
+            {
+                console.log("action invoked on row", row);
+            }
 
             ko.applyBindings(new vm());
         </script>
