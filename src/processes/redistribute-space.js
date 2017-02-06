@@ -59,7 +59,7 @@ gridState.processors['redistribute-space'] = {
 
 function widthToTemp(columnsArray) {
     columnsArray.forEach(function (col) {
-        col.tempWidth = col.width || ABSOLUTE_MIN_COL_WIDTH;
+        col.tempWidth = typeof col.width === "number" && col.width >= 0 ? col.width : ABSOLUTE_MIN_COL_WIDTH;
     });
 }
 
