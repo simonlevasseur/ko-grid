@@ -28,7 +28,7 @@ gridState.processors['update-bindings-columns'] = {
             var column = columns[i];
             var colBefore = options.cache[column.id];
             var colNow = JSON.stringify(column);
-            if (colBefore !== colNow) {
+            if (colBefore !== colNow || numBefore !== numNow) {
                 var newObj = JSON.parse(colNow);
                 addColumnFunctions(newObj, options);
                 temp[i](newObj);
