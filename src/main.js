@@ -59,6 +59,7 @@
         //= include "processes/ui-selected-count.js"
         //= include "processes/fetch-cell-values.js"
         //= include "processes/update-bindings-grid-state.js"
+        //= include "processes/ui-export-selected-rows.js"
     }
     //= include "model/model.js"
 

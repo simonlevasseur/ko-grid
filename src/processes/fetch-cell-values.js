@@ -25,6 +25,7 @@ gridState.processors['fetch-cell-values'] = {
                     temp[col.id] = row[col.dataAccessor];
                 }
             });
+            temp.raw = row;
             return temp;
         });
     }

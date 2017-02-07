@@ -89,6 +89,7 @@ function createInitialGridState() {
                 'row-selection',
                 'ui-selected-all-indicator',
                 'ui-selected-count',
+                'ui-export-selected-rows',
                 'update-bindings-data',
                 'update-bindings-paging',
                 'update-bindings-columns',
