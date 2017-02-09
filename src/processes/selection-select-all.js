@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/****************/
-/** Select All **/
-/****************/
-gridState.processors['select-all'] = {
+/**************************/
+/** Selection Select All **/
+/**************************/
+gridState.processors['selection-select-all'] = {
     watches: ['selection', 'data'],
     runs: function (options) {
         var all = options.model.selection.all;

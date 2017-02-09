@@ -53,50 +53,50 @@ function createInitialGridState() {
         processors: {
             start: ['log-start', 'pre-process', 'process', 'post-process', 'log-done'],
             'pre-process': [
-                'init-fetch-data',
-                'ui-enable-selection-column',
-                'ui-enable-actions-column',
-                'ui-container-size',
-                'check-columns-valid',
-                'index-columns-by-id',
-                'filter-change-resets-currentpage',
-                'sort-change-resets-currentpage'
+                'fetch-data-init',
+                'columns-enable-selection-column',
+                'columns-enable-actions-column',
+                'vm-container-size',
+                'columns-check-valid',
+                'columns-index-by-id',
+                'paging-filter-change-resets-currentpage',
+                'paging-sort-change-resets-currentpage'
             ],
             process: 'local',
             local: [
                 { watches: 'time', runs: 'fetch-data' },
-                'last-updated',
-                'check-data-valid',
-                'fetch-cell-values',
-                'filter',
-                'sort',
-                'check-paging-valid',
-                'pagesize-change-resets-currentpage',
-                'paging'
+                'time-last-updated',
+                'data-check-valid',
+                'data-fetch-cell-values',
+                'data-filter',
+                'data-sort',
+                'paging-check-valid',
+                'paging-pagesize-change-resets-currentpage',
+                'data-paging'
             ],
             remote: [
-                'pagesize-change-resets-currentpage',
+                'paging-pagesize-change-resets-currentpage',
                 { watches: ['time', 'sort', 'filter', 'paging', 'columns'], runs: 'fetch-data' },
-                'last-updated',
-                'check-data-valid',
-                'fetch-cell-values'
+                'time-last-updated',
+                'data-check-valid',
+                'data-fetch-cell-values'
             ],
             'post-process': [
-                'redistribute-space',
-                'sort-indicators',
-                'calculate-row-identities',
-                'select-all',
-                'select-single',
-                'disable-multi-page-selection',
-                'row-selection',
+                'columns-redistribute-space',
+                'columns-sort-indicators',
+                'data-calculate-row-identities',
+                'selection-select-all',
+                'selection-select-single',
+                'selection-disable-multi-page',
+                'data-row-selection',
                 'ui-selected-all-indicator',
                 'ui-selected-count',
                 'ui-export-selected-rows',
-                'update-bindings-data',
-                'update-bindings-paging',
-                'update-bindings-columns',
-                'update-bindings-ui',
-                'update-bindings-grid-state'
+                'vm-update-bindings-data',
+                'vm-update-bindings-paging',
+                'vm-update-bindings-columns',
+                'vm-update-bindings-ui',
+                'vm-update-bindings-grid-state'
             ],
             'fetch-data': function () {
                 throw new Error("Grids must specifiy a 'fetch-data' function or override the definition of 'process'");

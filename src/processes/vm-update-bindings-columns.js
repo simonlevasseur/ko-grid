@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/*****************************/
-/** Update Bindings: colums **/
-/*****************************/
-gridState.processors['update-bindings-columns'] = {
+/********************************/
+/** vm-Update Bindings: colums **/
+/********************************/
+gridState.processors['vm-update-bindings-columns'] = {
     watches: ['sort', 'columns'],
     init: function (model) {
         model.vm.columns = ko.observableArray();

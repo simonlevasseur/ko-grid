@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/********************************/
-/** Update Bindings: gridState **/
-/********************************/
-gridState.processors['update-bindings-grid-state'] = {
+/***********************************/
+/** vm-Update Bindings: gridState **/
+/***********************************/
+gridState.processors['vm-update-bindings-grid-state'] = {
     init: function (model) {
         model.vm.gridState = ko.observable();
     },

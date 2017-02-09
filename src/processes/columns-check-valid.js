@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/************************/
-/** Check Paging Valid **/
-/************************/
-gridState.processors['check-columns-valid'] = {
+/*************************/
+/** Columns Check Valid **/
+/*************************/
+gridState.processors['columns-check-valid'] = {
     watches: ['columns'],
     runs: function (options) {
         if (options.model.logging) {

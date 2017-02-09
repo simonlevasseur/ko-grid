@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
 /***********************/
-/** UI Container Size **/
+/** vm Container Size **/
 /***********************/
-gridState.processors['ui-container-size'] = {
+gridState.processors['vm-container-size'] = {
     init: function (model) {
         model.vm.size = ko.observable();
 

@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/***************/
-/** Page Data **/
-/***************/
-gridState.processors.paging = {
+/*****************/
+/** Data Paging **/
+/*****************/
+gridState.processors["data-paging"] = {
     watches: ['paging', 'data'],
     runs: function (options) {
         var paging = options.model.paging;

@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/**************************/
-/** Update row selection **/
-/**************************/
-gridState.processors['row-selection'] = {
+/************************/
+/** Data row selection **/
+/************************/
+gridState.processors['data-row-selection'] = {
     watches: ['data', 'selection'],
     runs: function (options) {
         if (!options.model.ui.selectable) {

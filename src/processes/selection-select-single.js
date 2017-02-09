@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/*******************/
-/** Select Single **/
-/*******************/
-gridState.processors['select-single'] = {
+/*****************************/
+/** Selection Select Single **/
+/*****************************/
+gridState.processors['selection-select-single'] = {
     watches: ['selection', 'data'],
     runs: function (options) {
         var single = options.model.ui.selectMode !== 'multi';

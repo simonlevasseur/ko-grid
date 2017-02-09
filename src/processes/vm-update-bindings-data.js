@@ -2,10 +2,10 @@
 
 var selectedObservables = {};
 
-/***************************/
-/** Update Bindings: data **/
-/***************************/
-gridState.processors['update-bindings-data'] = {
+/******************************/
+/** vm-Update Bindings: data **/
+/******************************/
+gridState.processors['vm-update-bindings-data'] = {
     watches: ['data', 'selection'],
     init: function (model) {
         model.vm.data = ko.observableArray();

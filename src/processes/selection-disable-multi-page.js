@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
 /*****************************/
-/** Enable Selection Column **/
+/** Selection Disable Multi-page **/
 /*****************************/
-gridState.processors['disable-multi-page-selection'] = {
+gridState.processors['selection-disable-multi-page'] = {
     watches: ['data', 'selection'],
     runs: function (options) {
         if (options.model.ui.selectable) {

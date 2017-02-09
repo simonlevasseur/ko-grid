@@ -1,9 +1,9 @@
     /* eslint no-unused-vars: 0 */
 
-/***********************/
-/** Fetch Cell Values **/
-/***********************/
-gridState.processors['fetch-cell-values'] = {
+/****************************/
+/** Data Fetch Cell Values **/
+/****************************/
+gridState.processors['data-fetch-cell-values'] = {
     watches: ['data', 'columns'],
     runs: function (options) {
         if (options.model.logging) {

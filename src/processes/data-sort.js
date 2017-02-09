@@ -1,9 +1,9 @@
     /* eslint no-unused-vars: 0 */
 
 /***************/
-/** Sort Data **/
+/** Data Sort **/
 /***************/
-gridState.processors.sort = {
+gridState.processors["data-sort"] = {
     watches: ['sort', 'data'],
     runs: function (options) {
         var originalData = options.changed.data ? options.model.data : options.cache.data;

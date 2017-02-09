@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/***************/
-/** Sort Data **/
-/***************/
-gridState.processors['sort-indicators'] = {
+/*****************************/
+/** Columns-sort-indicators **/
+/*****************************/
+gridState.processors['columns-sort-indicators'] = {
     watches: ['sort', 'columns'],
     runs: function (options) {
         if (options.model.logging) {

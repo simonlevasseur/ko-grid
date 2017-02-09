@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
 /*****************/
-/** Filter Data **/
+/** Data Filter **/
 /*****************/
-gridState.processors.filter = {
+gridState.processors["data-filter"] = {
     watches: ['filter', 'data'],
     runs: function (options) {
         var originalData = options.changed.data ? options.model.data : options.cache.data;

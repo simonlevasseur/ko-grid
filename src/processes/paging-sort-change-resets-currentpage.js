@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/**********************************************/
-/** sort changes should reset current page **/
-/**********************************************/
-gridState.processors['sort-change-resets-currentpage'] = {
+/***************************************************/
+/** paging sort changes should reset current page **/
+/***************************************************/
+gridState.processors['paging-sort-change-resets-currentpage'] = {
     watches: ['sort'],
     runs: function (options) {
         if (!options.cache.ranOnce) {

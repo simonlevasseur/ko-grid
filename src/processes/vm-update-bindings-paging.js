@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
 /*****************************/
-/** Update Bindings: paging **/
+/** vm-Update Bindings: paging **/
 /*****************************/
-gridState.processors['update-bindings-paging'] = {
+gridState.processors['vm-update-bindings-paging'] = {
     watches: 'paging',
     init: function (model) {
         model.vm.paging = ko.observable({});

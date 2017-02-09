@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
 /*****************************/
-/** Update Bindings: ui **/
+/** vm Update Bindings: ui **/
 /*****************************/
-gridState.processors['update-bindings-ui'] = {
+gridState.processors['vm-update-bindings-ui'] = {
     watches: 'ui',
     init: function (model) {
         model.vm.ui = ko.observable({});

@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/******************************/
-/** calculate-row-identities **/
-/******************************/
-gridState.processors['calculate-row-identities'] = {
+/***********************************/
+/** data-calculate-row-identities **/
+/***********************************/
+gridState.processors['data-calculate-row-identities'] = {
     watches: ['data', 'columns'],
     runs: function (options) {
         if (!options.model.ui.selectable) {

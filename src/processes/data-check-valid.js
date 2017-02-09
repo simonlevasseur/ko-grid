@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
 /**********************/
-/** Check-data-Valid **/
+/** data check valid **/
 /**********************/
-gridState.processors['check-data-valid'] = {
+gridState.processors['data-check-valid'] = {
     watches: ['data'],
     runs: function (options) {
         if (options.model.logging) {

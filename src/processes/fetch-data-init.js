@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
 /*********************/
-/** Init Fetch-Data **/
+/** Fetch-Data Init **/
 /*********************/
-gridState.processors['init-fetch-data'] = {
+gridState.processors['fetch-data-init'] = {
     input: ['data', 'time'],
     watches: 'data',
     runs: function (options) {

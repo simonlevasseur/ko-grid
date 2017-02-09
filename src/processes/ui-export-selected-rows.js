@@ -1,7 +1,7 @@
 /* eslint no-unused-vars: 0 */
 
 /*******************************/
-/** Export selected rows **/
+/** ui export selected rows **/
 /*******************************/
 gridState.processors['ui-export-selected-rows'] = {
     watches: ['selection', 'data'],

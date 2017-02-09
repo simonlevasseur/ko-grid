@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/*****************************/
-/** Enable Selection Column **/
-/*****************************/
-gridState.processors['ui-enable-selection-column'] = {
+/*************************************/
+/** Columns Enable Selection Column **/
+/*************************************/
+gridState.processors['columns-enable-selection-column'] = {
     watches: ['ui'],
     runs: function (options) {
         if (options.model.ui.selectable) {

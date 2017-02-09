@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/*****************************/
-/** Enable Actions Column **/
-/*****************************/
-gridState.processors['ui-enable-actions-column'] = {
+/***********************************/
+/** Columns Enable Actions Column **/
+/***********************************/
+gridState.processors['columns-enable-actions-column'] = {
     watches: ['ui'],
     runs: function (options) {
         if (options.model.ui && options.model.ui.actions) {

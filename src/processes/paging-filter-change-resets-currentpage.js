@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/**********************************************/
-/** Filter changes should reset current page **/
-/**********************************************/
-gridState.processors['filter-change-resets-currentpage'] = {
+/*****************************************************/
+/** Paging Filter changes should reset current page **/
+/*****************************************************/
+gridState.processors['paging-filter-change-resets-currentpage'] = {
     watches: ['filter'],
     runs: function (options) {
         if (!options.cache.ranOnce) {

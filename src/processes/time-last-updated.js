@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/******************/
-/** Last Updated **/
-/******************/
-gridState.processors['last-updated'] = {
+/***********************/
+/** Time Last Updated **/
+/***********************/
+gridState.processors['time-last-updated'] = {
     watches: 'data',
     runs: function (options) {
         if (options.model.logging) {

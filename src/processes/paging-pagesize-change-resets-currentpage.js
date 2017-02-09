@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 
-/************************************************/
-/** Pagesize changes should reset current page **/
-/************************************************/
-gridState.processors['pagesize-change-resets-currentpage'] = {
+/*******************************************************/
+/** paging Pagesize changes should reset current page **/
+/*******************************************************/
+gridState.processors['paging-pagesize-change-resets-currentpage'] = {
     watches: ['paging'],
     runs: function (options) {
         if (!options.cache.ranOnce) {
