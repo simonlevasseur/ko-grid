@@ -7,6 +7,10 @@ var selectedObservables = {};
 /***************************/
 gridState.processors['update-bindings-data'] = {
     watches: ['data', 'selection'],
+    init: function (model) {
+        model.vm.data = ko.observableArray();
+        model.vm.data.loaded = ko.observable(false);
+    },
     runs: function (options) {
         if (options.model.logging) {
             console.log('Updating the data bindings');
@@ -44,9 +48,9 @@ gridState.processors['update-bindings-data'] = {
 };
 
 function readonly(obs) {
-    return ko.pureComputed(function(){
+    return ko.pureComputed(function () {
         return obs();
-    })
+    });
 }
 
 function wrapped_process(grid, options) {

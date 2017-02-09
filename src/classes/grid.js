@@ -4,16 +4,9 @@
 /**    GRID CLASS    **/
 /**********************/
 var Grid = function (userOptions) {
-    var internalVM = {};
-    internalVM.data = ko.observableArray();
-    internalVM.data.loaded = ko.observable(false);
-    internalVM.paging = ko.observable({});
-    internalVM.ui = ko.observable({});
-    internalVM.size = ko.observable();
-    internalVM.gridState = ko.observable();
+    var didInitSymbol = Symbol('did run init');
 
-    internalVM.columns = ko.observableArray();
-    var thisGridSymbol = Symbol('Grid Instance');
+    var internalVM = {};
 
     var inputPipeline = PipelineFactory.create();
     inputPipeline.processors.process = processInput;
@@ -21,24 +14,15 @@ var Grid = function (userOptions) {
     var pipeline = PipelineFactory.create();
 
     var gridState = createInitialGridState();
-
     gridState.vm = internalVM;
+    internalVM.process = process;
+
+    checkInit();
 
     if (userOptions) {
         internalVM.ready = process(userOptions);
     }
-
-    internalVM.process = process;
-
-    ko.computed(function () {
-        var size = internalVM.size();
-        if (size) {
-            process({ space: size });
-        }
-    });
-
     return internalVM;
-
     // //////////////////
 
     function extendProperty(target, source, propName) {
@@ -60,50 +44,53 @@ var Grid = function (userOptions) {
         }
     }
 
+    function checkInit() {
+        for (var key in gridState.processors) {
+            var processor = gridState.processors[key];
+            if (typeof processor.init === 'function' && !processor[didInitSymbol]) {
+                processor[didInitSymbol] = true;
+                try {
+                    processor.init(gridState);
+                }
+                catch (err) {
+                    console.error('Error during grid processor initialization', err);
+                }
+            }
+        }
+    }
+
+    function getImportedProperties() {
+        var allProcessors = values(gridState.processors);
+        var inputs = allProcessors.map(function (processor) {
+            return processor.input;
+        }).filter(isTruthy);
+        var watches = allProcessors.map(function (processor) {
+            return processor.watches;
+        }).filter(isTruthy);
+        var propertiesInArrays = inputs.concat(watches).map(arrayify);
+        var properties = propertiesInArrays.reduce(function (all, arr) {
+            return all.concat(arr);
+        }, []);
+        var uniqueProperties = unique(properties);
+
+        return uniqueProperties;
+    }
+
     function process(options) {
         return inputPipeline.process(options, 'process');
     }
     function processInput(outerOptions) {
         var options = outerOptions.model;
+
+        // re-run the init in case any processors got added/replaced since the last run
+        checkInit();
+
         // Pull in only the recognized properties to discourage
         // devs from trying to hack the grid again
-        extendProperty(gridState, options, 'filter');
-        extendProperty(gridState, options, 'sort');
-        extendProperty(gridState, options, 'columns');
-        extendProperty(gridState, options, 'columnsById');
-        extendProperty(gridState, options, 'paging');
-        extendProperty(gridState, options, 'selection');
-        extendProperty(gridState, options, 'time');
-        extendProperty(gridState, options, 'space');
-        extendProperty(gridState, options, 'processors');
-        extendProperty(gridState, options, 'logging');
-        extendProperty(gridState, options, 'ui');
+        getImportedProperties().forEach(function (property) {
+            extendProperty(gridState, options, property);
+        });
 
-        // The data property must be handled seperatly as we
-        // actually need to transform it on import
-        if (ko.isObservable(options.data)) {
-            gridState.processors['fetch-data'] = function (pipelineArgs) {
-                pipelineArgs.model.data = options.data.peek();
-            };
-            if (!options.data[thisGridSymbol]) {
-                options.data[thisGridSymbol] = true;
-                options.data[thisGridSymbol] = ko.computed(function () {
-                    options.time = options.time || {};
-                    options.time.koDataUpdated = Date.now();
-                    process(options);
-                });
-            }
-        }
-        if (typeof options.data === 'function') {
-            gridState.processors['fetch-data'] = function (pipelineArgs) {
-                return Promise.resolve(options.data()).then(function (data) {
-                    pipelineArgs.model.data = data;
-                });
-            };
-        }
-        else if (Array.isArray(options.data)) {
-            gridState.data = options.data;
-        }
         gridState.lastInput = options;
         return pipeline.process(gridState, 'start');
     }

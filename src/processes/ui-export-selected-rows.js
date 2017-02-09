@@ -10,9 +10,9 @@ gridState.processors['ui-export-selected-rows'] = {
             console.log('Exporting selected rows');
         }
 
-        var selectedRows = options.model.data.filter(function(row){
+        var selectedRows = options.model.data.filter(function (row) {
             return row.isSelected;
-        }).map(function(row){
+        }).map(function (row) {
             return row.raw;
         });
         options.model.ui.selectedData = selectedRows;

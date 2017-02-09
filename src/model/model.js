@@ -53,8 +53,10 @@ function createInitialGridState() {
         processors: {
             start: ['log-start', 'pre-process', 'process', 'post-process', 'log-done'],
             'pre-process': [
+                'init-fetch-data',
                 'ui-enable-selection-column',
                 'ui-enable-actions-column',
+                'ui-container-size',
                 'check-columns-valid',
                 'index-columns-by-id',
                 'filter-change-resets-currentpage',
@@ -70,14 +72,14 @@ function createInitialGridState() {
                 'sort',
                 'check-paging-valid',
                 'pagesize-change-resets-currentpage',
-                'paging',
+                'paging'
             ],
             remote: [
                 'pagesize-change-resets-currentpage',
                 { watches: ['time', 'sort', 'filter', 'paging', 'columns'], runs: 'fetch-data' },
                 'last-updated',
                 'check-data-valid',
-                'fetch-cell-values',
+                'fetch-cell-values'
             ],
             'post-process': [
                 'redistribute-space',

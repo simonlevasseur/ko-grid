@@ -5,6 +5,9 @@
 /*****************************/
 gridState.processors['update-bindings-columns'] = {
     watches: ['sort', 'columns'],
+    init: function (model) {
+        model.vm.columns = ko.observableArray();
+    },
     runs: function (options) {
         if (options.model.logging) {
             console.log('Updating the column bindings');

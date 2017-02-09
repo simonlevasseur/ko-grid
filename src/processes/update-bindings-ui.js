@@ -5,6 +5,9 @@
 /*****************************/
 gridState.processors['update-bindings-ui'] = {
     watches: 'ui',
+    init: function (model) {
+        model.vm.ui = ko.observable({});
+    },
     runs: function (options) {
         if (options.model.logging) {
             console.log('Updating the ui specific bindings');

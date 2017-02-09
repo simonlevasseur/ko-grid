@@ -11,10 +11,9 @@ gridState.processors['ui-selected-count'] = {
         }
 
         var count = 0;
-        for(var key in options.model.selection)
-        {
-            if (key !== "all" && options.model.selection[key]){
-                count ++;
+        for (var key in options.model.selection) {
+            if (key !== 'all' && options.model.selection[key]) {
+                count++;
             }
         }
         options.model.ui.selectedCount = count;

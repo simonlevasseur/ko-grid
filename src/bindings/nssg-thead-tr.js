@@ -21,13 +21,13 @@
             /************************/
             /**     DATA BINDING   **/
             /************************/
-            var visibleCols = ko.pureComputed(function(){
+            var visibleCols = ko.pureComputed(function () {
                 var cols = ko.unwrap(gridVM.columns);
-                return cols.filter(function(col){
+                return cols.filter(function (col) {
                     return col.peek().isVisible;
                 });
             });
-            
+
             ko.applyBindingsToNode(element, {
                 foreach: {
                     data: visibleCols,

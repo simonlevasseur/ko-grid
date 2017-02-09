@@ -4,7 +4,7 @@ ko.bindingHandlers.newnssgTbodyTr = {
 
         var visibleColsWithGutter = ko.pureComputed(function () {
             var cols = ko.unwrap(gridVM.columns);
-            var temp = cols.filter(function(col){
+            var temp = cols.filter(function (col) {
                 return col.peek().isVisible;
             });
             temp.push({ id: '$gutter', type: 'gutter', isSortable: false, isResizable: false });

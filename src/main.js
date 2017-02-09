@@ -17,8 +17,6 @@
 
     //= include "other/symbolPolyfill.js"
 
-    //= include "classes/internalReferences.js"
-
     /*********************/
     /**     TEMPLATES   **/
     /*********************/
@@ -29,6 +27,7 @@
     //= include "other/defaults.js"
 
     function AddInitialProcesses(gridState) {
+        //= include "processes/init-fetch-data.js"
         //= include "processes/log-start.js"
         //= include "processes/log-done.js"
         //= include "processes/check-paging-valid.js"
@@ -60,6 +59,7 @@
         //= include "processes/fetch-cell-values.js"
         //= include "processes/update-bindings-grid-state.js"
         //= include "processes/ui-export-selected-rows.js"
+        //= include "processes/ui-container-size.js"
     }
     //= include "model/model.js"
 

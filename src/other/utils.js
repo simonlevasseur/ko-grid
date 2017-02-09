@@ -115,6 +115,46 @@ function findFirst(array, obj) {
     return undefined;
 }
 
+function arrayify(input) {
+    return Array.isArray(input) ? input : [input];
+}
+
+function isTruthy(obj) {
+    return !!obj;
+}
+
+function unique(array) {
+    var temp = {};
+    var result = [];
+    array.forEach(function (value) {
+        if (!temp[value]) {
+            temp[value] = true;
+            result.push(value);
+        }
+    });
+    return result;
+}
+
+function keys(obj) {
+    return keyValuePairs(obj).map(function (prop) {
+        return prop.key;
+    });
+}
+function values(obj) {
+    return keyValuePairs(obj).map(function (prop) {
+        return prop.value;
+    });
+}
+
+function keyValuePairs(obj) {
+    var result = [];
+    for (var key in obj) {
+        result.push({ key: key, value: obj[key] });
+    }
+    return result;
+}
+
+
 /************************/
 /**     KO EXTENDERS   **/
 /************************/

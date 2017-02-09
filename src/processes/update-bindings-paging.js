@@ -5,6 +5,9 @@
 /*****************************/
 gridState.processors['update-bindings-paging'] = {
     watches: 'paging',
+    init: function (model) {
+        model.vm.paging = ko.observable({});
+    },
     runs: function (options) {
         if (options.model.logging) {
             console.log('Updating the page bindings');

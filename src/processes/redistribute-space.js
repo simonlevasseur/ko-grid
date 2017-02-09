@@ -21,7 +21,7 @@ gridState.processors['redistribute-space'] = {
         if (options.model.logging) {
             console.log('Redistributing exta space amoung the columns');
         }
-        var columnsArray = options.model.columns.filter(function(col){
+        var columnsArray = options.model.columns.filter(function (col) {
             return col.isVisible;
         });
 
@@ -59,7 +59,7 @@ gridState.processors['redistribute-space'] = {
 
 function widthToTemp(columnsArray) {
     columnsArray.forEach(function (col) {
-        col.tempWidth = typeof col.width === "number" && col.width >= 0 ? col.width : ABSOLUTE_MIN_COL_WIDTH;
+        col.tempWidth = typeof col.width === 'number' && col.width >= 0 ? col.width : ABSOLUTE_MIN_COL_WIDTH;
     });
 }
 
