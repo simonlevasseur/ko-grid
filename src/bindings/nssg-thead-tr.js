@@ -3,8 +3,6 @@
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var gridVM = ko.unwrap(bindingContext.$component);
             var $container = $(element).closest('.nssg-container');
-            var containerWidth = null;
-            var allColWidths = null;
 
             /*******************/
             /**     SORTING   **/
@@ -40,8 +38,6 @@
             $(element).append(gutter);
 
             ko.computed(function () {
-                var allColWidths = null;
-
                 var allColWidths = visibleCols().reduce(function (total, col) {
                     return total + col().width;
                 }, 0);
@@ -55,12 +51,6 @@
             });
 
             return { controlsDescendantBindings: true };
-        },
-        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var gridVM = ko.unwrap(bindingContext.$component);
-            var cols = gridVM.columns;
-            var $container = $(element).closest('.nssg-container');
-            var containerWidth = null;
         }
     };
 }());

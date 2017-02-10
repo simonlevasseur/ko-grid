@@ -1,5 +1,5 @@
 ko.bindingHandlers.nssgContainerSize = {
-    init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+    init: function (element, valueAccessor) {
         function updateSize() {
             var $element = $(element);
             var size = { width: $element.outerWidth(), height: $element.outerHeight() };

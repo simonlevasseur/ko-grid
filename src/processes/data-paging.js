@@ -3,7 +3,7 @@
 /*****************/
 /** Data Paging **/
 /*****************/
-gridState.processors["data-paging"] = {
+gridState.processors['data-paging'] = {
     watches: ['paging', 'data'],
     runs: function (options) {
         var paging = options.model.paging;

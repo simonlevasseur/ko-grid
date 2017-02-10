@@ -82,7 +82,6 @@ function createInitialGridState() {
                 'data-fetch-cell-values'
             ],
             'post-process': [
-                'columns-redistribute-space',
                 'columns-sort-indicators',
                 'data-calculate-row-identities',
                 'selection-select-all',
@@ -92,6 +91,7 @@ function createInitialGridState() {
                 'ui-selected-all-indicator',
                 'ui-selected-count',
                 'ui-export-selected-rows',
+                'columns-redistribute-space',
                 'vm-update-bindings-data',
                 'vm-update-bindings-paging',
                 'vm-update-bindings-columns',

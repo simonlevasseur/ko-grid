@@ -45,7 +45,7 @@ var Grid = function (userOptions) {
     }
 
     function checkInit() {
-        for (var key in gridState.processors) {
+        for (var key in gridState.processors) { // eslint-disable-line guard-for-in
             var processor = gridState.processors[key];
             if (typeof processor.init === 'function' && !processor[didInitSymbol]) {
                 processor[didInitSymbol] = true;
@@ -60,7 +60,7 @@ var Grid = function (userOptions) {
     }
 
     function getImportedProperties() {
-        var allProcessors = values(gridState.processors);
+        var allProcessors = objectValues(gridState.processors);
         var inputs = allProcessors.map(function (processor) {
             return processor.input;
         }).filter(isTruthy);

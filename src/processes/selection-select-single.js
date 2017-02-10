@@ -19,13 +19,13 @@ gridState.processors['selection-select-single'] = {
                 if (options.model.logging) {
                     console.log('Applying select single');
                 }
-                function removeThis(old) {
+                var removeThis = function (old) {
                     var index = selectedArray.indexOf(old);
                     if (index !== -1) {
                         selectedArray.splice(index, 1);
                     }
                     delete options.model.selection[old];
-                }
+                };
                 // remove the previous selection
                 lastTime.forEach(removeThis);
                 // if we're still over the limit then effectively remove randomly until 1 item selected
@@ -34,9 +34,6 @@ gridState.processors['selection-select-single'] = {
                 }
             }
             options.cache.selected = selectedArray;
-        }
-        else {
-
         }
     }
 };

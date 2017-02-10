@@ -34,9 +34,9 @@ gridState.processors['vm-update-bindings-data'] = {
             }
 
             clone.toggleSelection = function (grid) {
-                var options = { selection: {} };
-                options.selection[row.$identity] = !row.isSelected;
-                return wrapped_process(grid, options);
+                var togglerOptions = { selection: {} };
+                togglerOptions.selection[row.$identity] = !row.isSelected;
+                return wrappedProcess(grid, togglerOptions);
             };
         });
 
@@ -53,7 +53,7 @@ function readonly(obs) {
     });
 }
 
-function wrapped_process(grid, options) {
+function wrappedProcess(grid, options) {
     return function () {
         grid.process(options);
         return true;

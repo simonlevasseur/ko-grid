@@ -135,20 +135,20 @@ function unique(array) {
     return result;
 }
 
-function keys(obj) {
-    return keyValuePairs(obj).map(function (prop) {
+function objectKeys(obj) {
+    return objectKeyValuePairs(obj).map(function (prop) {
         return prop.key;
     });
 }
-function values(obj) {
-    return keyValuePairs(obj).map(function (prop) {
+function objectValues(obj) {
+    return objectKeyValuePairs(obj).map(function (prop) {
         return prop.value;
     });
 }
 
-function keyValuePairs(obj) {
+function objectKeyValuePairs(obj) {
     var result = [];
-    for (var key in obj) {
+    for (var key in obj) { // eslint-disable-line guard-for-in
         result.push({ key: key, value: obj[key] });
     }
     return result;
@@ -181,6 +181,8 @@ function throttle(options) {
     var frequency = options.frequency;
     var leading = options.leading;
     var trailing = options.trailing;
+    var invokeTimer = null;
+
     if (typeof invoke !== 'function') {
         throw new Error('callback must be a function');
     }
@@ -204,7 +206,6 @@ function throttle(options) {
         }
     }
 
-    var invokeTimer;
     function requestInvoke() {
         if (invokeTimer) {
             return;
@@ -214,7 +215,7 @@ function throttle(options) {
     }
     function dispose() {
         options = null;
-        cb = null;
+        invoke = null;
         if (invokeTimer) {
             clearTimeout(invokeTimer);
         }

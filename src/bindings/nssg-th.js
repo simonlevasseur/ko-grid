@@ -63,7 +63,7 @@
                 gridVM.process({ columnsById: update });
             }
 
-            if ($('.nssg-col-grip', $th).length == 0) {
+            if ($('.nssg-col-grip', $th).length === 0) {
                 if (gridVM.ui().isResizable !== false && col.isResizable !== false) {
                     $colGrip = $('<div></div>')
                         .addClass('nssg-col-grip')
@@ -78,7 +78,7 @@
             /***************************/
 
             var $template = $('.nssg-th-content', $th);
-            if ($template.length == 0) {
+            if ($template.length === 0) {
                 $template = $("<div class='nssg-th-content'></div>", $th);
                 $template.append(templates[col.type + '-th']);
                 $th.append($template);

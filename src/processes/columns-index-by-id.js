@@ -4,6 +4,7 @@
 /** Columns Index by Id **/
 /*************************/
 gridState.processors['columns-index-by-id'] = {
+    input:['columnsById'],
     watches: ['columns'],
     runs: function (options) {
         if (options.model.logging) {

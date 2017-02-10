@@ -38,9 +38,6 @@ gridCustomizer = function (baseOptions, baseInitializer) {
         function addTemplates() {
             deepReplace(templates, realOptions.templates);
         }
-        function initActualGrid() {
-            actualGrid(new Grid(realOptions));
-        }
     };
 };
 

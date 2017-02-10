@@ -8,7 +8,7 @@ gridState.processors['columns-enable-actions-column'] = {
     runs: function (options) {
         if (options.model.ui && options.model.ui.actions) {
             var foundAny = false;
-            for (var key in options.model.ui.actions) {
+            for (var key in options.model.ui.actions) { // eslint-disable-line guard-for-in
                 foundAny = true;
             }
             if (!foundAny) {

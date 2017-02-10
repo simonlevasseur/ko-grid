@@ -3,7 +3,7 @@
 /***************/
 /** Data Sort **/
 /***************/
-gridState.processors["data-sort"] = {
+gridState.processors['data-sort'] = {
     watches: ['sort', 'data'],
     runs: function (options) {
         var originalData = options.changed.data ? options.model.data : options.cache.data;

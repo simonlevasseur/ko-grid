@@ -24,8 +24,8 @@ gridState.processors['selection-disable-multi-page'] = {
                 console.log('Removing selected rows which are not present on the current page');
             }
 
-            toBeRemoved.forEach(function (key) {
-                delete options.model.selection[key];
+            toBeRemoved.forEach(function (keyToRemove) {
+                delete options.model.selection[keyToRemove];
             });
         }
     }

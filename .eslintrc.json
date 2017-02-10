@@ -60,7 +60,15 @@
         "AddInitialProcesses": true,
         "gridState":true,
         "gridVM":true,
-        "createInitialGridState":true
+        "createInitialGridState":true,
+        "objectValues":true,
+        "objectKeys":true,
+        "objectKeyValuePairs":true,
+        "isTruthy":true,
+        "arrayify":true,
+        "unique": true,
+        "throttle": true,
+        "findFirst": true
     },
     "env":{
         "mocha": true,
