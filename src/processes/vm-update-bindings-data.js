@@ -8,8 +8,10 @@ var selectedObservables = {};
 gridState.processors['vm-update-bindings-data'] = {
     watches: ['data', 'selection'],
     init: function (model) {
-        model.vm.data = ko.observableArray();
-        model.vm.data.loaded = ko.observable(false);
+        if (!model.vm.data){
+            model.vm.data = ko.observableArray();
+            model.vm.data.loaded = ko.observable(false);
+        }
     },
     runs: function (options) {
         if (options.model.logging) {

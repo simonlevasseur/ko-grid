@@ -4,17 +4,17 @@
     'use strict';
 
     if (typeof require === 'function' && typeof exports === 'object' && typeof module === 'object') {
-        factory(require('ko'), require('jquery'), require('processing-pipeline'), exports);  // eslint-disable-line global-require
+        factory(require('ko'), require('jquery'), require('processing-pipeline'), require('handlebars'), exports);  // eslint-disable-line global-require
     }
     else if (typeof define === 'function' && define.amd) { // eslint-disable-line no-undef
-        define(['ko', 'jquery', 'processing-pipeline', 'exports'], factory); // eslint-disable-line no-undef
+        define(['ko', 'jquery', 'processing-pipeline', 'handlebars', 'exports'], factory); // eslint-disable-line no-undef
     }
     else {
-        factory(ko, $, PipelineFactory); // eslint-disable-line no-undef
+        factory(ko, $, PipelineFactory, Handlebars); // eslint-disable-line no-undef
     }
-}(function (ko, $, PipelineFactory) {
+}(function (ko, $, PipelineFactory, Handlebars) {
     'use strict';
-
+    
     //= include "other/symbolPolyfill.js"
 
     /*********************/
@@ -55,6 +55,7 @@
         //= include "processes/ui-selected-all-indicator.js"
         //= include "processes/ui-selected-count.js"
         //= include "processes/vm-container-size.js"
+        //= include "processes/vm-handlebars-data.js"
         //= include "processes/vm-update-bindings-columns.js"
         //= include "processes/vm-update-bindings-data.js"
         //= include "processes/vm-update-bindings-grid-state.js"

@@ -92,6 +92,7 @@ function createInitialGridState() {
                 'ui-selected-count',
                 'ui-export-selected-rows',
                 'columns-redistribute-space',
+                'vm-handlebars-data',
                 'vm-update-bindings-data',
                 'vm-update-bindings-paging',
                 'vm-update-bindings-columns',

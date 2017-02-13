@@ -1,7 +1,14 @@
 var gulp = require('gulp'),
     p = require('../package.json'),
     del = require('del'),
-    rename = require("gulp-rename");
+    rename = require("gulp-rename"),
+    gulpFunction = require("gulp-function");
+var cleanhtml = require('gulp-cleanhtml');
+    
+function removeNewLines(args){
+    var args = Array.prototype.slice.call(arguments, 0);
+    console.log(args);
+}
 
 gulp.task('js', function (cb) {
     // Plugins
@@ -35,7 +42,7 @@ gulp.task('js', function (cb) {
 
     // Compile HTML to JS
     gulp.src('src/templates/**/*.html')
-        .pipe( minifyHTML({ comments: true }) ) // Minify HTML files to 1-liners
+        .pipe(cleanhtml())
         .pipe( html2js(html2js.config) ) // Convert HTML to JS
         .pipe( concat('myTemplates.js') ) // Concatenate all JS templates into one file
         .pipe( insert.prepend('var templates = {};\n') ) // Add a variable declaration to the top

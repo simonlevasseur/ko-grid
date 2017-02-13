@@ -8,6 +8,7 @@
     "eslint-config-airbnb-base": "^10.0.1",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^2.3.0",
+    "gulp-cleanhtml": "^1.0.1",
     "gulp-concat": "^2.5.2",
     "gulp-eslint": "^3.0.1",
     "gulp-html-compile": "simonlevasseur/gulp-html-compile",
@@ -30,6 +31,7 @@
     "run-sequence": "^1.2.2"
   },
   "dependencies": {
+    "gulp-function": "^2.2.3",
     "promise-polyfill": "6.0.2"
   }
 }
