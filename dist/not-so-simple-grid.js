@@ -1242,7 +1242,9 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     console.log("Setting "+ rowIdentity+" to "+(!isSelected?"selected":"deselected"));
                     var rowSelect = {};
                     rowSelect[rowIdentity]= !isSelected;
-                    options.model.vm.process({"selection":rowSelect});
+                    setTimeout(function(){
+                        options.model.vm.process({"selection":rowSelect});
+                    },1);
                 }
                 
                 var templateParts = [];
@@ -1267,8 +1269,14 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     data: options.model.data
                 }
                 
+                var timeA = performance.now();
                 var compiledHtml = compiledTemplate(context);
+                var timeB = performance.now();
                 options.model.ui.hb_tbody(compiledHtml);
+                var timeC = performance.now();
+                
+                console.log("Render template", (timeB - timeA));
+                console.log("Update Binding", (timeC - timeB));
                 
                 if (options.changed.data) {
                     options.model.vm.data.loaded(true);
