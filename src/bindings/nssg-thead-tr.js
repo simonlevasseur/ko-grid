@@ -46,7 +46,7 @@
                     allColWidths = 0;
                 }
 
-                var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth)) - 1;
+                var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth));
                 $('.nssg-table', $container).width(fixedWidth);
             });
 

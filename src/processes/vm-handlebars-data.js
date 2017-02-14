@@ -27,13 +27,16 @@ gridState.processors['vm-handlebars-data'] = {
             window[options.cache.namespace] = options.cache.jsContext;
         }
         
-        options.cache.jsContext.toggleSelect = function(rowIdentity, isSelected) {
+        options.cache.jsContext.toggleSelect = function(rowIdentity, isSelected, e) {
             console.log("Setting "+ rowIdentity+" to "+(!isSelected?"selected":"deselected"));
             var rowSelect = {};
             rowSelect[rowIdentity]= !isSelected;
             setTimeout(function(){
                 options.model.vm.process({"selection":rowSelect});
             },1);
+            if (e){
+                $("input",$(e).parent()).prop('checked', !isSelected);
+            }
         }
         
         var templateParts = [];
@@ -45,6 +48,7 @@ gridState.processors['vm-handlebars-data'] = {
             }
             return "<td class='nssg-td nssg-td-"+col.type+"'>"+templates[col.type + "_hb"].replace(/\{\{value\}\}/g, "{{"+col.id+"}}")+"</td>";
         }));
+        templateParts.push("<td class='nssg-td nssg-td-gutter'></td>");
         templateParts.push("</tr>");
         templateParts.push("{{/each}}");
         var template = templateParts.join("\n");
