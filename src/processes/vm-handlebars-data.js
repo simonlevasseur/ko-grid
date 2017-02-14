@@ -39,9 +39,23 @@ gridState.processors['vm-handlebars-data'] = {
             }
         }
         
+        options.cache.jsContext.invokeAction = function(rowIdentity, index) {
+            var action = options.model.ui.actions[index];
+            var row = findFirst(options.model.data, {$identity: rowIdentity});
+            if (action && row)
+            {
+                if (action.onClick) {
+                    action.onClick(row.raw);
+                }
+            }
+            else {
+                console.warn("action or row data couldn't be matched")
+            }
+        }
+        
         var templateParts = [];
         templateParts.push("{{#each data as |row key|}}");
-        templateParts.push("<tr>");
+        templateParts.push("<tr class='nssg-tbody-tr'>");
         templateParts=templateParts.concat(options.model.columns.map(function(col){
             if (!col.isVisible){
                 return;
@@ -57,9 +71,14 @@ gridState.processors['vm-handlebars-data'] = {
             compiledTemplate = Handlebars.compile(template);
             options.cache.templates[template] = compiledTemplate;
         }
+        
+        var actions = options.model.ui.actions.map(function(action, index){
+            return {css:action.css, index:index};
+        })
         var context= {
             jsContext: options.cache.namespace,
-            data: options.model.data
+            data: options.model.data,
+            actions: actions
         }
         
         var timeA = performance.now();

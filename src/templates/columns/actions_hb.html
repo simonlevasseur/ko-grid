@@ -1,5 +1,5 @@
 <div class="nssg-actions-container">
-{{#actions}}
-    <a href="#" class="nssg-action {{css}}" onClick="javascript:function(){console.log('You clicked something')}"></a>
-{{/actions}}
+{{#each ../actions as |action key|}}
+    <a href="#" class="nssg-action {{action.css}}" onClick="{{../../jsContext}}.invokeAction('{{../$identity}}', {{action.index}}); return false"></a>
+{{/each}}
 </div>
