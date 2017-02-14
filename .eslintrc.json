@@ -68,7 +68,8 @@
         "arrayify":true,
         "unique": true,
         "throttle": true,
-        "findFirst": true
+        "findFirst": true,
+        "Handlebars": true
     },
     "env":{
         "mocha": true,

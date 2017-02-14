@@ -8,7 +8,7 @@ var selectedObservables = {};
 gridState.processors['vm-handlebars-data'] = {
     watches: ['data', 'selection'],
     init: function (model) {
-        if (!model.vm.data){
+        if (!model.vm.data) {
             model.vm.data = ko.observableArray();
             model.vm.data.loaded = ko.observable(false);
             model.ui.hb_tbody = ko.observable('');
@@ -16,80 +16,81 @@ gridState.processors['vm-handlebars-data'] = {
     },
     runs: function (options) {
         options.cache.templates = options.cache.templates || {};
-        
+
         if (options.model.logging) {
             console.log('Updating the handlebar data template');
         }
-        
-        if (!options.cache.namespace){
-            options.cache.namespace="NSSG_"+ Math.floor(Math.random()*99999);
+
+        if (!options.cache.namespace) {
+            options.cache.namespace = 'NSSG_' + Math.floor(Math.random() * 99999);
             options.cache.jsContext = {};
             window[options.cache.namespace] = options.cache.jsContext;
         }
-        
-        options.cache.jsContext.toggleSelect = function(rowIdentity, isSelected, e) {
-            console.log("Setting "+ rowIdentity+" to "+(!isSelected?"selected":"deselected"));
+
+        options.cache.jsContext.toggleSelect = function (rowIdentity, isSelected, e) {
+            console.log('Setting ' + rowIdentity + ' to ' + (!isSelected ? 'selected' : 'deselected'));
             var rowSelect = {};
-            rowSelect[rowIdentity]= !isSelected;
-            setTimeout(function(){
-                options.model.vm.process({"selection":rowSelect});
-            },1);
-            if (e){
-                $("input",$(e).parent()).prop('checked', !isSelected);
+            rowSelect[rowIdentity] = !isSelected;
+            setTimeout(function () {
+                options.model.vm.process({ selection: rowSelect });
+            }, 1);
+            if (e) {
+                $('input', $(e).parent()).prop('checked', !isSelected);
             }
-        }
-        
-        options.cache.jsContext.invokeAction = function(rowIdentity, index) {
+        };
+
+        options.cache.jsContext.invokeAction = function (rowIdentity, index) {
             var action = options.model.ui.actions[index];
-            var row = findFirst(options.model.data, {$identity: rowIdentity});
-            if (action && row)
-            {
+            var row = findFirst(options.model.data, { $identity: rowIdentity });
+            if (action && row) {
                 if (action.onClick) {
                     action.onClick(row.raw);
                 }
             }
             else {
-                console.warn("action or row data couldn't be matched")
+                console.warn("action or row data couldn't be matched");
             }
-        }
-        
+        };
+
         var templateParts = [];
-        templateParts.push("{{#each data as |row key|}}");
+        templateParts.push('{{#each data as |row key|}}');
         templateParts.push("<tr class='nssg-tbody-tr'>");
-        templateParts=templateParts.concat(options.model.columns.map(function(col){
-            if (!col.isVisible){
-                return;
+        templateParts = templateParts.concat(options.model.columns.map(function (col) {
+            if (!col.isVisible) {
+                return '';
             }
-            return "<td class='nssg-td nssg-td-"+col.type+"'>"+templates[col.type + "_hb"].replace(/\{\{value\}\}/g, "{{"+col.id+"}}")+"</td>";
+            return "<td class='nssg-td nssg-td-" + col.type + "'>" +
+                templates[col.type + '_hb'].replace(/\{\{value\}\}/g, '{{' + col.id + '}}') +
+                '</td>';
         }));
         templateParts.push("<td class='nssg-td nssg-td-gutter'></td>");
-        templateParts.push("</tr>");
-        templateParts.push("{{/each}}");
-        var template = templateParts.join("\n");
+        templateParts.push('</tr>');
+        templateParts.push('{{/each}}');
+        var template = templateParts.join('\n');
         var compiledTemplate = options.cache.templates[template];
-        if (!compiledTemplate){
+        if (!compiledTemplate) {
             compiledTemplate = Handlebars.compile(template);
             options.cache.templates[template] = compiledTemplate;
         }
-        
-        var actions = options.model.ui.actions.map(function(action, index){
-            return {css:action.css, index:index};
-        })
-        var context= {
+
+        var actions = options.model.ui.actions.map(function (action, index) {
+            return { css: action.css, index: index };
+        });
+        var context = {
             jsContext: options.cache.namespace,
             data: options.model.data,
             actions: actions
-        }
-        
+        };
+
         var timeA = performance.now();
         var compiledHtml = compiledTemplate(context);
         var timeB = performance.now();
         options.model.ui.hb_tbody(compiledHtml);
         var timeC = performance.now();
-        
-        console.log("Render template", (timeB - timeA));
-        console.log("Update Binding", (timeC - timeB));
-        
+
+        console.log('Render template', (timeB - timeA));
+        console.log('Update Binding', (timeC - timeB));
+
         if (options.changed.data) {
             options.model.vm.data.loaded(true);
         }

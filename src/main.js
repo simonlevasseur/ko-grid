@@ -4,7 +4,8 @@
     'use strict';
 
     if (typeof require === 'function' && typeof exports === 'object' && typeof module === 'object') {
-        factory(require('ko'), require('jquery'), require('processing-pipeline'), require('handlebars'), exports);  // eslint-disable-line global-require
+        factory(require('ko'), require('jquery'), require('processing-pipeline'), // eslint-disable-line global-require
+        require('handlebars'), exports);  // eslint-disable-line global-require
     }
     else if (typeof define === 'function' && define.amd) { // eslint-disable-line no-undef
         define(['ko', 'jquery', 'processing-pipeline', 'handlebars', 'exports'], factory); // eslint-disable-line no-undef
@@ -14,7 +15,7 @@
     }
 }(function (ko, $, PipelineFactory, Handlebars) {
     'use strict';
-    
+
     //= include "other/symbolPolyfill.js"
 
     /*********************/
