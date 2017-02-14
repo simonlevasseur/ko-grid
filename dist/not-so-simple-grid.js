@@ -39,11 +39,11 @@
 templates["grid"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=\"nssg-table\"><thead class=\"nssg-thead\"><tr class=\"nssg-thead-tr\" data-bind=\"newnssgTheadTr: true\"><th class=\"nssg-th\" data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=\"nssg-tobdy\" data-bind=\"html: ui().hb_tbody\"></tbody></table></div>";
 templates["paging"] = "<div class=\"nssg-paging\"><div class=\"nssg-paging-selector-container\" data-bind=\"visible: true\"> <span class=\"nssg-paging-view\">View</span> <select class=\"nssg-paging-pages\" data-bind=\"options: pageSizes, value: pageSize\"></select></div> <span class=\"nssg-paging-count\">Now Showing<span data-bind=\"text:firstItem\"></span> of<span data-bind=\"text:totalItems\"></span></span><div class=\"nssg-paging-controls\" data-bind=\"visible: true\"><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-first\" data-bind=\"click: goToFirstPage, visible: currentPageIndex() !== 1\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-prev\" data-bind=\"click: goToPrevPage, visible: currentPageIndex() !== 1\"></a> <input type=\"text\" class=\"nssg-paging-current\" data-bind=\"value: currentPageIndex\"/><span class=\"nssg-paging-total\" data-bind=\"text: 'of ' + maxPageIndex()\"></span><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-next\" data-bind=\"click: goToNextPage, visible: currentPageIndex() !== maxPageIndex()\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-last\" data-bind=\"click: goToLastPage, visible: currentPageIndex() !== maxPageIndex()\"></a></div></div>";
 templates["actions"] = "<div class=\"nssg-actions-container\" data-bind=\"foreach: $component().ui().actions\"><a href=\"#\" class=\"nssg-action\" data-bind=\"css: $data.css, click: function(){$data.onClick(row.raw)}\"></a></div>";
-templates["actions_hb"] = "<div class=\"nssg-actions-container\"> {{#actions}}<a href=\"#\" class=\"nssg-action {{css}}\" onClick=\"javascript:function(){console.log('You clicked something')}\"></a> {{/actions}}</div>";
+templates["actions_hb"] = "<div class=\"nssg-actions-container\"> {{#each ../actions as |action key|}}<a href=\"#\" class=\"nssg-action {{action.css}}\" onClick=\"{{../../jsContext}}.invokeAction('{{../$identity}}', {{action.index}}); return false\"></a> {{/each}}</div>";
 templates["gutter"] = "";
 templates["gutter_hb"] = "";
 templates["select"] = "<input type=\"checkbox\" data-bind=\"checked: row.isSelected, checkedValue: row, click: row.toggleSelection($component())\"/>";
-templates["select_hb"] = "<input type=\"checkbox\" {{#if isSelected}}checked {{/if}} onClick=\"javascript:{{../jsContext}}.toggleSelect('{{$identity}}', {{isSelected}})\"/>";
+templates["select_hb"] = "<input type=\"checkbox\" {{#if isSelected}}checked {{/if}} onClick=\"javascript:{{../jsContext}}.toggleSelect('{{$identity}}', {{isSelected}}, this)\"/>";
 templates["text"] = "<div class=\"nssg-td-text\" data-bind=\"text: $parent[id], attr: { title: $parent[id] }\"></div>";
 templates["text_hb"] = "<div class=\"nssg-td-text\" title=\"{{value}}\">{{value}}</div>";
 templates["select-th"] = "<input type=\"checkbox\" data-bind=\"checked: $component().ui().allSelected, visible: $parent.ui().selectMode === 'multi', click: col.toggleSelectAll($component())\"/>";
@@ -1238,24 +1238,42 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     window[options.cache.namespace] = options.cache.jsContext;
                 }
                 
-                options.cache.jsContext.toggleSelect = function(rowIdentity, isSelected) {
+                options.cache.jsContext.toggleSelect = function(rowIdentity, isSelected, e) {
                     console.log("Setting "+ rowIdentity+" to "+(!isSelected?"selected":"deselected"));
                     var rowSelect = {};
                     rowSelect[rowIdentity]= !isSelected;
                     setTimeout(function(){
                         options.model.vm.process({"selection":rowSelect});
                     },1);
+                    if (e){
+                        $("input",$(e).parent()).prop('checked', !isSelected);
+                    }
+                }
+                
+                options.cache.jsContext.invokeAction = function(rowIdentity, index) {
+                    var action = options.model.ui.actions[index];
+                    var row = findFirst(options.model.data, {$identity: rowIdentity});
+                    if (action && row)
+                    {
+                        if (action.onClick) {
+                            action.onClick(row.raw);
+                        }
+                    }
+                    else {
+                        console.warn("action or row data couldn't be matched")
+                    }
                 }
                 
                 var templateParts = [];
                 templateParts.push("{{#each data as |row key|}}");
-                templateParts.push("<tr>");
+                templateParts.push("<tr class='nssg-tbody-tr'>");
                 templateParts=templateParts.concat(options.model.columns.map(function(col){
                     if (!col.isVisible){
                         return;
                     }
                     return "<td class='nssg-td nssg-td-"+col.type+"'>"+templates[col.type + "_hb"].replace(/\{\{value\}\}/g, "{{"+col.id+"}}")+"</td>";
                 }));
+                templateParts.push("<td class='nssg-td nssg-td-gutter'></td>");
                 templateParts.push("</tr>");
                 templateParts.push("{{/each}}");
                 var template = templateParts.join("\n");
@@ -1264,9 +1282,14 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     compiledTemplate = Handlebars.compile(template);
                     options.cache.templates[template] = compiledTemplate;
                 }
+                
+                var actions = options.model.ui.actions.map(function(action, index){
+                    return {css:action.css, index:index};
+                })
                 var context= {
                     jsContext: options.cache.namespace,
-                    data: options.model.data
+                    data: options.model.data,
+                    actions: actions
                 }
                 
                 var timeA = performance.now();
@@ -1895,7 +1918,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                         allColWidths = 0;
                     }
     
-                    var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth)) - 1;
+                    var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth));
                     $('.nssg-table', $container).width(fixedWidth);
                 });
     
