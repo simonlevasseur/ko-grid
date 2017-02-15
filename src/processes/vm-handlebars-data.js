@@ -39,10 +39,12 @@ gridState.processors['vm-handlebars-data'] = {
             }
             if (options.model.ui.selectMode === 'single') {
                 for (var key in options.model.selection) {
-                    var id = options.cache.namespace + '_' + key;
-                    var $row = $('#' + id);
-                    var $select = $('.nssg-td-select input', $row);
-                    $select.prop('checked', false);
+                    if (options.model.selection.hasOwnProperty(key)) {
+                        var id = options.cache.namespace + '_' + key;
+                        var $row = $('#' + id);
+                        var $select = $('.nssg-td-select input', $row);
+                        $select.prop('checked', false);
+                    }
                 }
             }
         };
