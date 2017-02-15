@@ -37,6 +37,14 @@ gridState.processors['vm-handlebars-data'] = {
             if (e) {
                 $('input', $(e).parent()).prop('checked', !isSelected);
             }
+            if (options.model.ui.selectMode === 'single') {
+                for (var key in options.model.selection) {
+                    var id = options.cache.namespace + '_' + key;
+                    var $row = $('#' + id);
+                    var $select = $('.nssg-td-select input', $row);
+                    $select.prop('checked', false);
+                }
+            }
         };
 
         options.cache.jsContext.invokeAction = function (rowIdentity, index) {
@@ -54,7 +62,7 @@ gridState.processors['vm-handlebars-data'] = {
 
         var templateParts = [];
         templateParts.push('{{#each data as |row key|}}');
-        templateParts.push("<tr class='nssg-tbody-tr'>");
+        templateParts.push("<tr class='nssg-tbody-tr' id='" + options.cache.namespace + "_{{$identity}}'>");
         templateParts = templateParts.concat(options.model.columns.map(function (col) {
             if (!col.isVisible) {
                 return '';
@@ -73,9 +81,9 @@ gridState.processors['vm-handlebars-data'] = {
             options.cache.templates[template] = compiledTemplate;
         }
 
-        var actions = options.model.ui.actions.map(function (action, index) {
+        var actions = options.model.ui.actions ? options.model.ui.actions.map(function (action, index) {
             return { css: action.css, index: index };
-        });
+        }) : [];
         var context = {
             jsContext: options.cache.namespace,
             data: options.model.data,
