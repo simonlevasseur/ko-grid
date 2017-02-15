@@ -21,9 +21,9 @@ gridState.processors['data-calculate-row-identities'] = {
 
         options.model.data.forEach(function (row) {
             var identity = identityColumns.reduce(function (total, col) {
-                return total + '$' + getCellData(row, col);
+                return total + '_' + getCellData(row, col);
             }, '');
-            row.$identity = identity;
+            row.$identity = identity.replace(/[\s\.\@\+\-\|]/g, "");
         });
         // todo calculate identities
     }
