@@ -3,16 +3,18 @@
 /***************/
 /** Log Start **/
 /***************/
-gridState.processors['log-start'] = function (options) {
-    if (options.model.logging) {
-        console.group('Processing grid state change');
-        var whatChanged = JSON.stringify(options.model.lastInput, filterUninterestingProperties);
-        if (whatChanged.length === 2) {
-            whatChanged = JSON.stringify(options.model.lastInput);
+gridState.processors['log-start'] = {
+    input: 'logging',
+    runs: function (options) {
+        if (options.model.logging) {
+            console.group('Processing grid state change');
+            var whatChanged = JSON.stringify(options.model.lastInput, filterUninterestingProperties);
+            if (whatChanged.length === 2) {
+                whatChanged = JSON.stringify(options.model.lastInput);
+            }
+            console.log('Applying change', whatChanged);
         }
-        console.log('Applying change', whatChanged);
-    }
-};
+    } };
 
 
 function filterUninterestingProperties(key, value) {

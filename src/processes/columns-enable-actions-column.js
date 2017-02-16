@@ -17,7 +17,9 @@ gridState.processors['columns-enable-actions-column'] = {
 
             var actionCol = findFirst(options.model.columns, { id: '$$action' });
             if (!actionCol) {
-                console.log('Adding the action column');
+                if (options.model.logging) {
+                    console.log('Adding the action column');
+                }
                 actionCol = {
                     id: '$$action',
                     type: 'actions',

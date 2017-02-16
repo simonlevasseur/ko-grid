@@ -9,7 +9,9 @@ gridState.processors['columns-enable-selection-column'] = {
         if (options.model.ui.selectable) {
             var selectCol = findFirst(options.model.columns, { id: '$$select' });
             if (!selectCol) {
-                console.log('Adding the row selection column');
+                if (options.model.logging) {
+                    console.log('Adding the row selection column');
+                }
                 selectCol = {
                     id: '$$select',
                     type: 'select',
