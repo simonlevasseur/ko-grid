@@ -6,12 +6,12 @@ var selectedObservables = {};
 /** vm-Handlebars: data **/
 /******************************/
 gridState.processors['vm-handlebars-data'] = {
-    watches: ['data', 'selection'],
+    watches: ['data', 'selection', 'ui', 'columns'],
     init: function (model) {
         if (!model.vm.data) {
             model.vm.data = ko.observableArray();
             model.vm.data.loaded = ko.observable(false);
-            model.ui.hb_tbody = ko.observable('');
+            model.vm.hb_tbody = ko.observable('');
         }
     },
     runs: function (options) {
@@ -32,7 +32,7 @@ gridState.processors['vm-handlebars-data'] = {
             var rowSelect = {};
             rowSelect[rowIdentity] = !isSelected;
             setTimeout(function () {
-                options.model.vm.process({ selection: rowSelect });
+                options.model.vm.process({ selection: rowSelect, ui: { alreadyUpdatedSelection: true } });
             }, 1);
             if (e) {
                 $('input', $(e).parent()).prop('checked', !isSelected);
@@ -92,14 +92,21 @@ gridState.processors['vm-handlebars-data'] = {
             actions: actions
         };
 
-        var timeA = performance.now();
-        var compiledHtml = compiledTemplate(context);
-        var timeB = performance.now();
-        options.model.ui.hb_tbody(compiledHtml);
-        var timeC = performance.now();
+        if (!options.model.lastInput.ui || !options.model.lastInput.ui.alreadyUpdatedSelection) {
+            var timeA = performance.now();
+            var compiledHtml = compiledTemplate(context);
+            var timeB = performance.now();
+            options.model.vm.hb_tbody(compiledHtml);
+            var timeC = performance.now();
 
-        console.log('Render template', (timeB - timeA));
-        console.log('Update Binding', (timeC - timeB));
+            if (options.model.logging) {
+                console.log('Render template', (timeB - timeA));
+                console.log('Update Binding', (timeC - timeB));
+            }
+        }
+        else {
+            console.log('skipping the update data step since the ui should already be up to date');
+        }
 
         if (options.changed.data) {
             options.model.vm.data.loaded(true);
