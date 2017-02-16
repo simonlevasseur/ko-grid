@@ -38,7 +38,7 @@
     /**     TEMPLATES   **/
     /*********************/
     var templates = {};
-templates["grid"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=\"nssg-table\"><thead class=\"nssg-thead\"><tr class=\"nssg-thead-tr\" data-bind=\"newnssgTheadTr: true\"><th class=\"nssg-th\" data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=\"nssg-tobdy\" data-bind=\"html: ui().hb_tbody\"></tbody></table></div>";
+templates["grid"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=\"nssg-table\"><thead class=\"nssg-thead\"><tr class=\"nssg-thead-tr\" data-bind=\"newnssgTheadTr: true\"><th class=\"nssg-th\" data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=\"nssg-tobdy\" data-bind=\"html: hb_tbody\"></tbody></table></div>";
 templates["paging"] = "<div class=\"nssg-paging\"><div class=\"nssg-paging-selector-container\" data-bind=\"visible: true\"> <span class=\"nssg-paging-view\">View</span> <select class=\"nssg-paging-pages\" data-bind=\"options: pageSizes, value: pageSize\"></select></div> <span class=\"nssg-paging-count\">Now Showing<span data-bind=\"text:firstItem\"></span> of<span data-bind=\"text:totalItems\"></span></span><div class=\"nssg-paging-controls\" data-bind=\"visible: true\"><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-first\" data-bind=\"click: goToFirstPage, visible: currentPageIndex() !== 1\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-prev\" data-bind=\"click: goToPrevPage, visible: currentPageIndex() !== 1\"></a> <input type=\"text\" class=\"nssg-paging-current\" data-bind=\"value: currentPageIndex\"/><span class=\"nssg-paging-total\" data-bind=\"text: 'of ' + maxPageIndex()\"></span><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-next\" data-bind=\"click: goToNextPage, visible: currentPageIndex() !== maxPageIndex()\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-last\" data-bind=\"click: goToLastPage, visible: currentPageIndex() !== maxPageIndex()\"></a></div></div>";
 templates["actions"] = "<div class=\"nssg-actions-container\" data-bind=\"foreach: $component().ui().actions\"><a href=\"#\" class=\"nssg-action\" data-bind=\"css: $data.css, click: function(){$data.onClick(row.raw)}\"></a></div>";
 templates["actions_hb"] = "<div class=\"nssg-actions-container\"> {{#each ../actions as |action key|}}<a href=\"#\" class=\"nssg-action {{action.css}}\" onClick=\"{{../../jsContext}}.invokeAction('{{../$identity}}', {{action.index}}); return false\"></a> {{/each}}</div>";
@@ -584,7 +584,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     var identity = identityColumns.reduce(function (total, col) {
                         return total + '_' + getCellData(row, col);
                     }, '');
-                    row.$identity = identity.replace(/[\s\.\@\+\-\|]/g, '');
+                    row.$identity = identity.replace(/[\s.@+\-|]/g, '');
                 });
                 // todo calculate identities
             }
@@ -1220,12 +1220,12 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         /** vm-Handlebars: data **/
         /******************************/
         gridState.processors['vm-handlebars-data'] = {
-            watches: ['data', 'selection'],
+            watches: ['data', 'selection', 'ui', 'columns'],
             init: function (model) {
                 if (!model.vm.data) {
                     model.vm.data = ko.observableArray();
                     model.vm.data.loaded = ko.observable(false);
-                    model.ui.hb_tbody = ko.observable('');
+                    model.vm.hb_tbody = ko.observable('');
                 }
             },
             runs: function (options) {
@@ -1246,17 +1246,19 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     var rowSelect = {};
                     rowSelect[rowIdentity] = !isSelected;
                     setTimeout(function () {
-                        options.model.vm.process({ selection: rowSelect });
+                        options.model.vm.process({ selection: rowSelect, ui:{alreadyUpdatedSelection:true} });
                     }, 1);
                     if (e) {
                         $('input', $(e).parent()).prop('checked', !isSelected);
                     }
                     if (options.model.ui.selectMode === 'single') {
                         for (var key in options.model.selection) {
-                            var id = options.cache.namespace + '_' + key;
-                            var $row = $('#' + id);
-                            var $select = $('.nssg-td-select input', $row);
-                            $select.prop('checked', false);
+                            if (options.model.selection.hasOwnProperty(key)) {
+                                var id = options.cache.namespace + '_' + key;
+                                var $row = $('#' + id);
+                                var $select = $('.nssg-td-select input', $row);
+                                $select.prop('checked', false);
+                            }
                         }
                     }
                 };
@@ -1304,14 +1306,20 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     actions: actions
                 };
         
+                if (!options.model.lastInput.ui || !options.model.lastInput.ui.alreadyUpdatedSelection){
                 var timeA = performance.now();
                 var compiledHtml = compiledTemplate(context);
                 var timeB = performance.now();
-                options.model.ui.hb_tbody(compiledHtml);
+                options.model.vm.hb_tbody(compiledHtml);
                 var timeC = performance.now();
         
+                if (options.model.logging){
                 console.log('Render template', (timeB - timeA));
                 console.log('Update Binding', (timeC - timeB));
+                }
+                } else {
+                    console.log("skipping the update data step since the ui should already be up to date")
+                }
         
                 if (options.changed.data) {
                     options.model.vm.data.loaded(true);
@@ -1384,7 +1392,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         /** vm-Update Bindings: data **/
         /******************************/
         gridState.processors['vm-update-bindings-data'] = {
-            watches: ['data', 'selection'],
+            watches: ['data', 'selection', 'ui', 'columns'],
             init: function (model) {
                 if (!model.vm.data) {
                     model.vm.data = ko.observableArray();
@@ -1603,7 +1611,6 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'ui-export-selected-rows',
                     'columns-redistribute-space',
                     'vm-handlebars-data',
-                    'vm-update-bindings-data',
                     'vm-update-bindings-paging',
                     'vm-update-bindings-columns',
                     'vm-update-bindings-ui',
