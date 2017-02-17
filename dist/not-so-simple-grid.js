@@ -351,7 +351,9 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         
                     var actionCol = findFirst(options.model.columns, { id: '$$action' });
                     if (!actionCol) {
-                        console.log('Adding the action column');
+                        if (options.model.logging) {
+                            console.log('Adding the action column');
+                        }
                         actionCol = {
                             id: '$$action',
                             type: 'actions',
@@ -377,7 +379,9 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 if (options.model.ui.selectable) {
                     var selectCol = findFirst(options.model.columns, { id: '$$select' });
                     if (!selectCol) {
-                        console.log('Adding the row selection column');
+                        if (options.model.logging) {
+                            console.log('Adding the row selection column');
+                        }
                         selectCol = {
                             id: '$$select',
                             type: 'select',
@@ -874,16 +878,18 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         /***************/
         /** Log Start **/
         /***************/
-        gridState.processors['log-start'] = function (options) {
-            if (options.model.logging) {
-                console.group('Processing grid state change');
-                var whatChanged = JSON.stringify(options.model.lastInput, filterUninterestingProperties);
-                if (whatChanged.length === 2) {
-                    whatChanged = JSON.stringify(options.model.lastInput);
+        gridState.processors['log-start'] = {
+            input: 'logging',
+            runs: function (options) {
+                if (options.model.logging) {
+                    console.group('Processing grid state change');
+                    var whatChanged = JSON.stringify(options.model.lastInput, filterUninterestingProperties);
+                    if (whatChanged.length === 2) {
+                        whatChanged = JSON.stringify(options.model.lastInput);
+                    }
+                    console.log('Applying change', whatChanged);
                 }
-                console.log('Applying change', whatChanged);
-            }
-        };
+            } };
         
         
         function filterUninterestingProperties(key, value) {
@@ -1246,7 +1252,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     var rowSelect = {};
                     rowSelect[rowIdentity] = !isSelected;
                     setTimeout(function () {
-                        options.model.vm.process({ selection: rowSelect, ui:{alreadyUpdatedSelection:true} });
+                        options.model.vm.process({ selection: rowSelect, ui: { alreadyUpdatedSelection: true } });
                     }, 1);
                     if (e) {
                         $('input', $(e).parent()).prop('checked', !isSelected);
@@ -1306,19 +1312,20 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     actions: actions
                 };
         
-                if (!options.model.lastInput.ui || !options.model.lastInput.ui.alreadyUpdatedSelection){
-                var timeA = performance.now();
-                var compiledHtml = compiledTemplate(context);
-                var timeB = performance.now();
-                options.model.vm.hb_tbody(compiledHtml);
-                var timeC = performance.now();
+                if (!options.model.lastInput.ui || !options.model.lastInput.ui.alreadyUpdatedSelection) {
+                    var timeA = performance.now();
+                    var compiledHtml = compiledTemplate(context);
+                    var timeB = performance.now();
+                    options.model.vm.hb_tbody(compiledHtml);
+                    var timeC = performance.now();
         
-                if (options.model.logging){
-                console.log('Render template', (timeB - timeA));
-                console.log('Update Binding', (timeC - timeB));
+                    if (options.model.logging) {
+                        console.log('Render template', (timeB - timeA));
+                        console.log('Update Binding', (timeC - timeB));
+                    }
                 }
-                } else {
-                    console.log("skipping the update data step since the ui should already be up to date")
+                else {
+                    console.log('skipping the update data step since the ui should already be up to date');
                 }
         
                 if (options.changed.data) {
@@ -1392,7 +1399,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         /** vm-Update Bindings: data **/
         /******************************/
         gridState.processors['vm-update-bindings-data'] = {
-            watches: ['data', 'selection', 'ui', 'columns'],
+            watches: ['data', 'selection'],
             init: function (model) {
                 if (!model.vm.data) {
                     model.vm.data = ko.observableArray();
@@ -1719,6 +1726,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             getImportedProperties().forEach(function (property) {
                 extendProperty(gridState, options, property);
             });
+    
+            pipeline.debug = gridState.logging;
     
             gridState.lastInput = options;
             return pipeline.process(gridState, 'start');
