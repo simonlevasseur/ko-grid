@@ -92,7 +92,6 @@ var Grid = function (userOptions) {
         });
 
         pipeline.debug = gridState.logging;
-        inputPipeline.debug = gridState.logging;
 
         gridState.lastInput = options;
         return pipeline.process(gridState, 'start');
