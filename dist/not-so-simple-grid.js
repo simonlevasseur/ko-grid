@@ -45,7 +45,7 @@ templates["actions_hb"] = "<div class=\"nssg-actions-container\"> {{#each ../act
 templates["gutter"] = "";
 templates["gutter_hb"] = "";
 templates["select"] = "<input type=\"checkbox\" data-bind=\"checked: row.isSelected, checkedValue: row, click: row.toggleSelection($component())\"/>";
-templates["select_hb"] = "<input type=\"checkbox\" {{#if isSelected}}checked {{/if}} onClick=\"javascript:{{../jsContext}}.toggleSelect('{{$identity}}', {{isSelected}}, this)\"/>";
+templates["select_hb"] = "<input type=\"checkbox\" {{#if isSelected}}checked {{/if}} onClick=\"javascript:{{../jsContext}}.toggleSelect('{{$identity}}', this)\"/>";
 templates["text"] = "<div class=\"nssg-td-text\" data-bind=\"text: $parent[id], attr: { title: $parent[id] }\"></div>";
 templates["text_hb"] = "<div class=\"nssg-td-text\" title=\"{{value}}\">{{value}}</div>";
 templates["select-th"] = "<input type=\"checkbox\" data-bind=\"checked: $component().ui().allSelected, visible: $parent.ui().selectMode === 'multi', click: col.toggleSelectAll($component())\"/>";
@@ -1247,16 +1247,20 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     window[options.cache.namespace] = options.cache.jsContext;
                 }
         
-                options.cache.jsContext.toggleSelect = function (rowIdentity, isSelected, e) {
-                    console.log('Setting ' + rowIdentity + ' to ' + (!isSelected ? 'selected' : 'deselected'));
+                options.cache.jsContext.toggleSelect = function (rowIdentity, e) {
+                    var isSelected = !!options.model.selection[rowIdentity];
+                    if (options.model.logging) {
+                        console.log('Setting ' + rowIdentity + ' to ' + (!isSelected ? 'selected' : 'deselected'));
+                    }
+        
                     var rowSelect = {};
                     rowSelect[rowIdentity] = !isSelected;
                     setTimeout(function () {
                         options.model.vm.process({ selection: rowSelect, ui: { alreadyUpdatedSelection: true } });
+                        if (e) {
+                            $('input', $(e).parent()).prop('checked', !isSelected);
+                        }
                     }, 1);
-                    if (e) {
-                        $('input', $(e).parent()).prop('checked', !isSelected);
-                    }
                     if (options.model.ui.selectMode === 'single') {
                         for (var key in options.model.selection) {
                             if (options.model.selection.hasOwnProperty(key)) {
