@@ -27,16 +27,20 @@ gridState.processors['vm-handlebars-data'] = {
             window[options.cache.namespace] = options.cache.jsContext;
         }
 
-        options.cache.jsContext.toggleSelect = function (rowIdentity, isSelected, e) {
-            console.log('Setting ' + rowIdentity + ' to ' + (!isSelected ? 'selected' : 'deselected'));
+        options.cache.jsContext.toggleSelect = function (rowIdentity, e) {
+            var isSelected = !!options.model.selection[rowIdentity];
+            if (options.model.logging) {
+                console.log('Setting ' + rowIdentity + ' to ' + (!isSelected ? 'selected' : 'deselected'));
+            }
+
             var rowSelect = {};
             rowSelect[rowIdentity] = !isSelected;
             setTimeout(function () {
                 options.model.vm.process({ selection: rowSelect, ui: { alreadyUpdatedSelection: true } });
+                if (e) {
+                    $('input', $(e).parent()).prop('checked', !isSelected);
+                }
             }, 1);
-            if (e) {
-                $('input', $(e).parent()).prop('checked', !isSelected);
-            }
             if (options.model.ui.selectMode === 'single') {
                 for (var key in options.model.selection) {
                     if (options.model.selection.hasOwnProperty(key)) {
