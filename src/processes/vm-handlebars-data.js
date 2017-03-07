@@ -117,7 +117,9 @@ gridState.processors['vm-handlebars-data'] = {
         }
 
         if (!options.model.vm.data.loaded.peek()) {
-            options.model.vm.data.loaded(true);
+            setTimeout(function() {
+                options.model.vm.data.loaded(true);
+            },100);
         }
     }
 };
