@@ -6,7 +6,7 @@ var selectedObservables = {};
 /** vm-Handlebars: data **/
 /******************************/
 gridState.processors['vm-handlebars-data'] = {
-    watches: ['data', 'selection', 'ui', 'columns'],
+    watches: ['data', 'selection', 'ui', 'columns', 'space'],
     init: function (model) {
         if (!model.vm.data) {
             model.vm.data = ko.observableArray();
@@ -15,6 +15,10 @@ gridState.processors['vm-handlebars-data'] = {
         }
     },
     runs: function (options) {
+        if (!options.model.space || !options.model.space.width)
+        {
+            return;
+        }
         options.cache.templates = options.cache.templates || {};
 
         if (options.model.logging) {
@@ -112,7 +116,7 @@ gridState.processors['vm-handlebars-data'] = {
             console.log('skipping the update data step since the ui should already be up to date');
         }
 
-        if (options.changed.data) {
+        if (!options.model.vm.data.loaded.peek()) {
             options.model.vm.data.loaded(true);
         }
     }

@@ -4,11 +4,15 @@
 /** vm-Update Bindings: colums **/
 /********************************/
 gridState.processors['vm-update-bindings-columns'] = {
-    watches: ['sort', 'columns'],
+    watches: ['sort', 'columns', 'space'],
     init: function (model) {
         model.vm.columns = ko.observableArray();
     },
     runs: function (options) {
+        if (!options.model.space || !options.model.space.width)
+        {
+            return;
+        }
         if (options.model.logging) {
             console.log('Updating the column bindings');
         }
