@@ -84,14 +84,17 @@
                 $th.append($template);
             }
 
-            $th
-                .addClass('nssg-th-' + col.type)
-                .addClass('animate');
-            $th.outerWidth(col.width);
+            setTimeout(function(){
+                $th
+                    .addClass('nssg-th-' + col.type)
+                    .addClass('animate');
+                $th.outerWidth(col.width);
 
-            setTimeout(function () {
-                $th.removeClass('animate');
-            }, 200);
+                setTimeout(function () {
+                    $th.removeClass('animate');
+                }, 200);
+            },0);
+
             /*********************/
             /**     DISPLOSAL   **/
             /*********************/

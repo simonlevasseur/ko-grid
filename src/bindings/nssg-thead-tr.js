@@ -41,13 +41,15 @@
                 var allColWidths = visibleCols().reduce(function (total, col) {
                     return total + col().width;
                 }, 0);
-                var containerWidth = $container.width();
-                if (typeof allColWidths !== 'number' || isNaN(allColWidths)) {
-                    allColWidths = 0;
-                }
+                setTimeout(function() {
+                    var containerWidth = $container.width();
+                    if (typeof allColWidths !== 'number' || isNaN(allColWidths)) {
+                        allColWidths = 0;
+                    }
 
-                var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth));
-                $('.nssg-table', $container).width(fixedWidth);
+                    var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth));
+                    $('.nssg-table', $container).width(fixedWidth);
+                },0);
             });
 
             return { controlsDescendantBindings: true };
