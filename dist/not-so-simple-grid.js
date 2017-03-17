@@ -1226,7 +1226,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         /** vm-Handlebars: data **/
         /******************************/
         gridState.processors['vm-handlebars-data'] = {
-            watches: ['data', 'selection', 'ui', 'columns'],
+            watches: ['data', 'selection', 'ui', 'columns', 'space'],
             init: function (model) {
                 if (!model.vm.data) {
                     model.vm.data = ko.observableArray();
@@ -1235,6 +1235,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 }
             },
             runs: function (options) {
+                if (!options.model.space || !options.model.space.width)
+                {
+                    return;
+                }
                 options.cache.templates = options.cache.templates || {};
         
                 if (options.model.logging) {
@@ -1332,8 +1336,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     console.log('skipping the update data step since the ui should already be up to date');
                 }
         
-                if (options.changed.data) {
-                    options.model.vm.data.loaded(true);
+                if (!options.model.vm.data.loaded.peek()) {
+                    setTimeout(function() {
+                        options.model.vm.data.loaded(true);
+                    },100);
                 }
             }
         };
@@ -1344,11 +1350,15 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         /** vm-Update Bindings: colums **/
         /********************************/
         gridState.processors['vm-update-bindings-columns'] = {
-            watches: ['sort', 'columns'],
+            watches: ['sort', 'columns', 'space'],
             init: function (model) {
                 model.vm.columns = ko.observableArray();
             },
             runs: function (options) {
+                if (!options.model.space || !options.model.space.width)
+                {
+                    return;
+                }
                 if (options.model.logging) {
                     console.log('Updating the column bindings');
                 }
@@ -1711,16 +1721,19 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             var properties = propertiesInArrays.reduce(function (all, arr) {
                 return all.concat(arr);
             }, []);
+            // this is a meta property that won't actually occur
+            // in the grid processors but is important regardless
+            properties.push('processors');
             var uniqueProperties = unique(properties);
     
             return uniqueProperties;
         }
     
         function process(options) {
-            return inputPipeline.process(options, 'process');
+            return inputPipeline.process({inner:options}, 'process');
         }
         function processInput(outerOptions) {
-            var options = outerOptions.model;
+            var options = outerOptions.model.inner;
     
             // re-run the init in case any processors got added/replaced since the last run
             checkInit();
@@ -1946,13 +1959,15 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     var allColWidths = visibleCols().reduce(function (total, col) {
                         return total + col().width;
                     }, 0);
-                    var containerWidth = $container.width();
-                    if (typeof allColWidths !== 'number' || isNaN(allColWidths)) {
-                        allColWidths = 0;
-                    }
+                    setTimeout(function() {
+                        var containerWidth = $container.width();
+                        if (typeof allColWidths !== 'number' || isNaN(allColWidths)) {
+                            allColWidths = 0;
+                        }
     
-                    var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth));
-                    $('.nssg-table', $container).width(fixedWidth);
+                        var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth));
+                        $('.nssg-table', $container).width(fixedWidth);
+                    },0);
                 });
     
                 return { controlsDescendantBindings: true };
@@ -2046,14 +2061,17 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     $th.append($template);
                 }
     
-                $th
-                    .addClass('nssg-th-' + col.type)
-                    .addClass('animate');
-                $th.outerWidth(col.width);
+                setTimeout(function(){
+                    $th
+                        .addClass('nssg-th-' + col.type)
+                        .addClass('animate');
+                    $th.outerWidth(col.width);
     
-                setTimeout(function () {
-                    $th.removeClass('animate');
-                }, 200);
+                    setTimeout(function () {
+                        $th.removeClass('animate');
+                    }, 200);
+                },0);
+    
                 /*********************/
                 /**     DISPLOSAL   **/
                 /*********************/
