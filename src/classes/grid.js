@@ -71,16 +71,19 @@ var Grid = function (userOptions) {
         var properties = propertiesInArrays.reduce(function (all, arr) {
             return all.concat(arr);
         }, []);
+        // this is a meta property that won't actually occur
+        // in the grid processors but is important regardless
+        properties.push('processors');
         var uniqueProperties = unique(properties);
 
         return uniqueProperties;
     }
 
     function process(options) {
-        return inputPipeline.process(options, 'process');
+        return inputPipeline.process({inner:options}, 'process');
     }
     function processInput(outerOptions) {
-        var options = outerOptions.model;
+        var options = outerOptions.model.inner;
 
         // re-run the init in case any processors got added/replaced since the last run
         checkInit();
