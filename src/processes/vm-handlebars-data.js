@@ -78,7 +78,7 @@ gridState.processors['vm-handlebars-data'] = {
                 return '';
             }
             return "<td class='nssg-td nssg-td-" + col.type + "'>" +
-                templates[col.type + '_hb'].replace(/\{\{value\}\}/g, '{{' + col.id + '}}') +
+                templates[col.type + '_hb'].replace(/\{\{value/g, '{{' + col.id) +
                 '</td>';
         }));
         templateParts.push("<td class='nssg-td nssg-td-gutter'></td>");
