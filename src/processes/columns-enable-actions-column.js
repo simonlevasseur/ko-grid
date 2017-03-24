@@ -4,7 +4,7 @@
 /** Columns Enable Actions Column **/
 /***********************************/
 gridState.processors['columns-enable-actions-column'] = {
-    watches: ['ui'],
+    watches: ['ui','columns'],
     runs: function (options) {
         if (options.model.ui && options.model.ui.actions) {
             var foundAny = false;
