@@ -338,7 +338,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         /** Columns Enable Actions Column **/
         /***********************************/
         gridState.processors['columns-enable-actions-column'] = {
-            watches: ['ui'],
+            watches: ['ui','columns'],
             runs: function (options) {
                 if (options.model.ui && options.model.ui.actions) {
                     var foundAny = false;
@@ -374,7 +374,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         /** Columns Enable Selection Column **/
         /*************************************/
         gridState.processors['columns-enable-selection-column'] = {
-            watches: ['ui'],
+            watches: ['ui','columns'],
             runs: function (options) {
                 if (options.model.ui.selectable) {
                     var selectCol = findFirst(options.model.columns, { id: '$$select' });
@@ -565,6 +565,36 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         
         /* eslint no-unused-vars: 0 */
         
+        /************************/
+        /** Filter Check Valid **/
+        /************************/
+        gridState.processors['filter-check-valid'] = {
+            watches: ['filter'],
+            runs: function (options) {
+        
+                if (options.model.logging) {
+                    console.log('Checking the filter criteria looks right');
+                }
+        
+                if (typeof options.model.filter === 'string')
+                {
+                    options.model.filter= {
+                        '*': options.model.filter
+                    };
+                }
+                
+                for(var key in options.model.filter)
+                {
+                    var filter = options.model.filter[key];
+                    if (typeof filter === "string"){
+                        options.model.filter[key] = filter.toLowerCase();
+                    }
+                }
+            }
+        };
+        
+        /* eslint no-unused-vars: 0 */
+        
         /***********************************/
         /** data-calculate-row-identities **/
         /***********************************/
@@ -638,6 +668,9 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['data-fetch-cell-values'] = {
             watches: ['data', 'columns'],
             runs: function (options) {
+                var originalData = options.changed.data ? options.model.data : options.cache.data;
+                options.cache.data = originalData;
+                
                 // Check to make sure this is a change worth updating for
                 options.cache.dataAccessors = options.cache.dataAccessors || {};
                 var columnsInOrder = JSON.stringify(options.model.columns.map(function (col) {
@@ -659,7 +692,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     console.log('Fetching cell values');
                 }
         
-                options.model.data = options.model.data.map(function (row) {
+                options.model.data = originalData.map(function (row) {
                     var temp = {};
                     for (var key in row) {
                         if (key[0] === '$') {
@@ -680,6 +713,102 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+            /* eslint no-unused-vars: 0 */
+        
+        /****************************/
+        /** Data Aggregate Values  **/
+        /****************************/
+        gridState.processors['data-aggregate-values'] = {
+            watches: ['filter', 'data'],
+            runs: function (options) {
+                var originalData = options.changed.data ? options.model.data : options.cache.data;
+                options.cache.data = originalData;
+        
+                if (!options.model.filter || !options.model.filter['*'])
+                {
+                    //we don't need to aggregate the data as it's not being used right now
+                    return;
+                }
+                
+                if (options.model.data.length === 0)
+                {
+                    //there's no data
+                    return;
+                }
+                
+                if (!options.changed.data && options.model.data[0].$aggregate)
+                {
+                    //the data didn't change and we already made the aggregate so nothing to do
+                    return;
+                }
+                
+                if (options.model.logging) {
+                    console.log('Aggregating the data to be used with the wildcard filter');
+                }
+        
+                options.model.data = originalData.map(function(row){
+                    var temp = {};
+                    for(var key in row)
+                    {
+                        temp[key] = row[key]
+                    }
+                    var aggregate = [];
+                    options.model.columns.forEach(function(col){
+                        aggregate.push(row[col.id]);
+                    });
+                    temp.$aggregate = aggregate.join(" | ").toLowerCase();
+                    return temp;
+                });
+            }
+        };
+        
+            /* eslint no-unused-vars: 0 */
+        
+        /****************************/
+        /** Data to Lowercase  **/
+        /****************************/
+        gridState.processors['data-to-lowercase'] = {
+            watches: ['filter', 'data'],
+            runs: function (options) {
+                var originalData = options.changed.data ? options.model.data : options.cache.data;
+                options.cache.data = originalData;
+        
+                if (!options.model.filter)
+                {
+                    //we don't need to aggregate the data as it's not being used right now
+                    return;
+                }
+                
+                if (options.model.data.length === 0)
+                {
+                    //there's no data
+                    return;
+                }
+                
+                if (!options.changed.data && options.model.data[0].$lower)
+                {
+                    //the data didn't change and we already made the aggregate so nothing to do
+                    return;
+                }
+                
+                if (options.model.logging) {
+                    console.log('Running toLowerCase on the data');
+                }
+        
+                options.model.data = originalData.map(function(row){
+                    var temp = {};
+                    var lower = {};
+                    for(var key in row)
+                    {
+                        temp[key] = row[key]
+                        lower[key] = (""+row[key]).toLowerCase();
+                    }
+                    temp.$lower = lower;
+                    return temp;
+                });
+            }
+        };
+        
         /* eslint no-unused-vars: 0 */
         
         /*****************/
@@ -694,12 +823,52 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 if (options.model.logging) {
                     console.log('Filtering the data');
                 }
-        
-                if (options.model.filter !== '') {
-                    throw new Error('Filtering is just a placeholder for now');
+                
+                options.model.data = originalData.filter(applyFilters);
+                
+                function applyFilters(row){
+                    var match = true;
+                    for(var key in options.model.filter)
+                    {
+                        if (key === '*')
+                        {
+                            match &= applyFilter(row.$lower.$aggregate, options.model.filter[key]);
+                        }
+                        else {
+                            match &= applyFilter(row.$lower[key], options.model.filter[key]);
+                        }
+                    }
+                    return match;
+                }
+                
+                function applyFilter(value, filter)
+                {
+                    if (typeof filter === 'string') {
+                        return stringFilter(value, filter);
+                    }
+                    else if (typeof filter === 'function'){
+                        return functionFilter(value, filter);
+                    }
+                    else if (typeof filter === 'object' && typeof filter.exec === 'function'){
+                        return regexFilter(value, filter);
+                    }
+                    else {
+                        throw new Error("Unrecognized fitler type");
+                    }
                 }
         
-                // filter the data based on the filter options
+                function stringFilter(value, filter){
+                    return filter.split(/\s/).reduce(function(acc, token){
+                        return acc && value.indexOf(token) > -1;
+                    }, true);
+                }
+                
+                function rejectFilter(value, filter){
+                    return !!filter.exec(value);
+                }
+                function functionFilter(value, filter){
+                    return !!filter(value);
+                }
             }
         };
         
@@ -1298,7 +1467,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                         return '';
                     }
                     return "<td class='nssg-td nssg-td-" + col.type + "'>" +
-                        templates[col.type + '_hb'].replace(/\{\{value\}\}/g, '{{' + col.id + '}}') +
+                        templates[col.type + '_hb'].replace(/\{\{value/g, '{{' + col.id) +
                         '</td>';
                 }));
                 templateParts.push("<td class='nssg-td nssg-td-gutter'></td>");
@@ -1545,7 +1714,12 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     
     function createInitialGridState() {
         var gridState = {
-            filter: '',
+            filter:{},
+            // {
+            //    'name': 'potato salad',  //also matches 'salad potato' and 'sweet potato and turnip salad'
+            //    'description': /this is rejex/, applies the regex on the column
+            //    '*'   : 'creamy coleslaw',  each word occurs in any column, order doesn't matter
+            //}
             sort: [
             // { sortBy: '', sortAsc: true }
             ],
@@ -1599,7 +1773,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'columns-check-valid',
                     'columns-index-by-id',
                     'paging-filter-change-resets-currentpage',
-                    'paging-sort-change-resets-currentpage'
+                    'paging-sort-change-resets-currentpage',
+                    'filter-check-valid'
                 ],
                 process: 'local',
                 local: [
@@ -1607,6 +1782,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'time-last-updated',
                     'data-check-valid',
                     'data-fetch-cell-values',
+                    'data-aggregate-values',
+                    'data-to-lowercase',
                     'data-filter',
                     'data-sort',
                     'paging-check-valid',
@@ -2054,16 +2231,24 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 /**     COLUMN TEMPLATE   **/
                 /***************************/
     
+                var tmplName = col.type;
+                var tmpl = templates[tmplName + '-th'];
+    
+                if (!tmpl) {
+                    tmplName = 'text';
+                    tmpl = templates[tmplName + '-th'];
+                }
+    
                 var $template = $('.nssg-th-content', $th);
                 if ($template.length === 0) {
                     $template = $("<div class='nssg-th-content'></div>", $th);
-                    $template.append(templates[col.type + '-th']);
+                    $template.append(tmpl);
                     $th.append($template);
                 }
     
                 setTimeout(function(){
                     $th
-                        .addClass('nssg-th-' + col.type)
+                        .addClass('nssg-th-' + tmplName)
                         .addClass('animate');
                     $th.outerWidth(col.width);
     
