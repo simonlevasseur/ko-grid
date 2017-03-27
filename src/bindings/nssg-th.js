@@ -77,16 +77,24 @@
             /**     COLUMN TEMPLATE   **/
             /***************************/
 
+            var tmplName = col.type;
+            var tmpl = templates[tmplName + '-th'];
+
+            if (!tmpl) {
+                tmplName = 'text';
+                tmpl = templates[tmplName + '-th'];
+            }
+
             var $template = $('.nssg-th-content', $th);
             if ($template.length === 0) {
                 $template = $("<div class='nssg-th-content'></div>", $th);
-                $template.append(templates[col.type + '-th']);
+                $template.append(tmpl);
                 $th.append($template);
             }
 
             setTimeout(function(){
                 $th
-                    .addClass('nssg-th-' + col.type)
+                    .addClass('nssg-th-' + tmplName)
                     .addClass('animate');
                 $th.outerWidth(col.width);
 
