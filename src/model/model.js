@@ -6,7 +6,12 @@
 
 function createInitialGridState() {
     var gridState = {
-        filter: '',
+        filter:{},
+        // {
+        //    'name': 'potato salad',  //also matches 'salad potato' and 'sweet potato and turnip salad'
+        //    'description': /this is rejex/, applies the regex on the column
+        //    '*'   : 'creamy coleslaw',  each word occurs in any column, order doesn't matter
+        //}
         sort: [
         // { sortBy: '', sortAsc: true }
         ],
@@ -60,7 +65,8 @@ function createInitialGridState() {
                 'columns-check-valid',
                 'columns-index-by-id',
                 'paging-filter-change-resets-currentpage',
-                'paging-sort-change-resets-currentpage'
+                'paging-sort-change-resets-currentpage',
+                'filter-check-valid'
             ],
             process: 'local',
             local: [
@@ -68,6 +74,8 @@ function createInitialGridState() {
                 'time-last-updated',
                 'data-check-valid',
                 'data-fetch-cell-values',
+                'data-aggregate-values',
+                'data-to-lowercase',
                 'data-filter',
                 'data-sort',
                 'paging-check-valid',

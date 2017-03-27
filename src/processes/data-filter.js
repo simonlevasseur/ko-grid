@@ -12,11 +12,51 @@ gridState.processors['data-filter'] = {
         if (options.model.logging) {
             console.log('Filtering the data');
         }
-
-        if (options.model.filter !== '') {
-            throw new Error('Filtering is just a placeholder for now');
+        
+        options.model.data = originalData.filter(applyFilters);
+        
+        function applyFilters(row){
+            var match = true;
+            for(var key in options.model.filter)
+            {
+                if (key === '*')
+                {
+                    match &= applyFilter(row.$lower.$aggregate, options.model.filter[key]);
+                }
+                else {
+                    match &= applyFilter(row.$lower[key], options.model.filter[key]);
+                }
+            }
+            return match;
+        }
+        
+        function applyFilter(value, filter)
+        {
+            if (typeof filter === 'string') {
+                return stringFilter(value, filter);
+            }
+            else if (typeof filter === 'function'){
+                return functionFilter(value, filter);
+            }
+            else if (typeof filter === 'object' && typeof filter.exec === 'function'){
+                return regexFilter(value, filter);
+            }
+            else {
+                throw new Error("Unrecognized fitler type");
+            }
         }
 
-        // filter the data based on the filter options
+        function stringFilter(value, filter){
+            return filter.split(/\s/).reduce(function(acc, token){
+                return acc && value.indexOf(token) > -1;
+            }, true);
+        }
+        
+        function rejectFilter(value, filter){
+            return !!filter.exec(value);
+        }
+        function functionFilter(value, filter){
+            return !!filter(value);
+        }
     }
 };
