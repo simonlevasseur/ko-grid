@@ -63,6 +63,7 @@ function createInitialGridState() {
                 'columns-enable-actions-column',
                 'vm-container-size',
                 'columns-check-valid',
+                'columns-changed-reset-width',
                 'columns-index-by-id',
                 'paging-filter-change-resets-currentpage',
                 'paging-sort-change-resets-currentpage',

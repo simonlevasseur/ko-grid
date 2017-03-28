@@ -29,6 +29,7 @@
 
     function AddInitialProcesses(gridState) {
         //= include "processes/columns-check-valid.js"
+        //= include "processes/columns-changed-reset-width.js"
         //= include "processes/columns-enable-actions-column.js"
         //= include "processes/columns-enable-selection-column.js"
         //= include "processes/columns-index-by-id.js"
