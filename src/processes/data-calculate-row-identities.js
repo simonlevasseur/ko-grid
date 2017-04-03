@@ -23,7 +23,7 @@ gridState.processors['data-calculate-row-identities'] = {
             var identity = identityColumns.reduce(function (total, col) {
                 return total + '_' + getCellData(row, col);
             }, '');
-            row.$identity = identity.replace(/[\s.@+\-|]/g, '');
+            row.$identity = identity.replace(/[\s'".@+\-|]/g, '');
         });
         // todo calculate identities
     }
