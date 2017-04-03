@@ -41,7 +41,8 @@
             function onDocumentMouseMove(e) {
                 var currentWidth = $th.outerWidth();
                 var newWidth = startWidth + (e.pageX - startX);
-                newWidth = Math.max(80, newWidth);
+                var minWidth = col.minWidth ? Math.max(80,col.minWidth) : 80;
+                newWidth = Math.max(minWidth, newWidth);
                 var difference = newWidth - currentWidth;
 
                 var $table = $('.nssg-table', $container);
@@ -57,9 +58,11 @@
             function onDocumentMouseUp(e) {
                 var colWidth = startWidth + (e.pageX - startX);
                 $document.off('.' + NAMESPACE);
+                
+                var minWidth = col.minWidth ? Math.max(80,col.minWidth) : 80;
 
                 var update = {};
-                update[col.id] = { width: Math.max(80, colWidth) };
+                update[col.id] = { width: Math.max(minWidth, colWidth) };
                 gridVM.process({ columnsById: update });
             }
 

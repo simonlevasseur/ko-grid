@@ -18,9 +18,6 @@ gridState.processors['columns-redistribute-space'] = {
         if (!options.model.space || options.model.space.width <= 0) {
             return;
         }
-        if (options.model.logging) {
-            console.log('Redistributing exta space amoung the columns');
-        }
         var columnsArray = options.model.columns.filter(function (col) {
             return col.isVisible;
         });
@@ -52,8 +49,12 @@ gridState.processors['columns-redistribute-space'] = {
             }
         }
 
-        tempToWidth(columnsArray);
+        var whatWasChanged = tempToWidth(columnsArray);
         removeTemp(columnsArray);
+        
+        if (options.model.logging && whatWasChanged){
+            console.log('Redistributing exta space amoung the columns', whatWasChanged);
+        }
     }
 };
 
@@ -64,9 +65,16 @@ function widthToTemp(columnsArray) {
 }
 
 function tempToWidth(columnsArray) {
+    var somethingChanged = false;
+    var whatWasChanged = {};
     columnsArray.forEach(function (col) {
+        if (col.width !== col.tempWidth){
+            whatWasChanged[col.id] = {before:col.width, after:col.tempWidth}
+            somethingChanged = true;
+        }
         col.width = col.tempWidth;
     });
+    return somethingChanged? whatWasChanged : null;
 }
 
 function removeTemp(columnsArray) {
