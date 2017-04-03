@@ -39,7 +39,7 @@
     /*********************/
     var templates = {};
 templates["grid"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=\"nssg-table\"><thead class=\"nssg-thead\"><tr class=\"nssg-thead-tr\" data-bind=\"newnssgTheadTr: true\"><th class=\"nssg-th\" data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=\"nssg-tobdy\" data-bind=\"html: hb_tbody\"></tbody></table></div>";
-templates["paging"] = "<div class=\"nssg-paging\"><div class=\"nssg-paging-selector-container\" data-bind=\"visible: true\"> <span class=\"nssg-paging-view\">View</span> <select class=\"nssg-paging-pages\" data-bind=\"options: pageSizes, value: pageSize\"></select></div> <span class=\"nssg-paging-count\">Now Showing<span data-bind=\"text:firstItem\"></span> of<span data-bind=\"text:totalItems\"></span></span><div class=\"nssg-paging-controls\" data-bind=\"visible: true\"><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-first\" data-bind=\"click: goToFirstPage, visible: currentPageIndex() !== 1\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-prev\" data-bind=\"click: goToPrevPage, visible: currentPageIndex() !== 1\"></a> <input type=\"text\" class=\"nssg-paging-current\" data-bind=\"value: currentPageIndex\"/><span class=\"nssg-paging-total\" data-bind=\"text: 'of ' + maxPageIndex()\"></span><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-next\" data-bind=\"click: goToNextPage, visible: currentPageIndex() !== maxPageIndex()\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-last\" data-bind=\"click: goToLastPage, visible: currentPageIndex() !== maxPageIndex()\"></a></div></div>";
+templates["paging"] = "<div class=\"nssg-paging\"><div class=\"nssg-paging-selector-container\" data-bind=\"visible: true\"> <span class=\"nssg-paging-view\">View</span> <select class=\"nssg-paging-pages\" data-bind=\"options: pageSizes, value: pageSize\"></select></div> <span class=\"nssg-paging-count\">Now Showing&nbsp;<span data-bind=\"text:firstItem\"></span>-<span data-bind=\"text:lastItem\"></span> of&nbsp;<span data-bind=\"text:totalItems\"></span></span><div class=\"nssg-paging-controls\" data-bind=\"visible: true\"> <a href=\"#\" class=\"nssg-paging-arrow nssg-paging-first\" data-bind=\"click: goToFirstPage, visible: currentPageIndex()>1\"></a> <a href=\"#\" class=\"nssg-paging-arrow nssg-paging-prev\" data-bind=\"click: goToPrevPage, visible: currentPageIndex()>1\"></a> <input type=\"text\" class=\"nssg-paging-current\" data-bind=\"value: currentPageIndex\"/><span class=\"nssg-paging-total\" data-bind=\"text: 'of ' + maxPageIndex()\"></span><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-next\" data-bind=\"click: goToNextPage, visible: currentPageIndex() < maxPageIndex()\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-last\" data-bind=\"click: goToLastPage, visible: currentPageIndex() < maxPageIndex()\"></a></div></div>";
 templates["actions"] = "<div class=\"nssg-actions-container\" data-bind=\"foreach: $component().ui().actions\"><a href=\"#\" class=\"nssg-action\" data-bind=\"css: $data.css, click: function(){$data.onClick(row.raw)}\"></a></div>";
 templates["actions_hb"] = "<div class=\"nssg-actions-container\"> {{#each ../actions as |action key|}}<a href=\"#\" class=\"nssg-action {{action.css}}\" onClick=\"{{../../jsContext}}.invokeAction('{{../$identity}}', {{action.index}}); return false\"></a> {{/each}}</div>";
 templates["gutter"] = "";
@@ -332,13 +332,47 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         }
         
+        /*********************************/
+        /** Columns Changed Reset Width **/
+        /*********************************/
+        gridState.processors['columns-changed-reset-width'] = {
+            watches: ['columns'],
+            runs: function (options) {
+                var columnsArray = options.model.columns.filter(function (col) {
+                    // Only count columns which are resizable
+                    return col.isResizable;
+                }).filter(function (col) {
+                    // don't count "ui" columns which get added automatically
+                    return col.id.indexOf('$$') !== 0;
+                });
+        
+                var before = options.cache.length;
+                var now = columnsArray.length;
+        
+                options.cache.length = now;
+        
+                if (typeof before !== 'number' || before === now || now === 0) {
+                    // this is either the first time seeing columns, nothing changed, or nothing to do
+                    return;
+                }
+        
+                if (options.model.logging) {
+                    console.log('The length of the columns array changed; Resetting the width of resizable columns');
+                }
+        
+                columnsArray.forEach(function (col) {
+                    col.width = 0;
+                });
+            }
+        };
+        
         /* eslint no-unused-vars: 0 */
         
         /***********************************/
         /** Columns Enable Actions Column **/
         /***********************************/
         gridState.processors['columns-enable-actions-column'] = {
-            watches: ['ui','columns'],
+            watches: ['ui', 'columns'],
             runs: function (options) {
                 if (options.model.ui && options.model.ui.actions) {
                     var foundAny = false;
@@ -374,7 +408,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         /** Columns Enable Selection Column **/
         /*************************************/
         gridState.processors['columns-enable-selection-column'] = {
-            watches: ['ui','columns'],
+            watches: ['ui', 'columns'],
             runs: function (options) {
                 if (options.model.ui.selectable) {
                     var selectCol = findFirst(options.model.columns, { id: '$$select' });
@@ -422,6 +456,77 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         var ABSOLUTE_MIN_COL_WIDTH = 80;
         
         /********************************/
+        /** Columns-Apply Min Max Width **/
+        /********************************/
+        gridState.processors['columns-apply-min-max-width'] = {
+            watches: ['columns', 'space'],
+            runs: function (options) {
+                if (!options.model.space || options.model.space.width <= 0) {
+                    return;
+                }
+                var columnsArray = options.model.columns.filter(function (col) {
+                    return col.isVisible;
+                });
+        
+                widthToTemp(columnsArray);
+        
+                applyMinMax(columnsArray);
+        
+                var whatWasChanged = tempToWidth(columnsArray);
+                removeTemp(columnsArray);
+        
+                if (options.model.logging && whatWasChanged) {
+                    console.log('Applying Min/Max column widths', whatWasChanged);
+                }
+            }
+        };
+        
+        function widthToTemp(columnsArray) {
+            columnsArray.forEach(function (col) {
+                col.tempWidth = typeof col.width === 'number' && col.width >= 0 ? col.width : ABSOLUTE_MIN_COL_WIDTH;
+            });
+        }
+        
+        function tempToWidth(columnsArray) {
+            var somethingChanged = false;
+            var whatWasChanged = {};
+            columnsArray.forEach(function (col) {
+                if (col.width !== col.tempWidth) {
+                    whatWasChanged[col.id] = { before: col.width, after: col.tempWidth };
+                    somethingChanged = true;
+                }
+                col.width = col.tempWidth;
+            });
+            return somethingChanged ? whatWasChanged : null;
+        }
+        
+        function removeTemp(columnsArray) {
+            columnsArray.forEach(function (col) {
+                delete col.tempWidth;
+            });
+        }
+        
+        function applyMinMax(columnsArray) {
+            columnsArray.forEach(function (col) {
+                if (col.isResizable === false || !col.isVisible) {
+                    return;
+                }
+                if (col.minWidth) {
+                    col.tempWidth = Math.max(col.tempWidth, col.minWidth);
+                }
+                if (col.maxWidth) {
+                    col.tempWidth = Math.min(col.tempWidth, col.maxWidth);
+                }
+                if (col.tempWidth < ABSOLUTE_MIN_COL_WIDTH) {
+                    col.tempWidth = ABSOLUTE_MIN_COL_WIDTH;
+                }
+            });
+        }
+        
+        /* eslint no-unused-vars: 0 */
+        var ABSOLUTE_MIN_COL_WIDTH = 80;
+        
+        /********************************/
         /** Columns-Redistribute Space **/
         /********************************/
         /**
@@ -437,9 +542,6 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             runs: function (options) {
                 if (!options.model.space || options.model.space.width <= 0) {
                     return;
-                }
-                if (options.model.logging) {
-                    console.log('Redistributing exta space amoung the columns');
                 }
                 var columnsArray = options.model.columns.filter(function (col) {
                     return col.isVisible;
@@ -472,8 +574,12 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     }
                 }
         
-                tempToWidth(columnsArray);
+                var whatWasChanged = tempToWidth(columnsArray);
                 removeTemp(columnsArray);
+        
+                if (options.model.logging && whatWasChanged) {
+                    console.log('Redistributing exta space amoung the columns', whatWasChanged);
+                }
             }
         };
         
@@ -484,9 +590,16 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         }
         
         function tempToWidth(columnsArray) {
+            var somethingChanged = false;
+            var whatWasChanged = {};
             columnsArray.forEach(function (col) {
+                if (col.width !== col.tempWidth) {
+                    whatWasChanged[col.id] = { before: col.width, after: col.tempWidth };
+                    somethingChanged = true;
+                }
                 col.width = col.tempWidth;
             });
+            return somethingChanged ? whatWasChanged : null;
         }
         
         function removeTemp(columnsArray) {
@@ -538,6 +651,86 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         }
         
         /* eslint no-unused-vars: 0 */
+        var ABSOLUTE_MIN_COL_WIDTH = 80;
+        
+        /**********************************************/
+        /** Columns-Unlock columns user just resized **/
+        /**********************************************/
+        gridState.processors['columns-unlock-columns-user-just-resized'] = {
+            watches: ['columns'],
+            runs: function (options) {
+                var didRemoveLock = false;
+                var whatWasUnlocked = [];
+        
+                options.model.columns.forEach(function (col) {
+                    if (col.$temporarilyIsResizableFalse) {
+                        delete col.$temporarilyIsResizableFalse;
+                        col.isResizable = true;
+                        didRemoveLock = true;
+                        whatWasUnlocked.push(col.id);
+                    }
+                });
+        
+                if (didRemoveLock && options.model.logging) {
+                    console.log('Unlocked columns', whatWasUnlocked);
+                }
+            }
+        };
+        
+        /* eslint no-unused-vars: 0 */
+        var ABSOLUTE_MIN_COL_WIDTH = 80;
+        
+        /********************************************/
+        /** Columns-Lock Columns user just resized **/
+        /********************************************/
+        gridState.processors['columns-lock-columns-user-just-resized'] = {
+            watches: ['columns'],
+            runs: function (options) {
+                var changedColumnsById = options.model.lastInput.columnsById;
+                if (!changedColumnsById) {
+                    return;
+                }
+        
+                var key;
+                var col;
+                var columnsThatWereJustResizedByUser = {};
+                for (key in changedColumnsById) {
+                    if (changedColumnsById.hasOwnProperty(key)) {
+                        col = changedColumnsById[key];
+                        if (col.width && options.model.columnsById[key].isResizable) {
+                            columnsThatWereJustResizedByUser[key] = true;
+                        }
+                    }
+                }
+        
+                var resizableColumnsThatWerentResized = options.model.columns.filter(function (filterCol) {
+                    return filterCol.isVisible && filterCol.isResizable && !columnsThatWereJustResizedByUser[filterCol.id];
+                });
+        
+                if (resizableColumnsThatWerentResized.length === 0) {
+                    // If there are no other valid resizable columns then we can't lock anything without creating ui glitches
+                    if (options.model.logging) {
+                        console.log('Unable to lock column size', columnsThatWereJustResizedByUser);
+                    }
+                }
+                else {
+                    var whatWasLocked = [];
+                    for (key in columnsThatWereJustResizedByUser) {
+                        if (columnsThatWereJustResizedByUser.hasOwnProperty(key)) {
+                            col = options.model.columnsById[key];
+                            col.isResizable = false;
+                            col.$temporarilyIsResizableFalse = true;
+                            whatWasLocked.push(key);
+                        }
+                    }
+                    if (options.model.logging) {
+                        console.log('Locking column width', whatWasLocked);
+                    }
+                }
+            }
+        };
+        
+        /* eslint no-unused-vars: 0 */
         
         /*****************************/
         /** Columns-sort-indicators **/
@@ -571,23 +764,22 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['filter-check-valid'] = {
             watches: ['filter'],
             runs: function (options) {
-        
                 if (options.model.logging) {
                     console.log('Checking the filter criteria looks right');
                 }
         
-                if (typeof options.model.filter === 'string')
-                {
-                    options.model.filter= {
+                if (typeof options.model.filter === 'string') {
+                    options.model.filter = {
                         '*': options.model.filter
                     };
                 }
-                
-                for(var key in options.model.filter)
-                {
-                    var filter = options.model.filter[key];
-                    if (typeof filter === "string"){
-                        options.model.filter[key] = filter.toLowerCase();
+        
+                for (var key in options.model.filter) {
+                    if (options.model.filter.hasOwnProperty(key)) {
+                        var filter = options.model.filter[key];
+                        if (typeof filter === 'string') {
+                            options.model.filter[key] = filter.toLowerCase();
+                        }
                     }
                 }
             }
@@ -618,7 +810,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     var identity = identityColumns.reduce(function (total, col) {
                         return total + '_' + getCellData(row, col);
                     }, '');
-                    row.$identity = identity.replace(/[\s.@+\-|]/g, '');
+                    row.$identity = identity.replace(/[\s'".@+\-|]/g, '');
                 });
                 // todo calculate identities
             }
@@ -670,7 +862,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             runs: function (options) {
                 var originalData = options.changed.data ? options.model.data : options.cache.data;
                 options.cache.data = originalData;
-                
+        
                 // Check to make sure this is a change worth updating for
                 options.cache.dataAccessors = options.cache.dataAccessors || {};
                 var columnsInOrder = JSON.stringify(options.model.columns.map(function (col) {
@@ -724,39 +916,37 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 var originalData = options.changed.data ? options.model.data : options.cache.data;
                 options.cache.data = originalData;
         
-                if (!options.model.filter || !options.model.filter['*'])
-                {
-                    //we don't need to aggregate the data as it's not being used right now
+                if (!options.model.filter || !options.model.filter['*']) {
+                    // we don't need to aggregate the data as it's not being used right now
                     return;
                 }
-                
-                if (options.model.data.length === 0)
-                {
-                    //there's no data
+        
+                if (options.model.data.length === 0) {
+                    // there's no data
                     return;
                 }
-                
-                if (!options.changed.data && options.model.data[0].$aggregate)
-                {
-                    //the data didn't change and we already made the aggregate so nothing to do
+        
+                if (!options.changed.data && options.model.data[0].$aggregate) {
+                    // the data didn't change and we already made the aggregate so nothing to do
                     return;
                 }
-                
+        
                 if (options.model.logging) {
                     console.log('Aggregating the data to be used with the wildcard filter');
                 }
         
-                options.model.data = originalData.map(function(row){
+                options.model.data = originalData.map(function (row) {
                     var temp = {};
-                    for(var key in row)
-                    {
-                        temp[key] = row[key]
+                    for (var key in row) {
+                        if (row.hasOwnProperty(key)) {
+                            temp[key] = row[key];
+                        }
                     }
                     var aggregate = [];
-                    options.model.columns.forEach(function(col){
+                    options.model.columns.forEach(function (col) {
                         aggregate.push(row[col.id]);
                     });
-                    temp.$aggregate = aggregate.join(" | ").toLowerCase();
+                    temp.$aggregate = aggregate.join(' | ').toLowerCase();
                     return temp;
                 });
             }
@@ -773,35 +963,33 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 var originalData = options.changed.data ? options.model.data : options.cache.data;
                 options.cache.data = originalData;
         
-                if (!options.model.filter)
-                {
-                    //we don't need to aggregate the data as it's not being used right now
+                if (!options.model.filter) {
+                    // we don't need to aggregate the data as it's not being used right now
                     return;
                 }
-                
-                if (options.model.data.length === 0)
-                {
-                    //there's no data
+        
+                if (options.model.data.length === 0) {
+                    // there's no data
                     return;
                 }
-                
-                if (!options.changed.data && options.model.data[0].$lower)
-                {
-                    //the data didn't change and we already made the aggregate so nothing to do
+        
+                if (!options.changed.data && options.model.data[0].$lower) {
+                    // the data didn't change and we already made the aggregate so nothing to do
                     return;
                 }
-                
+        
                 if (options.model.logging) {
                     console.log('Running toLowerCase on the data');
                 }
         
-                options.model.data = originalData.map(function(row){
+                options.model.data = originalData.map(function (row) {
                     var temp = {};
                     var lower = {};
-                    for(var key in row)
-                    {
-                        temp[key] = row[key]
-                        lower[key] = (""+row[key]).toLowerCase();
+                    for (var key in row) {
+                        if (row.hasOwnProperty(key)) {
+                            temp[key] = row[key];
+                            lower[key] = ('' + row[key]).toLowerCase();
+                        }
                     }
                     temp.$lower = lower;
                     return temp;
@@ -823,15 +1011,14 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 if (options.model.logging) {
                     console.log('Filtering the data');
                 }
-                
+        
                 options.model.data = originalData.filter(applyFilters);
-                
-                function applyFilters(row){
+        
+                function applyFilters(row) {
+                    /* eslint no-bitwise: 0*/
                     var match = true;
-                    for(var key in options.model.filter)
-                    {
-                        if (key === '*')
-                        {
+                    for (var key in options.model.filter) {
+                        if (key === '*') {
                             match &= applyFilter(row.$lower.$aggregate, options.model.filter[key]);
                         }
                         else {
@@ -840,33 +1027,32 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     }
                     return match;
                 }
-                
-                function applyFilter(value, filter)
-                {
+        
+                function applyFilter(value, filter) {
                     if (typeof filter === 'string') {
                         return stringFilter(value, filter);
                     }
-                    else if (typeof filter === 'function'){
+                    else if (typeof filter === 'function') {
                         return functionFilter(value, filter);
                     }
-                    else if (typeof filter === 'object' && typeof filter.exec === 'function'){
+                    else if (typeof filter === 'object' && typeof filter.exec === 'function') {
                         return regexFilter(value, filter);
                     }
                     else {
-                        throw new Error("Unrecognized fitler type");
+                        throw new Error('Unrecognized fitler type');
                     }
                 }
         
-                function stringFilter(value, filter){
-                    return filter.split(/\s/).reduce(function(acc, token){
+                function stringFilter(value, filter) {
+                    return filter.split(/\s/).reduce(function (acc, token) {
                         return acc && value.indexOf(token) > -1;
                     }, true);
                 }
-                
-                function rejectFilter(value, filter){
+        
+                function regexFilter(value, filter) {
                     return !!filter.exec(value);
                 }
-                function functionFilter(value, filter){
+                function functionFilter(value, filter) {
                     return !!filter(value);
                 }
             }
@@ -891,11 +1077,20 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 var minIndex = paging.pageSize * (paging.currentPage - 1);
                 var maxIndex = minIndex + paging.pageSize;
         
+                maxIndex = Math.min(maxIndex, originalData.length); // the last page might have less than a full page of items
+        
                 options.model.paging.firstItem = minIndex + 1;
-                options.model.paging.lastItem = maxIndex + 1;
+                options.model.paging.lastItem = maxIndex + 1 - 1; // converting from a 0-based index to a 1-based index, then
+                                                                  // subtracting 1 because the last item is the one before the slice
+        
+                if (originalData.length === 0) {
+                    options.model.paging.firstItem = 0;
+                    options.model.paging.lastItemItem = 0;
+                }
+        
                 options.model.paging.totalItems = originalData.length;
         
-                options.model.paging.pageCount = Math.ceil(originalData.length / paging.pageSize);
+                options.model.paging.pageCount = Math.max(1, Math.ceil(originalData.length / paging.pageSize));
                 options.model.data = originalData.slice(minIndex, maxIndex);
             }
         };
@@ -1113,7 +1308,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     paging.currentPage = 1;
                 }
                 else if (paging.currentPage > paging.pageCount) {
-                    paging.currentPage = paging.pageCount;
+                    paging.currentPage = Math.max(1, paging.pageCount);
                 }
             }
         };
@@ -1404,8 +1599,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 }
             },
             runs: function (options) {
-                if (!options.model.space || !options.model.space.width)
-                {
+                if (!options.model.space || !options.model.space.width) {
                     return;
                 }
                 options.cache.templates = options.cache.templates || {};
@@ -1506,9 +1700,9 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 }
         
                 if (!options.model.vm.data.loaded.peek()) {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         options.model.vm.data.loaded(true);
-                    },100);
+                    }, 100);
                 }
             }
         };
@@ -1524,8 +1718,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 model.vm.columns = ko.observableArray();
             },
             runs: function (options) {
-                if (!options.model.space || !options.model.space.width)
-                {
+                if (!options.model.space || !options.model.space.width) {
                     return;
                 }
                 if (options.model.logging) {
@@ -1714,12 +1907,12 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     
     function createInitialGridState() {
         var gridState = {
-            filter:{},
+            filter: {},
             // {
             //    'name': 'potato salad',  //also matches 'salad potato' and 'sweet potato and turnip salad'
             //    'description': /this is rejex/, applies the regex on the column
             //    '*'   : 'creamy coleslaw',  each word occurs in any column, order doesn't matter
-            //}
+            // }
             sort: [
             // { sortBy: '', sortAsc: true }
             ],
@@ -1771,6 +1964,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'columns-enable-actions-column',
                     'vm-container-size',
                     'columns-check-valid',
+                    'columns-changed-reset-width',
                     'columns-index-by-id',
                     'paging-filter-change-resets-currentpage',
                     'paging-sort-change-resets-currentpage',
@@ -1807,7 +2001,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'ui-selected-all-indicator',
                     'ui-selected-count',
                     'ui-export-selected-rows',
+                    'columns-apply-min-max-width',
+                    'columns-lock-columns-user-just-resized',
                     'columns-redistribute-space',
+                    'columns-unlock-columns-user-just-resized',
                     'vm-handlebars-data',
                     'vm-update-bindings-paging',
                     'vm-update-bindings-columns',
@@ -1907,7 +2104,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         }
     
         function process(options) {
-            return inputPipeline.process({inner:options}, 'process');
+            return inputPipeline.process({ inner: options }, 'process');
         }
         function processInput(outerOptions) {
             var options = outerOptions.model.inner;
@@ -1947,6 +2144,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         this.pageSizes = propertyAsObservable(gridVM.ui, 'pageSizes');
         this.maxPageIndex = propertyAsObservable(gridVM.paging, 'pageCount');
         this.firstItem = propertyAsObservable(gridVM.paging, 'firstItem');
+        this.lastItem = propertyAsObservable(gridVM.paging, 'lastItem');
         this.totalItems = propertyAsObservable(gridVM.paging, 'totalItems');
         this.currentPageIndex = ko.pureComputed({ read: function () {
             return gridVM.paging().currentPage;
@@ -2136,7 +2334,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     var allColWidths = visibleCols().reduce(function (total, col) {
                         return total + col().width;
                     }, 0);
-                    setTimeout(function() {
+                    setTimeout(function () {
                         var containerWidth = $container.width();
                         if (typeof allColWidths !== 'number' || isNaN(allColWidths)) {
                             allColWidths = 0;
@@ -2144,7 +2342,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     
                         var fixedWidth = Math.ceil(Math.max(allColWidths, containerWidth));
                         $('.nssg-table', $container).width(fixedWidth);
-                    },0);
+                    }, 0);
                 });
     
                 return { controlsDescendantBindings: true };
@@ -2195,7 +2393,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 function onDocumentMouseMove(e) {
                     var currentWidth = $th.outerWidth();
                     var newWidth = startWidth + (e.pageX - startX);
-                    newWidth = Math.max(80, newWidth);
+                    var minWidth = col.minWidth ? Math.max(80, col.minWidth) : 80;
+                    newWidth = Math.max(minWidth, newWidth);
                     var difference = newWidth - currentWidth;
     
                     var $table = $('.nssg-table', $container);
@@ -2212,8 +2411,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     var colWidth = startWidth + (e.pageX - startX);
                     $document.off('.' + NAMESPACE);
     
+                    var minWidth = col.minWidth ? Math.max(80, col.minWidth) : 80;
+    
                     var update = {};
-                    update[col.id] = { width: Math.max(80, colWidth) };
+                    update[col.id] = { width: Math.max(minWidth, colWidth) };
                     gridVM.process({ columnsById: update });
                 }
     
@@ -2246,7 +2447,13 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     $th.append($template);
                 }
     
-                setTimeout(function(){
+                if (col.width === 0) {
+                    // This hack is needed for firefox
+                    $th.css('padding', '0px');
+                    $th.css('border', '0px solid transparent');
+                }
+    
+                setTimeout(function () {
                     $th
                         .addClass('nssg-th-' + tmplName)
                         .addClass('animate');
@@ -2255,7 +2462,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     setTimeout(function () {
                         $th.removeClass('animate');
                     }, 200);
-                },0);
+                }, 0);
     
                 /*********************/
                 /**     DISPLOSAL   **/
