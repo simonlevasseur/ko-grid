@@ -95,12 +95,18 @@
                 $th.append($template);
             }
 
+            if (col.width === 0) {
+                //This hack is needed for firefox
+                $th.css("padding", "0px");
+                $th.css("border", "0px solid transparent");
+            }
+
             setTimeout(function () {
                 $th
                     .addClass('nssg-th-' + tmplName)
                     .addClass('animate');
                 $th.outerWidth(col.width);
-
+                
                 setTimeout(function () {
                     $th.removeClass('animate');
                 }, 200);
