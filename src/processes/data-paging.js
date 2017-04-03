@@ -16,6 +16,8 @@ gridState.processors['data-paging'] = {
 
         var minIndex = paging.pageSize * (paging.currentPage - 1);
         var maxIndex = minIndex + paging.pageSize;
+        
+        maxIndex = Math.min(maxIndex, originalData.length); //the last page might have less than a full page of items
 
         options.model.paging.firstItem = minIndex + 1;
         options.model.paging.lastItem = maxIndex + 1 - 1; //converting from a 0-based index to a 1-based index, then 
