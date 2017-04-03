@@ -4,7 +4,7 @@
         <select class="nssg-paging-pages" data-bind="options: pageSizes, value: pageSize"></select>
     </div>
 
-    <span class="nssg-paging-count">Now Showing <span data-bind="text:firstItem"></span> of <span data-bind="text:totalItems"></span></span>
+    <span class="nssg-paging-count">Now Showing&nbsp;<span data-bind="text:firstItem"></span>-<span data-bind="text:lastItem"></span> of <span data-bind="text:totalItems"></span></span>
 
     <div class="nssg-paging-controls" data-bind="visible: true">
         <a href="#" class="nssg-paging-arrow nssg-paging-first" data-bind="click: goToFirstPage, visible: currentPageIndex() !== 1"></a>

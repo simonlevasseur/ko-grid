@@ -18,7 +18,8 @@ gridState.processors['data-paging'] = {
         var maxIndex = minIndex + paging.pageSize;
 
         options.model.paging.firstItem = minIndex + 1;
-        options.model.paging.lastItem = maxIndex + 1;
+        options.model.paging.lastItem = maxIndex + 1 - 1; //converting from a 0-based index to a 1-based index, then 
+                                                          //subtracting 1 because the last item is the one before the slice 
         options.model.paging.totalItems = originalData.length;
 
         options.model.paging.pageCount = Math.ceil(originalData.length / paging.pageSize);
