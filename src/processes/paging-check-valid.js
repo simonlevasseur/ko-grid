@@ -25,7 +25,7 @@ gridState.processors['paging-check-valid'] = {
             paging.currentPage = 1;
         }
         else if (paging.currentPage > paging.pageCount) {
-            paging.currentPage = paging.pageCount;
+            paging.currentPage = Math.max(1, paging.pageCount);
         }
     }
 };

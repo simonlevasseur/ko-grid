@@ -7,11 +7,11 @@
     <span class="nssg-paging-count">Now Showing&nbsp;<span data-bind="text:firstItem"></span>-<span data-bind="text:lastItem"></span> of&nbsp; <span data-bind="text:totalItems"></span></span>
 
     <div class="nssg-paging-controls" data-bind="visible: true">
-        <a href="#" class="nssg-paging-arrow nssg-paging-first" data-bind="click: goToFirstPage, visible: currentPageIndex() !== 1"></a>
-        <a href="#" class="nssg-paging-arrow nssg-paging-prev" data-bind="click: goToPrevPage, visible: currentPageIndex() !== 1"></a>
+        <a href="#" class="nssg-paging-arrow nssg-paging-first" data-bind="click: goToFirstPage, visible: currentPageIndex() > 1"></a>
+        <a href="#" class="nssg-paging-arrow nssg-paging-prev" data-bind="click: goToPrevPage, visible: currentPageIndex() > 1"></a>
         <input type="text" class="nssg-paging-current" data-bind="value: currentPageIndex" />
         <span class="nssg-paging-total" data-bind="text: 'of ' + maxPageIndex()"></span>
-        <a href="#" class="nssg-paging-arrow nssg-paging-next" data-bind="click: goToNextPage, visible: currentPageIndex() !== maxPageIndex()"></a>
-        <a href="#" class="nssg-paging-arrow nssg-paging-last" data-bind="click: goToLastPage, visible: currentPageIndex() !== maxPageIndex()"></a>
+        <a href="#" class="nssg-paging-arrow nssg-paging-next" data-bind="click: goToNextPage, visible: currentPageIndex() < maxPageIndex()"></a>
+        <a href="#" class="nssg-paging-arrow nssg-paging-last" data-bind="click: goToLastPage, visible: currentPageIndex() < maxPageIndex()"></a>
     </div>
 </div>
