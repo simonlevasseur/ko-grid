@@ -16,6 +16,7 @@ gridState.processors['data-filter'] = {
         options.model.data = originalData.filter(applyFilters);
 
         function applyFilters(row) {
+            /* eslint no-bitwise: 0*/
             var match = true;
             for (var key in options.model.filter) {
                 if (key === '*') {
@@ -49,7 +50,7 @@ gridState.processors['data-filter'] = {
             }, true);
         }
 
-        function rejectFilter(value, filter) {
+        function regexFilter(value, filter) {
             return !!filter.exec(value);
         }
         function functionFilter(value, filter) {

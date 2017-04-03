@@ -7,23 +7,28 @@ var ABSOLUTE_MIN_COL_WIDTH = 80;
 gridState.processors['columns-lock-columns-user-just-resized'] = {
     watches: ['columns'],
     runs: function (options) {
-        if (!options.model.lastInput.columnsById) {
+        var changedColumnsById = options.model.lastInput.columnsById;
+        if (!changedColumnsById) {
             return;
         }
 
+        var key;
+        var col;
         var columnsThatWereJustResizedByUser = {};
-        for (var key in options.model.lastInput.columnsById) {
-            var col = options.model.lastInput.columnsById[key];
-            if (col.width && options.model.columnsById[key].isResizable) {
-                columnsThatWereJustResizedByUser[key] = true;
+        for (key in changedColumnsById) {
+            if (changedColumnsById.hasOwnProperty(key)) {
+                col = changedColumnsById[key];
+                if (col.width && options.model.columnsById[key].isResizable) {
+                    columnsThatWereJustResizedByUser[key] = true;
+                }
             }
         }
 
-        var resizableColumnsThatWerentResized = options.model.columns.filter(function (col) {
-            return col.isVisible && col.isResizable && !columnsThatWereJustResizedByUser[col.id];
+        var resizableColumnsThatWerentResized = options.model.columns.filter(function (filterCol) {
+            return filterCol.isVisible && filterCol.isResizable && !columnsThatWereJustResizedByUser[filterCol.id];
         });
 
-        if (resizableColumnsThatWerentResized.length == 0) {
+        if (resizableColumnsThatWerentResized.length === 0) {
             // If there are no other valid resizable columns then we can't lock anything without creating ui glitches
             if (options.model.logging) {
                 console.log('Unable to lock column size', columnsThatWereJustResizedByUser);
@@ -31,11 +36,13 @@ gridState.processors['columns-lock-columns-user-just-resized'] = {
         }
         else {
             var whatWasLocked = [];
-            for (var key in columnsThatWereJustResizedByUser) {
-                var col = options.model.columnsById[key];
-                col.isResizable = false;
-                col.$temporarilyIsResizableFalse = true;
-                whatWasLocked.push(key);
+            for (key in columnsThatWereJustResizedByUser) {
+                if (columnsThatWereJustResizedByUser.hasOwnProperty(key)) {
+                    col = options.model.columnsById[key];
+                    col.isResizable = false;
+                    col.$temporarilyIsResizableFalse = true;
+                    whatWasLocked.push(key);
+                }
             }
             if (options.model.logging) {
                 console.log('Locking column width', whatWasLocked);

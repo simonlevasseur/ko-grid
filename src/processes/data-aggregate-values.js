@@ -31,7 +31,9 @@ gridState.processors['data-aggregate-values'] = {
         options.model.data = originalData.map(function (row) {
             var temp = {};
             for (var key in row) {
-                temp[key] = row[key];
+                if (row.hasOwnProperty(key)) {
+                    temp[key] = row[key];
+                }
             }
             var aggregate = [];
             options.model.columns.forEach(function (col) {

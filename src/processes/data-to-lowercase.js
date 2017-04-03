@@ -32,8 +32,10 @@ gridState.processors['data-to-lowercase'] = {
             var temp = {};
             var lower = {};
             for (var key in row) {
-                temp[key] = row[key];
-                lower[key] = ('' + row[key]).toLowerCase();
+                if (row.hasOwnProperty(key)) {
+                    temp[key] = row[key];
+                    lower[key] = ('' + row[key]).toLowerCase();
+                }
             }
             temp.$lower = lower;
             return temp;
