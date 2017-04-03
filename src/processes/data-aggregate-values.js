@@ -9,39 +9,35 @@ gridState.processors['data-aggregate-values'] = {
         var originalData = options.changed.data ? options.model.data : options.cache.data;
         options.cache.data = originalData;
 
-        if (!options.model.filter || !options.model.filter['*'])
-        {
-            //we don't need to aggregate the data as it's not being used right now
+        if (!options.model.filter || !options.model.filter['*']) {
+            // we don't need to aggregate the data as it's not being used right now
             return;
         }
-        
-        if (options.model.data.length === 0)
-        {
-            //there's no data
+
+        if (options.model.data.length === 0) {
+            // there's no data
             return;
         }
-        
-        if (!options.changed.data && options.model.data[0].$aggregate)
-        {
-            //the data didn't change and we already made the aggregate so nothing to do
+
+        if (!options.changed.data && options.model.data[0].$aggregate) {
+            // the data didn't change and we already made the aggregate so nothing to do
             return;
         }
-        
+
         if (options.model.logging) {
             console.log('Aggregating the data to be used with the wildcard filter');
         }
 
-        options.model.data = originalData.map(function(row){
+        options.model.data = originalData.map(function (row) {
             var temp = {};
-            for(var key in row)
-            {
-                temp[key] = row[key]
+            for (var key in row) {
+                temp[key] = row[key];
             }
             var aggregate = [];
-            options.model.columns.forEach(function(col){
+            options.model.columns.forEach(function (col) {
                 aggregate.push(row[col.id]);
             });
-            temp.$aggregate = aggregate.join(" | ").toLowerCase();
+            temp.$aggregate = aggregate.join(' | ').toLowerCase();
             return temp;
         });
     }

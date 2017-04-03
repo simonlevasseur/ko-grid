@@ -9,8 +9,7 @@ gridState.processors['vm-update-bindings-columns'] = {
         model.vm.columns = ko.observableArray();
     },
     runs: function (options) {
-        if (!options.model.space || !options.model.space.width)
-        {
+        if (!options.model.space || !options.model.space.width) {
             return;
         }
         if (options.model.logging) {

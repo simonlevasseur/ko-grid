@@ -12,15 +12,13 @@ gridState.processors['data-filter'] = {
         if (options.model.logging) {
             console.log('Filtering the data');
         }
-        
+
         options.model.data = originalData.filter(applyFilters);
-        
-        function applyFilters(row){
+
+        function applyFilters(row) {
             var match = true;
-            for(var key in options.model.filter)
-            {
-                if (key === '*')
-                {
+            for (var key in options.model.filter) {
+                if (key === '*') {
                     match &= applyFilter(row.$lower.$aggregate, options.model.filter[key]);
                 }
                 else {
@@ -29,33 +27,32 @@ gridState.processors['data-filter'] = {
             }
             return match;
         }
-        
-        function applyFilter(value, filter)
-        {
+
+        function applyFilter(value, filter) {
             if (typeof filter === 'string') {
                 return stringFilter(value, filter);
             }
-            else if (typeof filter === 'function'){
+            else if (typeof filter === 'function') {
                 return functionFilter(value, filter);
             }
-            else if (typeof filter === 'object' && typeof filter.exec === 'function'){
+            else if (typeof filter === 'object' && typeof filter.exec === 'function') {
                 return regexFilter(value, filter);
             }
             else {
-                throw new Error("Unrecognized fitler type");
+                throw new Error('Unrecognized fitler type');
             }
         }
 
-        function stringFilter(value, filter){
-            return filter.split(/\s/).reduce(function(acc, token){
+        function stringFilter(value, filter) {
+            return filter.split(/\s/).reduce(function (acc, token) {
                 return acc && value.indexOf(token) > -1;
             }, true);
         }
-        
-        function rejectFilter(value, filter){
+
+        function rejectFilter(value, filter) {
             return !!filter.exec(value);
         }
-        function functionFilter(value, filter){
+        function functionFilter(value, filter) {
             return !!filter(value);
         }
     }

@@ -6,12 +6,12 @@
 
 function createInitialGridState() {
     var gridState = {
-        filter:{},
+        filter: {},
         // {
         //    'name': 'potato salad',  //also matches 'salad potato' and 'sweet potato and turnip salad'
         //    'description': /this is rejex/, applies the regex on the column
         //    '*'   : 'creamy coleslaw',  each word occurs in any column, order doesn't matter
-        //}
+        // }
         sort: [
         // { sortBy: '', sortAsc: true }
         ],

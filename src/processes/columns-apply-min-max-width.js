@@ -20,8 +20,8 @@ gridState.processors['columns-apply-min-max-width'] = {
 
         var whatWasChanged = tempToWidth(columnsArray);
         removeTemp(columnsArray);
-        
-        if (options.model.logging && whatWasChanged){
+
+        if (options.model.logging && whatWasChanged) {
             console.log('Applying Min/Max column widths', whatWasChanged);
         }
     }
@@ -37,13 +37,13 @@ function tempToWidth(columnsArray) {
     var somethingChanged = false;
     var whatWasChanged = {};
     columnsArray.forEach(function (col) {
-        if (col.width !== col.tempWidth){
-            whatWasChanged[col.id] = {before:col.width, after:col.tempWidth}
+        if (col.width !== col.tempWidth) {
+            whatWasChanged[col.id] = { before: col.width, after: col.tempWidth };
             somethingChanged = true;
         }
         col.width = col.tempWidth;
     });
-    return somethingChanged? whatWasChanged : null;
+    return somethingChanged ? whatWasChanged : null;
 }
 
 function removeTemp(columnsArray) {

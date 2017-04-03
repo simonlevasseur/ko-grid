@@ -80,7 +80,7 @@ var Grid = function (userOptions) {
     }
 
     function process(options) {
-        return inputPipeline.process({inner:options}, 'process');
+        return inputPipeline.process({ inner: options }, 'process');
     }
     function processInput(outerOptions) {
         var options = outerOptions.model.inner;

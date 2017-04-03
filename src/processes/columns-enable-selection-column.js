@@ -4,7 +4,7 @@
 /** Columns Enable Selection Column **/
 /*************************************/
 gridState.processors['columns-enable-selection-column'] = {
-    watches: ['ui','columns'],
+    watches: ['ui', 'columns'],
     runs: function (options) {
         if (options.model.ui.selectable) {
             var selectCol = findFirst(options.model.columns, { id: '$$select' });

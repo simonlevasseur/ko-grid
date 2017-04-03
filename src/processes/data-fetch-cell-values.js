@@ -8,7 +8,7 @@ gridState.processors['data-fetch-cell-values'] = {
     runs: function (options) {
         var originalData = options.changed.data ? options.model.data : options.cache.data;
         options.cache.data = originalData;
-        
+
         // Check to make sure this is a change worth updating for
         options.cache.dataAccessors = options.cache.dataAccessors || {};
         var columnsInOrder = JSON.stringify(options.model.columns.map(function (col) {

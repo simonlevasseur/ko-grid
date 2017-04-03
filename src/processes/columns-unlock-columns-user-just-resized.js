@@ -9,16 +9,16 @@ gridState.processors['columns-unlock-columns-user-just-resized'] = {
     runs: function (options) {
         var didRemoveLock = false;
         var whatWasUnlocked = [];
-    
-        options.model.columns.forEach(function(col){
-            if (col.$temporarilyIsResizableFalse){
+
+        options.model.columns.forEach(function (col) {
+            if (col.$temporarilyIsResizableFalse) {
                 delete col.$temporarilyIsResizableFalse;
                 col.isResizable = true;
                 didRemoveLock = true;
                 whatWasUnlocked.push(col.id);
             }
         });
-        
+
         if (didRemoveLock && options.model.logging) {
             console.log('Unlocked columns', whatWasUnlocked);
         }

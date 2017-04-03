@@ -15,8 +15,7 @@ gridState.processors['vm-handlebars-data'] = {
         }
     },
     runs: function (options) {
-        if (!options.model.space || !options.model.space.width)
-        {
+        if (!options.model.space || !options.model.space.width) {
             return;
         }
         options.cache.templates = options.cache.templates || {};
@@ -117,9 +116,9 @@ gridState.processors['vm-handlebars-data'] = {
         }
 
         if (!options.model.vm.data.loaded.peek()) {
-            setTimeout(function() {
+            setTimeout(function () {
                 options.model.vm.data.loaded(true);
-            },100);
+            }, 100);
         }
     }
 };
