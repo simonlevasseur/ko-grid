@@ -1121,6 +1121,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         /** Data Sort **/
         /***************/
         gridState.processors['data-sort'] = {
+            input: "sortFunctions",
             watches: ['sort', 'data'],
             runs: function (options) {
                 var originalData = options.changed.data ? options.model.data : options.cache.data;
