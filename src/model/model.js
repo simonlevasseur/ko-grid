@@ -63,7 +63,6 @@ function createInitialGridState() {
                 'columns-enable-actions-column',
                 'vm-container-size',
                 'columns-check-valid',
-                'columns-changed-reset-width',
                 'columns-index-by-id',
                 'paging-filter-change-resets-currentpage',
                 'paging-sort-change-resets-currentpage',
@@ -101,9 +100,7 @@ function createInitialGridState() {
                 'ui-selected-count',
                 'ui-export-selected-rows',
                 'columns-apply-min-max-width',
-                'columns-lock-columns-user-just-resized',
                 'columns-redistribute-space',
-                'columns-unlock-columns-user-just-resized',
                 'vm-handlebars-data',
                 'vm-update-bindings-paging',
                 'vm-update-bindings-columns',
@@ -112,7 +109,13 @@ function createInitialGridState() {
             ],
             'fetch-data': function () {
                 throw new Error("Grids must specifiy a 'fetch-data' function or override the definition of 'process'");
-            }
+            },
+            'columns-redistribute-space': 'columns-redistribute-space-to-rightmost-visible'
+            /*[
+                'columns-lock-columns-user-just-resized',
+                'columns-redistribute-space-equally',
+                'columns-unlock-columns-user-just-resized',
+            ]*/
 
         }
     };

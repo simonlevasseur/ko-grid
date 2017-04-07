@@ -29,12 +29,13 @@
 
     function AddInitialProcesses(gridState) {
         //= include "processes/columns-check-valid.js"
-        //= include "processes/columns-changed-reset-width.js"
+        //= include "processes/columns-changed-reset-width-to-zero.js"
         //= include "processes/columns-enable-actions-column.js"
         //= include "processes/columns-enable-selection-column.js"
         //= include "processes/columns-index-by-id.js"
         //= include "processes/columns-apply-min-max-width.js"
-        //= include "processes/columns-redistribute-space.js"
+        //= include "processes/columns-redistribute-space-equally.js"
+        //= include "processes/columns-redistribute-space-to-rightmost-visible.js"
         //= include "processes/columns-unlock-columns-user-just-resized.js"
         //= include "processes/columns-lock-columns-user-just-resized.js"
         //= include "processes/columns-sort-indicators.js"

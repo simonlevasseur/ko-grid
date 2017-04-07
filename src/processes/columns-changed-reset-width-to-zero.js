@@ -1,7 +1,7 @@
-/*********************************/
-/** Columns Changed Reset Width **/
-/*********************************/
-gridState.processors['columns-changed-reset-width'] = {
+/*****************************************/
+/** Columns Changed Reset Width to zero **/
+/*****************************************/
+gridState.processors['columns-changed-reset-width-to-zero'] = {
     watches: ['columns'],
     runs: function (options) {
         var columnsArray = options.model.columns.filter(function (col) {

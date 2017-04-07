@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: 0 */
 var ABSOLUTE_MIN_COL_WIDTH = 80;
 
-/********************************/
-/** Columns-Redistribute Space **/
-/********************************/
+/****************************************/
+/** Columns-Redistribute Space Equally **/
+/****************************************/
 /**
  * #1 too small distribute proportionally
  * #2 cols too big grid scrolls
@@ -12,7 +12,7 @@ var ABSOLUTE_MIN_COL_WIDTH = 80;
  * #5 some cols not resizable
  * #6 drag finished transition distribute proportionally
  */
-gridState.processors['columns-redistribute-space'] = {
+gridState.processors['columns-redistribute-space-equally'] = {
     watches: ['columns', 'space'],
     runs: function (options) {
         if (!options.model.space || options.model.space.width <= 0) {
