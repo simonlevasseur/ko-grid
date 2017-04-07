@@ -15,7 +15,6 @@
     }
 }(function (ko, $, PipelineFactory, Handlebars) {
     'use strict';
-
     /*********************/
     /** SYMBOL POLYFILL **/
     /*********************/
@@ -34,12 +33,13 @@
     }
     
 
+
     /*********************/
     /**     TEMPLATES   **/
     /*********************/
     var templates = {};
 templates["grid"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=\"nssg-table\"><thead class=\"nssg-thead\"><tr class=\"nssg-thead-tr\" data-bind=\"newnssgTheadTr: true\"><th class=\"nssg-th\" data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=\"nssg-tobdy\" data-bind=\"html: hb_tbody\"></tbody></table></div>";
-templates["paging"] = "<div class=\"nssg-paging\"><div class=\"nssg-paging-selector-container\" data-bind=\"visible: true\"> <span class=\"nssg-paging-view\">View</span> <select class=\"nssg-paging-pages\" data-bind=\"options: pageSizes, value: pageSize\"></select></div> <span class=\"nssg-paging-count\">Now Showing&nbsp;<span data-bind=\"text:firstItem\"></span>-<span data-bind=\"text:lastItem\"></span> of&nbsp;<span data-bind=\"text:totalItems\"></span></span><div class=\"nssg-paging-controls\" data-bind=\"visible: true\"> <a href=\"#\" class=\"nssg-paging-arrow nssg-paging-first\" data-bind=\"click: goToFirstPage, visible: currentPageIndex()>1\"></a> <a href=\"#\" class=\"nssg-paging-arrow nssg-paging-prev\" data-bind=\"click: goToPrevPage, visible: currentPageIndex()>1\"></a> <input type=\"text\" class=\"nssg-paging-current\" data-bind=\"value: currentPageIndex\"/><span class=\"nssg-paging-total\" data-bind=\"text: 'of ' + maxPageIndex()\"></span><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-next\" data-bind=\"click: goToNextPage, visible: currentPageIndex() < maxPageIndex()\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-last\" data-bind=\"click: goToLastPage, visible: currentPageIndex() < maxPageIndex()\"></a></div></div>";
+templates["paging"] = "<div class=\"nssg-paging\"><div class=\"nssg-paging-selector-container\" data-bind=\"visible: true\"> <span class=\"nssg-paging-view\">View</span> <select class=\"nssg-paging-pages\" data-bind=\"options: pageSizes, value: pageSize\"></select></div> <span class=\"nssg-paging-count\">Showing&nbsp;<span data-bind=\"text:firstItem\"></span>-<span data-bind=\"text:lastItem\"></span> of&nbsp;<span data-bind=\"text:totalItems\"></span></span><div class=\"nssg-paging-controls\" data-bind=\"visible: true\"> <a href=\"#\" class=\"nssg-paging-arrow nssg-paging-first\" data-bind=\"click: goToFirstPage, visible: currentPageIndex()>1\"></a> <a href=\"#\" class=\"nssg-paging-arrow nssg-paging-prev\" data-bind=\"click: goToPrevPage, visible: currentPageIndex()>1\"></a> <input type=\"text\" class=\"nssg-paging-current\" data-bind=\"value: currentPageIndex\"/><span class=\"nssg-paging-total\" data-bind=\"text: 'of ' + maxPageIndex()\"></span><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-next\" data-bind=\"click: goToNextPage, visible: currentPageIndex() < maxPageIndex()\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-last\" data-bind=\"click: goToLastPage, visible: currentPageIndex() < maxPageIndex()\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-refresh\" data-bind=\"click: refresh\"></a></div></div>";
 templates["actions"] = "<div class=\"nssg-actions-container\" data-bind=\"foreach: $component().ui().actions\"><a href=\"#\" class=\"nssg-action\" data-bind=\"css: $data.css, click: function(){$data.onClick(row.raw)}\"></a></div>";
 templates["actions_hb"] = "<div class=\"nssg-actions-container\"> {{#each ../actions as |action key|}}<a href=\"#\" class=\"nssg-action {{action.css}}\" onClick=\"{{../../jsContext}}.invokeAction('{{../$identity}}', {{action.index}}); return false\"></a> {{/each}}</div>";
 templates["gutter"] = "";
@@ -50,7 +50,6 @@ templates["text"] = "<div class=\"nssg-td-text\" data-bind=\"text: $parent[id], 
 templates["text_hb"] = "<div class=\"nssg-td-text\" title=\"{{value}}\">{{value}}</div>";
 templates["select-th"] = "<input type=\"checkbox\" data-bind=\"checked: $component().ui().allSelected, visible: $parent.ui().selectMode === 'multi', click: col.toggleSelectAll($component())\"/>";
 templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.heading, attr: { title: col.heading }\"></div>";
-
     /* eslint no-unused-vars: "off" */
     
     /*****************/
@@ -278,6 +277,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     }
     
 
+
     //= include "other/defaults.js"
 
     function AddInitialProcesses(gridState) {
@@ -332,10 +332,11 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         }
         
-        /*********************************/
-        /** Columns Changed Reset Width **/
-        /*********************************/
-        gridState.processors['columns-changed-reset-width'] = {
+
+        /*****************************************/
+        /** Columns Changed Reset Width to zero **/
+        /*****************************************/
+        gridState.processors['columns-changed-reset-width-to-zero'] = {
             watches: ['columns'],
             runs: function (options) {
                 var columnsArray = options.model.columns.filter(function (col) {
@@ -366,6 +367,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /***********************************/
@@ -402,6 +404,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*************************************/
@@ -433,6 +436,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*************************/
@@ -452,6 +456,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         var ABSOLUTE_MIN_COL_WIDTH = 80;
         
@@ -523,12 +528,13 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             });
         }
         
+
         /* eslint no-unused-vars: 0 */
         var ABSOLUTE_MIN_COL_WIDTH = 80;
         
-        /********************************/
-        /** Columns-Redistribute Space **/
-        /********************************/
+        /****************************************/
+        /** Columns-Redistribute Space Equally **/
+        /****************************************/
         /**
          * #1 too small distribute proportionally
          * #2 cols too big grid scrolls
@@ -537,7 +543,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
          * #5 some cols not resizable
          * #6 drag finished transition distribute proportionally
          */
-        gridState.processors['columns-redistribute-space'] = {
+        gridState.processors['columns-redistribute-space-equally'] = {
             watches: ['columns', 'space'],
             runs: function (options) {
                 if (!options.model.space || options.model.space.width <= 0) {
@@ -650,6 +656,103 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             applyMinMax(columnsArray);
         }
         
+
+        /* eslint no-unused-vars: 0 */
+        var ABSOLUTE_MIN_COL_WIDTH = 80;
+        
+        /*****************************************************/
+        /** Columns-Redistribute Space to Rightmost Visible **/
+        /*****************************************************/
+        gridState.processors['columns-redistribute-space-to-rightmost-visible'] = {
+            watches: ['columns', 'space'],
+            runs: function (options) {
+                if (!options.model.space || options.model.space.width <= 0) {
+                    return;
+                }
+                var columnsVisible = options.model.columns.filter(function (col) {
+                    return col.isVisible;
+                });
+                var columnsVisibleAndResizable = columnsVisible.filter(function (col) {
+                    return col.isResizable;
+                });
+                if (columnsVisibleAndResizable.length === 0) {
+                    // we wouldn't be able to do anything anyway so exit early
+                    return;
+                }
+                var rightmost = columnsVisibleAndResizable[columnsVisibleAndResizable.length - 1];
+        
+                widthToTemp(columnsVisible);
+        
+                var containerWidth = Math.floor(options.model.space.width) - 2;
+                var availableWidth;
+                var previousAvailableWidth;
+                var usedWidth;
+        
+                applyMinMax(columnsVisible);
+        
+                usedWidth = calculateUsedWidth(columnsVisible);
+                availableWidth = Math.max(0, containerWidth - usedWidth);
+        
+                rightmost.tempWidth += availableWidth;
+        
+                var whatWasChanged = tempToWidth(columnsVisible);
+                removeTemp(columnsVisible);
+        
+                if (options.model.logging && whatWasChanged) {
+                    console.log('Redistributing exta space amoung the columns', whatWasChanged);
+                }
+            }
+        };
+        
+        function widthToTemp(columnsVisible) {
+            columnsVisible.forEach(function (col) {
+                col.tempWidth = typeof col.width === 'number' && col.width >= 0 ? col.width : ABSOLUTE_MIN_COL_WIDTH;
+            });
+        }
+        
+        function tempToWidth(columnsVisible) {
+            var somethingChanged = false;
+            var whatWasChanged = {};
+            columnsVisible.forEach(function (col) {
+                if (col.width !== col.tempWidth) {
+                    whatWasChanged[col.id] = { before: col.width, after: col.tempWidth };
+                    somethingChanged = true;
+                }
+                col.width = col.tempWidth;
+            });
+            return somethingChanged ? whatWasChanged : null;
+        }
+        
+        function removeTemp(columnsVisible) {
+            columnsVisible.forEach(function (col) {
+                delete col.tempWidth;
+            });
+        }
+        
+        function calculateUsedWidth(columnsVisible) {
+            return columnsVisible.reduce(function (total, col) {
+                return total + (col.tempWidth ? col.tempWidth : 0);
+            }, 0);
+        }
+        
+        function applyMinMax(columnsVisible) {
+            columnsVisible.forEach(function (col) {
+                if (col.isResizable === false || !col.isVisible) {
+                    return;
+                }
+                if (col.minWidth) {
+                    col.tempWidth = Math.max(col.tempWidth, col.minWidth);
+                }
+                if (col.maxWidth) {
+                    col.tempWidth = Math.min(col.tempWidth, col.maxWidth);
+                }
+                if (col.tempWidth < ABSOLUTE_MIN_COL_WIDTH) {
+                    col.tempWidth = ABSOLUTE_MIN_COL_WIDTH;
+                }
+            });
+        }
+        
+
         /* eslint no-unused-vars: 0 */
         var ABSOLUTE_MIN_COL_WIDTH = 80;
         
@@ -677,6 +780,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         var ABSOLUTE_MIN_COL_WIDTH = 80;
         
@@ -730,6 +834,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*****************************/
@@ -756,6 +861,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /************************/
@@ -777,7 +883,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 for (var key in options.model.filter) {
                     if (options.model.filter.hasOwnProperty(key)) {
                         var filter = options.model.filter[key];
-                        if (typeof filter === 'string') {
+                        if (filter === '') {
+                            delete options.model.filter[key];
+                        }
+                        else if (typeof filter === 'string') {
                             options.model.filter[key] = filter.toLowerCase();
                         }
                     }
@@ -785,6 +894,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /***********************************/
@@ -820,6 +930,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             return row[col.id];
         }
         
+
         /* eslint no-unused-vars: 0 */
         
         /**********************/
@@ -852,6 +963,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             return row && typeof row === 'object';
         }
         
+
             /* eslint no-unused-vars: 0 */
         
         /****************************/
@@ -905,6 +1017,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
             /* eslint no-unused-vars: 0 */
         
         /****************************/
@@ -952,6 +1065,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
             /* eslint no-unused-vars: 0 */
         
         /****************************/
@@ -997,6 +1111,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*****************/
@@ -1058,6 +1173,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*****************/
@@ -1095,6 +1211,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /************************/
@@ -1115,13 +1232,14 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
             /* eslint no-unused-vars: 0 */
         
         /***************/
         /** Data Sort **/
         /***************/
         gridState.processors['data-sort'] = {
-            input: "sortFunctions",
+            input: 'sortFunctions',
             watches: ['sort', 'data'],
             runs: function (options) {
                 var originalData = options.changed.data ? options.model.data : options.cache.data;
@@ -1174,6 +1292,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         };
         
         
+
         /* eslint no-unused-vars: 0 */
         
         /*********************/
@@ -1200,6 +1319,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /***************/
@@ -1238,6 +1358,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             return value;
         }
         
+
         /* eslint no-unused-vars: 0 */
         
         /***************/
@@ -1282,6 +1403,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             return value;
         }
         
+
         /* eslint no-unused-vars: 0 */
         
         /************************/
@@ -1314,6 +1436,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*****************************************************/
@@ -1334,6 +1457,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*******************************************************/
@@ -1362,6 +1486,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /***************************************************/
@@ -1381,6 +1506,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*****************************/
@@ -1414,6 +1540,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /**************************/
@@ -1445,6 +1572,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*****************************/
@@ -1485,6 +1613,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /***********************/
@@ -1501,6 +1630,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*******************************/
@@ -1522,6 +1652,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*******************************/
@@ -1540,6 +1671,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*******************************/
@@ -1562,6 +1694,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /***********************/
@@ -1583,6 +1716,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         var selectedObservables = {};
@@ -1708,6 +1842,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /********************************/
@@ -1768,6 +1903,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         }
         
+
         /* eslint no-unused-vars: 0 */
         
         var selectedObservables = {};
@@ -1832,6 +1968,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             };
         }
         
+
         /* eslint no-unused-vars: 0 */
         
         /***********************************/
@@ -1849,6 +1986,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*****************************/
@@ -1867,6 +2005,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
         /* eslint no-unused-vars: 0 */
         
         /*****************************/
@@ -1897,6 +2036,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
         };
         
+
 
 
     }
@@ -1965,7 +2105,6 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'columns-enable-actions-column',
                     'vm-container-size',
                     'columns-check-valid',
-                    'columns-changed-reset-width',
                     'columns-index-by-id',
                     'paging-filter-change-resets-currentpage',
                     'paging-sort-change-resets-currentpage',
@@ -2003,9 +2142,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'ui-selected-count',
                     'ui-export-selected-rows',
                     'columns-apply-min-max-width',
-                    'columns-lock-columns-user-just-resized',
                     'columns-redistribute-space',
-                    'columns-unlock-columns-user-just-resized',
                     'vm-handlebars-data',
                     'vm-update-bindings-paging',
                     'vm-update-bindings-columns',
@@ -2014,7 +2151,13 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 ],
                 'fetch-data': function () {
                     throw new Error("Grids must specifiy a 'fetch-data' function or override the definition of 'process'");
-                }
+                },
+                'columns-redistribute-space': 'columns-redistribute-space-to-rightmost-visible'
+                /* [
+                    'columns-lock-columns-user-just-resized',
+                    'columns-redistribute-space-equally',
+                    'columns-unlock-columns-user-just-resized',
+                ]*/
     
             }
         };
@@ -2202,6 +2345,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         this.goToNextPage = function () {
             this.goToPage(gridVM.paging().currentPage + 1);
         };
+    
+        this.refresh = function () {
+            gridVM.process({ time: { refresh: Date.now() } });
+        };
     };
     
     function propertyAsObservable(obs, prop) {
@@ -2267,6 +2414,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     }
     
 
+
     /**********************/
     /**     COMPONENTS   **/
     /**********************/
@@ -2279,6 +2427,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         template: templates.grid
     });
     
+
     ko.components.register('newgrid-paging', {
         viewModel: {
             createViewModel: function (params) {
@@ -2288,6 +2437,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         template: templates.paging
     });
     
+
 
     /********************/
     /**     BINDINGS   **/
@@ -2351,6 +2501,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         };
     }());
     
+
     (function () {
         ko.bindingHandlers.newnssgTh = {
             update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -2492,6 +2643,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         };
     }());
     
+
     ko.bindingHandlers.newnssgTd = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var col = valueAccessor();
@@ -2508,6 +2660,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         }
     };
     
+
     ko.bindingHandlers.newnssgTbody = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var gridVM = ko.unwrap(bindingContext.$component);
@@ -2526,6 +2679,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         }
     };
     
+
     ko.bindingHandlers.newnssgTbodyTr = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var gridVM = ko.unwrap(bindingContext.$component);
@@ -2553,6 +2707,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         }
     };
     
+
     ko.bindingHandlers.nssgContainerSize = {
         init: function (element, valueAccessor) {
             function updateSize() {
@@ -2576,6 +2731,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     };
     
     
+
 
     ko.NewGrid = Grid; // eslint-disable-line no-undef, no-param-reassign
     ko.NewGrid.customize = gridCustomizer; // eslint-disable-line no-undef, no-param-reassign
