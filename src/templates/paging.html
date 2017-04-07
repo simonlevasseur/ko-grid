@@ -13,5 +13,6 @@
         <span class="nssg-paging-total" data-bind="text: 'of ' + maxPageIndex()"></span>
         <a href="#" class="nssg-paging-arrow nssg-paging-next" data-bind="click: goToNextPage, visible: currentPageIndex() < maxPageIndex()"></a>
         <a href="#" class="nssg-paging-arrow nssg-paging-last" data-bind="click: goToLastPage, visible: currentPageIndex() < maxPageIndex()"></a>
+        <a href="#" class="nssg-paging-arrow nssg-paging-refresh" data-bind="click: refresh"></a>
     </div>
 </div>

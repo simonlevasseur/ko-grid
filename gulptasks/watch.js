@@ -1,7 +1,7 @@
 var gulp = require('gulp'),
     browserSync = require('browser-sync').create();
 
-gulp.task('watch', ['css', 'js'], function (done) {
+gulp.task('watch', ['css', 'js', 'img'], function (done) {
     browserSync.init({ server: './', directory: true }, function () {
         gulp.watch(['src/**/*.js', 'src/**/*.html'], [/*'test', */'js']);
         gulp.watch(['src/scss/**/*.scss'], ['css']);
