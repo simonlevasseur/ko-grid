@@ -19,7 +19,10 @@ gridState.processors['filter-check-valid'] = {
         for (var key in options.model.filter) {
             if (options.model.filter.hasOwnProperty(key)) {
                 var filter = options.model.filter[key];
-                if (typeof filter === 'string') {
+                if (filter === '') {
+                    delete options.model.filter[key];
+                }
+                else if (typeof filter === 'string') {
                     options.model.filter[key] = filter.toLowerCase();
                 }
             }
