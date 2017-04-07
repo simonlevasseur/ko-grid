@@ -71,10 +71,10 @@ Grid.Pager = function (options, gridVM) {
     this.goToNextPage = function () {
         this.goToPage(gridVM.paging().currentPage + 1);
     };
-    
-    this.refresh = function() {
-        gridVM.process({time:{refresh:Date.now()}});
-    }
+
+    this.refresh = function () {
+        gridVM.process({ time: { refresh: Date.now() } });
+    };
 };
 
 function propertyAsObservable(obs, prop) {

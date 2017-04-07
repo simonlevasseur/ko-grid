@@ -13,11 +13,11 @@ gridState.processors['columns-redistribute-space-to-rightmost-visible'] = {
         var columnsVisible = options.model.columns.filter(function (col) {
             return col.isVisible;
         });
-        var columnsVisibleAndResizable = columnsVisible.filter(function(col){
+        var columnsVisibleAndResizable = columnsVisible.filter(function (col) {
             return col.isResizable;
         });
-        if (columnsVisibleAndResizable.length === 0){
-            //we wouldn't be able to do anything anyway so exit early
+        if (columnsVisibleAndResizable.length === 0) {
+            // we wouldn't be able to do anything anyway so exit early
             return;
         }
         var rightmost = columnsVisibleAndResizable[columnsVisibleAndResizable.length - 1];
@@ -30,10 +30,10 @@ gridState.processors['columns-redistribute-space-to-rightmost-visible'] = {
         var usedWidth;
 
         applyMinMax(columnsVisible);
-        
+
         usedWidth = calculateUsedWidth(columnsVisible);
         availableWidth = Math.max(0, containerWidth - usedWidth);
-        
+
         rightmost.tempWidth += availableWidth;
 
         var whatWasChanged = tempToWidth(columnsVisible);

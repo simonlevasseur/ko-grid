@@ -111,7 +111,7 @@ function createInitialGridState() {
                 throw new Error("Grids must specifiy a 'fetch-data' function or override the definition of 'process'");
             },
             'columns-redistribute-space': 'columns-redistribute-space-to-rightmost-visible'
-            /*[
+            /* [
                 'columns-lock-columns-user-just-resized',
                 'columns-redistribute-space-equally',
                 'columns-unlock-columns-user-just-resized',
