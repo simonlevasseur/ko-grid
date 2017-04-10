@@ -34,12 +34,10 @@ gridState.processors['vm-update-bindings-columns'] = {
             var column = columns[i];
             var colBefore = options.cache[column.id];
             var colNow = JSON.stringify(column);
-            if (colBefore !== colNow || numBefore !== numNow) {
-                var newObj = JSON.parse(colNow);
-                addColumnFunctions(newObj, options);
-                temp[i](newObj);
-                options.cache[column.id] = colNow;
-            }
+            var newObj = JSON.parse(colNow);
+            addColumnFunctions(newObj, options);
+            temp[i](newObj);
+            options.cache[column.id] = colNow;
         }
         if (numBefore !== numNow) {
             options.model.vm.columns(temp);
