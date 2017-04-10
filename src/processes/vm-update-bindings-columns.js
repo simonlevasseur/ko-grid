@@ -39,9 +39,8 @@ gridState.processors['vm-update-bindings-columns'] = {
             temp[i](newObj);
             options.cache[column.id] = colNow;
         }
-        if (numBefore !== numNow) {
-            options.model.vm.columns(temp);
-        }
+    
+        options.model.vm.columns(temp);
     }
 };
 
