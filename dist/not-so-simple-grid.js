@@ -48,7 +48,7 @@ templates["select"] = "<input type=\"checkbox\" data-bind=\"checked: row.isSelec
 templates["select_hb"] = "<input type=\"checkbox\" {{#if isSelected}}checked {{/if}} onClick=\"javascript:{{../jsContext}}.toggleSelect('{{$identity}}', this)\"/>";
 templates["text"] = "<div class=\"nssg-td-text\" data-bind=\"text: $parent[id], attr: { title: $parent[id] }\"></div>";
 templates["text_hb"] = "<div class=\"nssg-td-text\" title=\"{{value}}\">{{value}}</div>";
-templates["select-th"] = "<input type=\"checkbox\" data-bind=\"checked: $component().ui().allSelected, visible: $parent.ui().selectMode === 'multi', click: col.toggleSelectAll($component())\"/>";
+templates["select-th"] = "<input type=\"checkbox\" data-bind=\"checked: $component().ui().allSelected, visible: $parent.ui().selectMode==='multi' && $parent.paging().totalItems> 0, click: col.toggleSelectAll($component())\" />";
 templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.heading, attr: { title: col.heading }\"></div>";
     /* eslint no-unused-vars: "off" */
     
