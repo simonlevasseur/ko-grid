@@ -1884,9 +1884,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     temp[i](newObj);
                     options.cache[column.id] = colNow;
                 }
-                if (numBefore !== numNow) {
-                    options.model.vm.columns(temp);
-                }
+            
+                options.model.vm.columns(temp);
             }
         };
         
@@ -2281,6 +2280,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
      * @param {ObservableArray} data - The array of data to be paged
      */
     Grid.Pager = function (options, gridVM) {
+        window.doRegisterPaging();
+        
         // Options
         this.enabled = ko.observable(true);
         this.pageSizes = propertyAsObservable(gridVM.ui, 'pageSizes');
@@ -2426,15 +2427,20 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     });
     
 
-    ko.components.register('newgrid-paging', {
-        viewModel: {
-            createViewModel: function (params) {
-                return params.vm;
-            }
-        },
-        template: templates.paging
-    });
+    window.doRegisterPaging = function(){
+        ko.components.register('newgrid-paging', {
+            viewModel: {
+                createViewModel: function (params) {
+                    return params.vm;
+                }
+            },
+            template: templates.paging
+        });
     
+        window.doRegisterPaging = function(){}
+    }
+    
+    var abc=123;
 
 
     /********************/
