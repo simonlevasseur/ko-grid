@@ -36,7 +36,7 @@ gridState.processors['vm-update-bindings-columns'] = {
             var colNow = JSON.stringify(column);
             var newObj = JSON.parse(colNow);
             addColumnFunctions(newObj, options);
-            newObj.width = newObj.adjustedWidth | newObj.width;
+            newObj.width = newObj.adjustedWidth || newObj.width;
             temp[i](newObj);
             didChange = true;
             options.cache[column.id] = colNow;
