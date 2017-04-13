@@ -36,7 +36,7 @@ gridState.processors['columns-redistribute-space-to-rightmost-visible'] = {
 
         rightmost.tempWidth += availableWidth;
 
-        var whatWasChanged = tempToWidth(columnsVisible);
+        var whatWasChanged = tempToAdjustedWidth(columnsVisible);
         removeTemp(columnsVisible);
 
         if (options.model.logging && whatWasChanged) {
@@ -51,15 +51,15 @@ function widthToTemp(columnsVisible) {
     });
 }
 
-function tempToWidth(columnsVisible) {
+function tempToAdjustedWidth(columnsVisible) {
     var somethingChanged = false;
     var whatWasChanged = {};
     columnsVisible.forEach(function (col) {
-        if (col.width !== col.tempWidth) {
-            whatWasChanged[col.id] = { before: col.width, after: col.tempWidth };
+        if (col.adjustedwidth !== col.tempWidth) {
+            whatWasChanged[col.id] = { before: col.adjustedwidth || col.width, after: col.tempWidth };
             somethingChanged = true;
         }
-        col.width = col.tempWidth;
+        col.adjustedWidth = col.tempWidth;
     });
     return somethingChanged ? whatWasChanged : null;
 }

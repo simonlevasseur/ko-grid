@@ -49,7 +49,7 @@ gridState.processors['columns-redistribute-space-equally'] = {
             }
         }
 
-        var whatWasChanged = tempToWidth(columnsArray);
+        var whatWasChanged = tempToAdjustedWidth(columnsArray);
         removeTemp(columnsArray);
 
         if (options.model.logging && whatWasChanged) {
@@ -64,15 +64,15 @@ function widthToTemp(columnsArray) {
     });
 }
 
-function tempToWidth(columnsArray) {
+function tempToAdjustedWidth(columnsArray) {
     var somethingChanged = false;
     var whatWasChanged = {};
     columnsArray.forEach(function (col) {
-        if (col.width !== col.tempWidth) {
-            whatWasChanged[col.id] = { before: col.width, after: col.tempWidth };
+        if (col.adjustedWidth !== col.tempWidth) {
+            whatWasChanged[col.id] = { before: col.adjustedWidth || col.width, after: col.tempWidth };
             somethingChanged = true;
         }
-        col.width = col.tempWidth;
+        col.adjustedWidth = col.tempWidth;
     });
     return somethingChanged ? whatWasChanged : null;
 }

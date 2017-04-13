@@ -39,7 +39,7 @@
 
             ko.computed(function () {
                 var allColWidths = visibleCols().reduce(function (total, col) {
-                    return total + col().width;
+                    return total + (col().adjustedWidth || col().width);
                 }, 0);
                 setTimeout(function () {
                     var containerWidth = $container.width();

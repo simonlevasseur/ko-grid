@@ -30,6 +30,7 @@
 
 
             function onColGripMouseDown(e) {
+                col = valueAccessor();
                 startX = e.pageX;
                 startWidth = $th.outerWidth();
 
@@ -62,7 +63,7 @@
                 var minWidth = col.minWidth ? Math.max(80, col.minWidth) : 80;
 
                 var update = {};
-                update[col.id] = { width: Math.max(minWidth, colWidth) };
+                update[col.id] = { width: Math.max(minWidth, colWidth), adjustedWidth: 0 };
                 gridVM.process({ columnsById: update });
             }
 
@@ -95,7 +96,7 @@
                 $th.append($template);
             }
 
-            if (col.width === 0) {
+            if ((col.adjustedWidth || col.width) === 0) {
                 // This hack is needed for firefox
                 $th.css('padding', '0px');
                 $th.css('border', '0px solid transparent');
@@ -105,7 +106,7 @@
                 $th
                     .addClass('nssg-th-' + tmplName)
                     .addClass('animate');
-                $th.outerWidth(col.width);
+                $th.outerWidth(col.adjustedWidth || col.width);
 
                 setTimeout(function () {
                     $th.removeClass('animate');
