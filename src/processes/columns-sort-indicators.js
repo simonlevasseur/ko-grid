@@ -6,11 +6,13 @@
 gridState.processors['columns-sort-indicators'] = {
     watches: ['sort', 'columns'],
     runs: function (options) {
-        if (options.model.logging) {
-            console.log('Updating the sort indicators');
-        }
-
+        var didChange = false;
+        var before = {};
+        var after = {};
+        
         options.model.columns.forEach(function (column) {
+            before[column.id] = {a:column.isSorted, b:column.isSortedAsc};
+            
             column.isSorted = false;
             column.isSortedAsc = false;
         });
@@ -21,5 +23,14 @@ gridState.processors['columns-sort-indicators'] = {
                 column.isSortedAsc = sort.sortAsc;
             }
         });
+        options.model.columns.forEach(function (column) {
+            after[column.id] = {a:column.isSorted, b:column.isSortedAsc};
+        });
+        
+        didChange = JSON.stringify(before) !== JSON.stringify(after);
+        
+        if (options.model.logging && didChange) {
+            console.log('Updating the sort indicators');
+        }
     }
 };

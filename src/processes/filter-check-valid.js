@@ -6,6 +6,15 @@
 gridState.processors['filter-check-valid'] = {
     watches: ['filter'],
     runs: function (options) {
+        var hasKeys = false;
+        for(var key in options.model.filter){
+            hasKeys = true;
+            break;
+        }
+        if (!hasKeys) {
+            return;
+        }
+        
         if (options.model.logging) {
             console.log('Checking the filter criteria looks right');
         }

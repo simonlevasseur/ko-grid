@@ -6,10 +6,6 @@
 gridState.processors['data-check-valid'] = {
     watches: ['data'],
     runs: function (options) {
-        if (options.model.logging) {
-            console.log('Checking if filter changed');
-        }
-
         var valid = true;
         if (!Array.isArray(options.model.data)) {
             valid = false;

@@ -9,9 +9,7 @@ gridState.processors['data-calculate-row-identities'] = {
         if (!options.model.ui.selectable) {
             return;
         }
-        if (options.model.logging) {
-            console.log('Calculating row identities');
-        }
+        var didChange = false;
 
         var identityColumns = options.model.columns.filter(function (col) {
             return col.isIdentity;
@@ -23,9 +21,16 @@ gridState.processors['data-calculate-row-identities'] = {
             var identity = identityColumns.reduce(function (total, col) {
                 return total + '_' + getCellData(row, col);
             }, '');
-            row.$identity = identity.replace(/[\s'".@+\-|]/g, '');
+            var formattedIdentity = identity.replace(/[\s'".@+\-|]/g, '');
+            if (row.$identity !== formattedIdentity){
+                didChange = true;
+            }
+            row.$identity = formattedIdentity;
         });
-        // todo calculate identities
+        
+        if (options.model.logging && didChange) {
+            console.log('Row identities calculated');
+        }
     }
 };
 

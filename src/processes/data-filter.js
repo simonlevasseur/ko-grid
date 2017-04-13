@@ -9,7 +9,13 @@ gridState.processors['data-filter'] = {
         var originalData = options.changed.data ? options.model.data : options.cache.data;
         options.cache.data = originalData;
 
-        if (options.model.logging) {
+        var hasKeys = false;
+        for (var key in options.model.filter){
+            hasKeys = true;
+            break;
+        }
+        
+        if (options.model.logging && hasKeys) {
             console.log('Filtering the data');
         }
 

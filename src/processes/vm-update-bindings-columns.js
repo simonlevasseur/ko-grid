@@ -12,9 +12,7 @@ gridState.processors['vm-update-bindings-columns'] = {
         if (!options.model.space || !options.model.space.width) {
             return;
         }
-        if (options.model.logging) {
-            console.log('Updating the column bindings');
-        }
+        var didChange = false;
         var i = 0;
 
         var columns = options.model.columns;
@@ -23,10 +21,12 @@ gridState.processors['vm-update-bindings-columns'] = {
         var numNow = columns.length;
         if (numBefore > numNow) {
             temp = temp.slice(0, numNow);
+            didChange = true;
         }
         else if (numBefore < numNow) {
             for (i = numBefore; i < numNow; i++) {
                 temp[i] = ko.observable();
+                didChange = true;
             }
         }
 
@@ -38,8 +38,14 @@ gridState.processors['vm-update-bindings-columns'] = {
             addColumnFunctions(newObj, options);
             newObj.width = newObj.adjustedWidth | newObj.width;
             temp[i](newObj);
+            didChange = true;
             options.cache[column.id] = colNow;
         }
+
+        if (options.model.logging && didChange) {
+            console.log('Updating the column bindings');
+        }
+
     
         options.model.vm.columns(temp);
     }

@@ -15,7 +15,7 @@ gridState.processors['vm-update-bindings-data'] = {
     },
     runs: function (options) {
         if (options.model.logging) {
-            console.log('Updating the data bindings');
+            console.log('Updating the grid content using Knockout templates');
         }
 
         var uiData = options.model.data.slice();

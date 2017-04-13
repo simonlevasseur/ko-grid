@@ -21,7 +21,7 @@ gridState.processors['vm-handlebars-data'] = {
         options.cache.templates = options.cache.templates || {};
 
         if (options.model.logging) {
-            console.log('Updating the handlebar data template');
+            console.log('Updating the grid content using Handlebar templates');
         }
 
         if (!options.cache.namespace) {
@@ -32,9 +32,9 @@ gridState.processors['vm-handlebars-data'] = {
 
         options.cache.jsContext.toggleSelect = function (rowIdentity, e) {
             var isSelected = !!options.model.selection[rowIdentity];
-            if (options.model.logging) {
-                console.log('Setting ' + rowIdentity + ' to ' + (!isSelected ? 'selected' : 'deselected'));
-            }
+            //if (options.model.logging) {
+                //console.log('Setting ' + rowIdentity + ' to ' + (!isSelected ? 'selected' : 'deselected'));
+            //}
 
             var rowSelect = {};
             rowSelect[rowIdentity] = !isSelected;
@@ -106,13 +106,14 @@ gridState.processors['vm-handlebars-data'] = {
             options.model.vm.hb_tbody(compiledHtml);
             var timeC = performance.now();
 
-            if (options.model.logging) {
-                console.log('Render template', (timeB - timeA));
-                console.log('Update Binding', (timeC - timeB));
-            }
+            //if (options.model.logging) {
+                //keeping it here for debugging
+                //console.log('Render template', (timeB - timeA));
+                //console.log('Update Binding', (timeC - timeB));
+            //}
         }
         else {
-            console.log('skipping the update data step since the ui should already be up to date');
+            console.log('skipping the update dom step since the dom should already be up to date');
         }
 
         if (!options.model.vm.data.loaded.peek()) {

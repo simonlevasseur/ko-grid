@@ -9,7 +9,13 @@ gridState.processors['data-to-lowercase'] = {
         var originalData = options.changed.data ? options.model.data : options.cache.data;
         options.cache.data = originalData;
 
-        if (!options.model.filter) {
+        var hasKeys = false;
+        for (var key in options.model.filter) {
+            hasKeys = true;
+            break;
+        }
+        
+        if (!hasKeys) {
             // we don't need to aggregate the data as it's not being used right now
             return;
         }
@@ -25,7 +31,7 @@ gridState.processors['data-to-lowercase'] = {
         }
 
         if (options.model.logging) {
-            console.log('Running toLowerCase on the data');
+            console.log('Calculating the lowercase values of the cells to use with string filtering');
         }
 
         options.model.data = originalData.map(function (row) {
