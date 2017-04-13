@@ -27,7 +27,7 @@
     "gulpfile.js"
   ],
   "dependencies": {
-    "processing-pipeline": "^0.0.10",
+    "processing-pipeline": "^0.0.11",
     "handlebars": "^4.0.5"
   }
 }
