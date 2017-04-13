@@ -9,7 +9,7 @@ gridState.processors['columns-check-valid'] = {
         if (!Array.isArray(options.model.columns)) {
             throw new Error('Columns must be an array of objects');
         }
-        
+
         var didChange = false;
 
         var identityColPresent = !!findFirst(options.model.columns, { isIdentity: true });
@@ -38,7 +38,7 @@ gridState.processors['columns-check-valid'] = {
             }
             columnIds[columnIds] = true;
         });
-        
+
         if (options.model.logging && didChange) {
             console.log('Default values applied to the columns');
         }

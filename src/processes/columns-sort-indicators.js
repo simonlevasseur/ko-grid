@@ -9,10 +9,10 @@ gridState.processors['columns-sort-indicators'] = {
         var didChange = false;
         var before = {};
         var after = {};
-        
+
         options.model.columns.forEach(function (column) {
-            before[column.id] = {a:column.isSorted, b:column.isSortedAsc};
-            
+            before[column.id] = { a: column.isSorted, b: column.isSortedAsc };
+
             column.isSorted = false;
             column.isSortedAsc = false;
         });
@@ -24,11 +24,11 @@ gridState.processors['columns-sort-indicators'] = {
             }
         });
         options.model.columns.forEach(function (column) {
-            after[column.id] = {a:column.isSorted, b:column.isSortedAsc};
+            after[column.id] = { a: column.isSorted, b: column.isSortedAsc };
         });
-        
+
         didChange = JSON.stringify(before) !== JSON.stringify(after);
-        
+
         if (options.model.logging && didChange) {
             console.log('Updating the sort indicators');
         }

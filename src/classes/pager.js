@@ -10,7 +10,7 @@
  */
 Grid.Pager = function (options, gridVM) {
     window.doRegisterPaging();
-    
+
     // Options
     this.enabled = ko.observable(true);
     this.pageSizes = propertyAsObservable(gridVM.ui, 'pageSizes');

@@ -22,12 +22,12 @@ gridState.processors['data-calculate-row-identities'] = {
                 return total + '_' + getCellData(row, col);
             }, '');
             var formattedIdentity = identity.replace(/[\s'".@+\-|]/g, '');
-            if (row.$identity !== formattedIdentity){
+            if (row.$identity !== formattedIdentity) {
                 didChange = true;
             }
             row.$identity = formattedIdentity;
         });
-        
+
         if (options.model.logging && didChange) {
             console.log('Row identities calculated');
         }

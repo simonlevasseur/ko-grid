@@ -15,7 +15,7 @@ gridState.processors['ui-selected-count'] = {
         }
         didChange = (options.model.ui.selectedCount || 0) !== count;
         options.model.ui.selectedCount = count;
-        
+
         if (options.model.logging && options.model.ui.selectable && didChange) {
             console.log('Updating the selection count');
         }

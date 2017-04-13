@@ -12,14 +12,14 @@ gridState.processors['data-row-selection'] = {
         var didChange = false;
         options.model.data.forEach(function (row) {
             var newValue = !!options.model.selection[row.$identity];
-            if (row.isSelected !== newValue){
+            if (row.isSelected !== newValue) {
                 if (!row.isSelected !== !newValue) {
                     didChange = true;
                 }
                 row.isSelected = newValue;
             }
         });
-        
+
         if (options.model.logging && didChange) {
             console.log('Updating row selection');
         }

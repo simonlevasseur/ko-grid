@@ -28,7 +28,8 @@ gridState.processors['paging-check-valid'] = {
         if (options.model.logging && didChange) {
             if (options.changed.data) {
                 console.log('Data changed, Pagination options updated');
-            } else {
+            }
+            else {
                 console.log('Pagination options were invalid and have been updated');
             }
         }

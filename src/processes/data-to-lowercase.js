@@ -14,7 +14,7 @@ gridState.processors['data-to-lowercase'] = {
             hasKeys = true;
             break;
         }
-        
+
         if (!hasKeys) {
             // we don't need to aggregate the data as it's not being used right now
             return;

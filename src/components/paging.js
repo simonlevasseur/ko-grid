@@ -1,4 +1,4 @@
-window.doRegisterPaging = function(){
+window.doRegisterPaging = function () {
     ko.components.register('newgrid-paging', {
         viewModel: {
             createViewModel: function (params) {
@@ -8,7 +8,7 @@ window.doRegisterPaging = function(){
         template: templates.paging
     });
 
-    window.doRegisterPaging = function(){}
-}
+    window.doRegisterPaging = function () {};
+};
 
-var abc=123;
+var abc = 123;

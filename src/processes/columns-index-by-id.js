@@ -16,7 +16,7 @@ gridState.processors['columns-index-by-id'] = {
             }
             options.model.columnsById[column.id] = column;
         });
-        
+
         if (options.model.logging && didChange) {
             console.log('Indexing columns by id');
         }
