@@ -5,7 +5,7 @@
 /***************/
 gridState.processors['log-done'] = function (options) {
     if (options.model.logging) {
-        console.log('Final grid state', JSON.stringify(options.model, filterUninterestingProperties));
+        console.log('Final grid state', JSON.parse(JSON.stringify(options.model, filterUninterestingProperties)));
         console.groupEnd();
     }
 };
@@ -20,9 +20,6 @@ function filterUninterestingProperties(key, value) {
     }
     if (key === 'vm') {
         return undefined;
-    }
-    if (key === 'columns') {
-        return value.length;
     }
     if (key === 'columnsById') {
         return undefined;

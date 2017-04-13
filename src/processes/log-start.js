@@ -12,7 +12,7 @@ gridState.processors['log-start'] = {
             if (whatChanged.length === 2) {
                 whatChanged = JSON.stringify(options.model.lastInput);
             }
-            console.log('Applying change', whatChanged);
+            console.log('Applying change', JSON.parse(whatChanged));
         }
     } };
 
@@ -26,9 +26,6 @@ function filterUninterestingProperties(key, value) {
     }
     if (key === 'vm') {
         return undefined;
-    }
-    if (key === 'columns') {
-        return value.length;
     }
     if (key === 'columnsById') {
         return undefined;
