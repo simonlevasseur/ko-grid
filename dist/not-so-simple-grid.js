@@ -289,13 +289,11 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['columns-check-valid'] = {
             watches: ['columns'],
             runs: function (options) {
-                if (options.model.logging) {
-                    console.log('Validating column options');
-                }
-        
                 if (!Array.isArray(options.model.columns)) {
                     throw new Error('Columns must be an array of objects');
                 }
+        
+                var didChange = false;
         
                 var identityColPresent = !!findFirst(options.model.columns, { isIdentity: true });
                 var columnIds = {};
@@ -307,28 +305,36 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                         throw new Error('Column id must be specified if dataAccessor is a not a string');
                     }
         
-                    setDefault(column, 'type', 'string', 'text');
-                    setDefault(column, 'id', 'string', column.dataAccessor);
+                    didChange |= setDefault(column, 'type', 'string', 'text');
+                    didChange |= setDefault(column, 'id', 'string', column.dataAccessor);
                     if (typeof column.dataAccessor !== 'function') {
-                        setDefault(column, 'dataAccessor', 'string', column.id);
+                        didChange |= setDefault(column, 'dataAccessor', 'string', column.id);
                     }
-                    setDefault(column, 'heading', 'string', column.id);
-                    setDefault(column, 'isIdentity', 'boolean', !identityColPresent);
-                    setDefault(column, 'isSortable', 'boolean', true);
-                    setDefault(column, 'isResizable', 'boolean', true);
-                    setDefault(column, 'isVisible', 'boolean', true);
+                    didChange |= setDefault(column, 'heading', 'string', column.id);
+                    didChange |= setDefault(column, 'isIdentity', 'boolean', !identityColPresent);
+                    didChange |= setDefault(column, 'isSortable', 'boolean', true);
+                    didChange |= setDefault(column, 'isResizable', 'boolean', true);
+                    didChange |= setDefault(column, 'isVisible', 'boolean', true);
         
                     if (columnIds[column.id]) {
                         throw new Error("Columns must have unique id's: " + column.id);
                     }
                     columnIds[columnIds] = true;
                 });
+        
+                if (options.model.logging && didChange) {
+                    console.log('Default values applied to the columns');
+                }
             }
         };
         
         function setDefault(obj, prop, type, defaultValue) {
             if (typeof obj[prop] !== type || (type === 'object' && !type)) { // eslint-disable-line valid-typeof
                 obj[prop] = defaultValue;
+                return true;
+            }
+            else {
+                return false;
             }
         }
         
@@ -446,13 +452,19 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             input: ['columnsById'],
             watches: ['columns'],
             runs: function (options) {
-                if (options.model.logging) {
-                    console.log('Indexing columns by id');
-                }
+                var before = options.model.columnsById || {};
                 options.model.columnsById = {};
+                var didChange = false;
                 options.model.columns.forEach(function (column) {
+                    if (before[column.id] !== column) {
+                        didChange = true;
+                    }
                     options.model.columnsById[column.id] = column;
                 });
+        
+                if (options.model.logging && didChange) {
+                    console.log('Indexing columns by id');
+                }
             }
         };
         
@@ -580,7 +592,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     }
                 }
         
-                var whatWasChanged = tempToWidth(columnsArray);
+                var whatWasChanged = tempToAdjustedWidth(columnsArray);
                 removeTemp(columnsArray);
         
                 if (options.model.logging && whatWasChanged) {
@@ -595,15 +607,15 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             });
         }
         
-        function tempToWidth(columnsArray) {
+        function tempToAdjustedWidth(columnsArray) {
             var somethingChanged = false;
             var whatWasChanged = {};
             columnsArray.forEach(function (col) {
-                if (col.width !== col.tempWidth) {
-                    whatWasChanged[col.id] = { before: col.width, after: col.tempWidth };
+                if (col.adjustedWidth !== col.tempWidth) {
+                    whatWasChanged[col.id] = { before: col.adjustedWidth || col.width, after: col.tempWidth };
                     somethingChanged = true;
                 }
-                col.width = col.tempWidth;
+                col.adjustedWidth = col.tempWidth;
             });
             return somethingChanged ? whatWasChanged : null;
         }
@@ -695,7 +707,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         
                 rightmost.tempWidth += availableWidth;
         
-                var whatWasChanged = tempToWidth(columnsVisible);
+                var whatWasChanged = tempToAdjustedWidth(columnsVisible);
                 removeTemp(columnsVisible);
         
                 if (options.model.logging && whatWasChanged) {
@@ -710,15 +722,15 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             });
         }
         
-        function tempToWidth(columnsVisible) {
+        function tempToAdjustedWidth(columnsVisible) {
             var somethingChanged = false;
             var whatWasChanged = {};
             columnsVisible.forEach(function (col) {
-                if (col.width !== col.tempWidth) {
-                    whatWasChanged[col.id] = { before: col.width, after: col.tempWidth };
+                if (col.adjustedwidth !== col.tempWidth) {
+                    whatWasChanged[col.id] = { before: col.adjustedwidth || col.width, after: col.tempWidth };
                     somethingChanged = true;
                 }
-                col.width = col.tempWidth;
+                col.adjustedWidth = col.tempWidth;
             });
             return somethingChanged ? whatWasChanged : null;
         }
@@ -843,11 +855,13 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['columns-sort-indicators'] = {
             watches: ['sort', 'columns'],
             runs: function (options) {
-                if (options.model.logging) {
-                    console.log('Updating the sort indicators');
-                }
+                var didChange = false;
+                var before = {};
+                var after = {};
         
                 options.model.columns.forEach(function (column) {
+                    before[column.id] = { a: column.isSorted, b: column.isSortedAsc };
+        
                     column.isSorted = false;
                     column.isSortedAsc = false;
                 });
@@ -858,6 +872,15 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                         column.isSortedAsc = sort.sortAsc;
                     }
                 });
+                options.model.columns.forEach(function (column) {
+                    after[column.id] = { a: column.isSorted, b: column.isSortedAsc };
+                });
+        
+                didChange = JSON.stringify(before) !== JSON.stringify(after);
+        
+                if (options.model.logging && didChange) {
+                    console.log('Updating the sort indicators');
+                }
             }
         };
         
@@ -870,6 +893,15 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['filter-check-valid'] = {
             watches: ['filter'],
             runs: function (options) {
+                var hasKeys = false;
+                for (var key in options.model.filter) {
+                    hasKeys = true;
+                    break;
+                }
+                if (!hasKeys) {
+                    return;
+                }
+        
                 if (options.model.logging) {
                     console.log('Checking the filter criteria looks right');
                 }
@@ -906,9 +938,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 if (!options.model.ui.selectable) {
                     return;
                 }
-                if (options.model.logging) {
-                    console.log('Calculating row identities');
-                }
+                var didChange = false;
         
                 var identityColumns = options.model.columns.filter(function (col) {
                     return col.isIdentity;
@@ -920,9 +950,16 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     var identity = identityColumns.reduce(function (total, col) {
                         return total + '_' + getCellData(row, col);
                     }, '');
-                    row.$identity = identity.replace(/[\s'".@+\-|]/g, '');
+                    var formattedIdentity = identity.replace(/[\s'".@+\-|]/g, '');
+                    if (row.$identity !== formattedIdentity) {
+                        didChange = true;
+                    }
+                    row.$identity = formattedIdentity;
                 });
-                // todo calculate identities
+        
+                if (options.model.logging && didChange) {
+                    console.log('Row identities calculated');
+                }
             }
         };
         
@@ -939,10 +976,6 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['data-check-valid'] = {
             watches: ['data'],
             runs: function (options) {
-                if (options.model.logging) {
-                    console.log('Checking if filter changed');
-                }
-        
                 var valid = true;
                 if (!Array.isArray(options.model.data)) {
                     valid = false;
@@ -1077,7 +1110,13 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 var originalData = options.changed.data ? options.model.data : options.cache.data;
                 options.cache.data = originalData;
         
-                if (!options.model.filter) {
+                var hasKeys = false;
+                for (var key in options.model.filter) {
+                    hasKeys = true;
+                    break;
+                }
+        
+                if (!hasKeys) {
                     // we don't need to aggregate the data as it's not being used right now
                     return;
                 }
@@ -1093,7 +1132,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 }
         
                 if (options.model.logging) {
-                    console.log('Running toLowerCase on the data');
+                    console.log('Calculating the lowercase values of the cells to use with string filtering');
                 }
         
                 options.model.data = originalData.map(function (row) {
@@ -1123,7 +1162,13 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 var originalData = options.changed.data ? options.model.data : options.cache.data;
                 options.cache.data = originalData;
         
-                if (options.model.logging) {
+                var hasKeys = false;
+                for (var key in options.model.filter) {
+                    hasKeys = true;
+                    break;
+                }
+        
+                if (options.model.logging && hasKeys) {
                     console.log('Filtering the data');
                 }
         
@@ -1223,12 +1268,20 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 if (!options.model.ui.selectable) {
                     return;
                 }
-                if (options.model.logging) {
+                var didChange = false;
+                options.model.data.forEach(function (row) {
+                    var newValue = !!options.model.selection[row.$identity];
+                    if (row.isSelected !== newValue) {
+                        if (!row.isSelected !== !newValue) {
+                            didChange = true;
+                        }
+                        row.isSelected = newValue;
+                    }
+                });
+        
+                if (options.model.logging && didChange) {
                     console.log('Updating row selection');
                 }
-                options.model.data.forEach(function (row) {
-                    row.isSelected = !!options.model.selection[row.$identity];
-                });
             }
         };
         
@@ -1327,7 +1380,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         /***************/
         gridState.processors['log-done'] = function (options) {
             if (options.model.logging) {
-                console.log('Final grid state', JSON.stringify(options.model, filterUninterestingProperties));
+                console.log('Final grid state', JSON.parse(JSON.stringify(options.model, filterUninterestingProperties)));
                 console.groupEnd();
             }
         };
@@ -1342,9 +1395,6 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
             if (key === 'vm') {
                 return undefined;
-            }
-            if (key === 'columns') {
-                return value.length;
             }
             if (key === 'columnsById') {
                 return undefined;
@@ -1373,7 +1423,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     if (whatChanged.length === 2) {
                         whatChanged = JSON.stringify(options.model.lastInput);
                     }
-                    console.log('Applying change', whatChanged);
+                    console.log('Applying change', JSON.parse(whatChanged));
                 }
             } };
         
@@ -1387,9 +1437,6 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             }
             if (key === 'vm') {
                 return undefined;
-            }
-            if (key === 'columns') {
-                return value.length;
             }
             if (key === 'columnsById') {
                 return undefined;
@@ -1412,26 +1459,32 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['paging-check-valid'] = {
             watches: ['paging', 'data'],
             runs: function (options) {
-                if (options.model.logging) {
-                    console.log('Validating paging options');
-                }
-        
                 var paging = options.model.paging;
                 var data = options.model.data;
+                var didChange = false;
                 if (paging.pageSize < 1 || isNaN(paging.pageSize)) {
                     paging.pageSize = 1;
+                    didChange = true;
                 }
                 if (options.changed.data) {
-                    if (options.model.logging) {
-                        console.log('Data changed, updating page Count');
-                    }
                     paging.pageCount = Math.ceil(Math.max(1, data.length / paging.pageSize));
+                    didChange = true;
                 }
                 if (paging.currentPage < 1 || isNaN(paging.currentPage)) {
                     paging.currentPage = 1;
+                    didChange = true;
                 }
                 else if (paging.currentPage > paging.pageCount) {
                     paging.currentPage = Math.max(1, paging.pageCount);
+                    didChange = true;
+                }
+                if (options.model.logging && didChange) {
+                    if (options.changed.data) {
+                        console.log('Data changed, Pagination options updated');
+                    }
+                    else {
+                        console.log('Pagination options were invalid and have been updated');
+                    }
                 }
             }
         };
@@ -1623,7 +1676,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             watches: 'data',
             runs: function (options) {
                 if (options.model.logging) {
-                    console.log("Updating the lastFetch'd timestamp");
+                    console.log('Data changed, recording the time of the update');
                 }
         
                 options.model.time.lastFetch = Date.now();
@@ -1639,16 +1692,22 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['ui-export-selected-rows'] = {
             watches: ['selection', 'data'],
             runs: function (options) {
-                if (options.model.logging && options.model.ui.selectable) {
-                    console.log('Exporting selected rows');
-                }
-        
                 var selectedRows = options.model.data.filter(function (row) {
                     return row.isSelected;
                 }).map(function (row) {
                     return row.raw;
                 });
+                var didReplace = options.model.ui.selectedData && options.model.ui.selectedData.length > 0;
                 options.model.ui.selectedData = selectedRows;
+        
+                if (options.model.logging && options.model.ui.selectable) {
+                    if (selectedRows.length > 0) {
+                        console.log('Exporting selected rows');
+                    }
+                    else if (didReplace) {
+                        console.log('Clearing selected rows from the exported state');
+                    }
+                }
             }
         };
         
@@ -1661,10 +1720,6 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['ui-selected-all-indicator'] = {
             watches: ['selection', 'data'],
             runs: function (options) {
-                if (options.model.logging && options.model.ui.selectable) {
-                    console.log('Updating the selection indicators');
-                }
-        
                 var allSelected = !findFirst(options.model.data, { isSelected: false });
         
                 options.model.ui.allSelected = allSelected;
@@ -1680,17 +1735,19 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['ui-selected-count'] = {
             watches: ['selection', 'data'],
             runs: function (options) {
-                if (options.model.logging && options.model.ui.selectable) {
-                    console.log('Updating the selection count');
-                }
-        
+                var didChange = false;
                 var count = 0;
                 for (var key in options.model.selection) {
                     if (key !== 'all' && options.model.selection[key]) {
                         count++;
                     }
                 }
+                didChange = (options.model.ui.selectedCount || 0) !== count;
                 options.model.ui.selectedCount = count;
+        
+                if (options.model.logging && options.model.ui.selectable && didChange) {
+                    console.log('Updating the selection count');
+                }
             }
         };
         
@@ -1740,7 +1797,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 options.cache.templates = options.cache.templates || {};
         
                 if (options.model.logging) {
-                    console.log('Updating the handlebar data template');
+                    console.log('Updating the grid content using Handlebar templates');
                 }
         
                 if (!options.cache.namespace) {
@@ -1751,9 +1808,9 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         
                 options.cache.jsContext.toggleSelect = function (rowIdentity, e) {
                     var isSelected = !!options.model.selection[rowIdentity];
-                    if (options.model.logging) {
-                        console.log('Setting ' + rowIdentity + ' to ' + (!isSelected ? 'selected' : 'deselected'));
-                    }
+                    // if (options.model.logging) {
+                        // console.log('Setting ' + rowIdentity + ' to ' + (!isSelected ? 'selected' : 'deselected'));
+                    // }
         
                     var rowSelect = {};
                     rowSelect[rowIdentity] = !isSelected;
@@ -1825,13 +1882,14 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     options.model.vm.hb_tbody(compiledHtml);
                     var timeC = performance.now();
         
-                    if (options.model.logging) {
-                        console.log('Render template', (timeB - timeA));
-                        console.log('Update Binding', (timeC - timeB));
-                    }
+                    // if (options.model.logging) {
+                        // keeping it here for debugging
+                        // console.log('Render template', (timeB - timeA));
+                        // console.log('Update Binding', (timeC - timeB));
+                    // }
                 }
                 else {
-                    console.log('skipping the update data step since the ui should already be up to date');
+                    console.log('skipping the update dom step since the dom should already be up to date');
                 }
         
                 if (!options.model.vm.data.loaded.peek()) {
@@ -1857,9 +1915,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 if (!options.model.space || !options.model.space.width) {
                     return;
                 }
-                if (options.model.logging) {
-                    console.log('Updating the column bindings');
-                }
+                var didChange = false;
                 var i = 0;
         
                 var columns = options.model.columns;
@@ -1868,10 +1924,12 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 var numNow = columns.length;
                 if (numBefore > numNow) {
                     temp = temp.slice(0, numNow);
+                    didChange = true;
                 }
                 else if (numBefore < numNow) {
                     for (i = numBefore; i < numNow; i++) {
                         temp[i] = ko.observable();
+                        didChange = true;
                     }
                 }
         
@@ -1881,10 +1939,17 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     var colNow = JSON.stringify(column);
                     var newObj = JSON.parse(colNow);
                     addColumnFunctions(newObj, options);
+                    newObj.width = newObj.adjustedWidth || newObj.width;
                     temp[i](newObj);
+                    didChange = true;
                     options.cache[column.id] = colNow;
                 }
-            
+        
+                if (options.model.logging && didChange) {
+                    console.log('Updating the column bindings');
+                }
+        
+        
                 options.model.vm.columns(temp);
             }
         };
@@ -1918,7 +1983,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             },
             runs: function (options) {
                 if (options.model.logging) {
-                    console.log('Updating the data bindings');
+                    console.log('Updating the grid content using Knockout templates');
                 }
         
                 var uiData = options.model.data.slice();
@@ -1976,9 +2041,6 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 model.vm.gridState = ko.observable();
             },
             runs: function (options) {
-                if (options.model.logging) {
-                    console.log('Publishing grid state');
-                }
                 options.model.vm.gridState(options.model);
             }
         };
@@ -2281,7 +2343,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
      */
     Grid.Pager = function (options, gridVM) {
         window.doRegisterPaging();
-        
+    
         // Options
         this.enabled = ko.observable(true);
         this.pageSizes = propertyAsObservable(gridVM.ui, 'pageSizes');
@@ -2427,7 +2489,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     });
     
 
-    window.doRegisterPaging = function(){
+    window.doRegisterPaging = function () {
         ko.components.register('newgrid-paging', {
             viewModel: {
                 createViewModel: function (params) {
@@ -2437,10 +2499,11 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             template: templates.paging
         });
     
-        window.doRegisterPaging = function(){}
-    }
+        window.doRegisterPaging = function () {};
+    };
     
-    var abc=123;
+    var abc = 123;
+    
 
 
     /********************/
@@ -2487,7 +2550,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     
                 ko.computed(function () {
                     var allColWidths = visibleCols().reduce(function (total, col) {
-                        return total + col().width;
+                        return total + (col().adjustedWidth || col().width);
                     }, 0);
                     setTimeout(function () {
                         var containerWidth = $container.width();
@@ -2538,6 +2601,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     
     
                 function onColGripMouseDown(e) {
+                    col = valueAccessor();
                     startX = e.pageX;
                     startWidth = $th.outerWidth();
     
@@ -2570,7 +2634,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     var minWidth = col.minWidth ? Math.max(80, col.minWidth) : 80;
     
                     var update = {};
-                    update[col.id] = { width: Math.max(minWidth, colWidth) };
+                    update[col.id] = { width: Math.max(minWidth, colWidth), adjustedWidth: 0 };
                     gridVM.process({ columnsById: update });
                 }
     
@@ -2603,7 +2667,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     $th.append($template);
                 }
     
-                if (col.width === 0) {
+                if ((col.adjustedWidth || col.width) === 0) {
                     // This hack is needed for firefox
                     $th.css('padding', '0px');
                     $th.css('border', '0px solid transparent');
@@ -2613,7 +2677,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     $th
                         .addClass('nssg-th-' + tmplName)
                         .addClass('animate');
-                    $th.outerWidth(col.width);
+                    $th.outerWidth(col.adjustedWidth || col.width);
     
                     setTimeout(function () {
                         $th.removeClass('animate');
