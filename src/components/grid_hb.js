@@ -1,4 +1,4 @@
-ko.components.register('newgrid', {
+ko.components.register('newgrid-hb', {
     viewModel: {
         createViewModel: function (params) {
             params.vm().process({processors:{vm:"use-handlebars"}});

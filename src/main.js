@@ -85,6 +85,8 @@
     /**     COMPONENTS   **/
     /**********************/
     //= include "components/grid.js"
+    //= include "components/grid_hb.js"
+    //= include "components/grid_ko.js"
     //= include "components/paging.js"
 
     /********************/

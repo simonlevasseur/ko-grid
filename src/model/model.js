@@ -101,11 +101,18 @@ function createInitialGridState() {
                 'ui-export-selected-rows',
                 'columns-apply-min-max-width',
                 'columns-redistribute-space',
-                'vm-handlebars-data',
+                'vm',
                 'vm-update-bindings-paging',
                 'vm-update-bindings-columns',
                 'vm-update-bindings-ui',
                 'vm-update-bindings-grid-state'
+            ],
+            'vm':[],
+            'use-handlebars' : [
+                'vm-handlebars-data',
+            ],
+            'use-knockout': [
+                'vm-update-bindings-data',
             ],
             'fetch-data': function () {
                 throw new Error("Grids must specifiy a 'fetch-data' function or override the definition of 'process'");
