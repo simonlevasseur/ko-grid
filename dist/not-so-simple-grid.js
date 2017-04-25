@@ -38,7 +38,8 @@
     /**     TEMPLATES   **/
     /*********************/
     var templates = {};
-templates["grid"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=\"nssg-table\"><thead class=\"nssg-thead\"><tr class=\"nssg-thead-tr\" data-bind=\"newnssgTheadTr: true\"><th class=\"nssg-th\" data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=\"nssg-tobdy\" data-bind=\"html: hb_tbody\"></tbody></table></div>";
+templates["grid"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=\"nssg-table\"><thead class=\"nssg-thead\"><tr class=\"nssg-thead-tr\" data-bind=\"newnssgTheadTr: true\"><th class=\"nssg-th\" data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=\"nssg-tobdy\" data-bind=\"newnssgTbody: true\"><tr class=\"nssg-tbody-tr\" data-bind=\"newnssgTbodyTr: true\"><td class=\"nssg-td\" data-bind=\"newnssgTd: col\"></td></tr></tbody></table></div>";
+templates["grid_hb"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=\"nssg-table\"><thead class=\"nssg-thead\"><tr class=\"nssg-thead-tr\" data-bind=\"newnssgTheadTr: true\"><th class=\"nssg-th\" data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=\"nssg-tobdy\" data-bind=\"html: hb_tbody\"></tbody></table></div>";
 templates["paging"] = "<div class=\"nssg-paging\"><div class=\"nssg-paging-selector-container\" data-bind=\"visible: true\"> <span class=\"nssg-paging-view\">View</span> <select class=\"nssg-paging-pages\" data-bind=\"options: pageSizes, value: pageSize\"></select></div> <span class=\"nssg-paging-count\">Showing&nbsp;<span data-bind=\"text:firstItem\"></span>-<span data-bind=\"text:lastItem\"></span> of&nbsp;<span data-bind=\"text:totalItems\"></span></span><div class=\"nssg-paging-controls\" data-bind=\"visible: true\"> <a href=\"#\" class=\"nssg-paging-arrow nssg-paging-first\" data-bind=\"click: goToFirstPage, visible: currentPageIndex()>1\"></a> <a href=\"#\" class=\"nssg-paging-arrow nssg-paging-prev\" data-bind=\"click: goToPrevPage, visible: currentPageIndex()>1\"></a> <input type=\"text\" class=\"nssg-paging-current\" data-bind=\"value: currentPageIndex\"/><span class=\"nssg-paging-total\" data-bind=\"text: 'of ' + maxPageIndex()\"></span><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-next\" data-bind=\"click: goToNextPage, visible: currentPageIndex() < maxPageIndex()\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-last\" data-bind=\"click: goToLastPage, visible: currentPageIndex() < maxPageIndex()\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-refresh\" data-bind=\"click: refresh\"></a></div></div>";
 templates["actions"] = "<div class=\"nssg-actions-container\" data-bind=\"foreach: $component().ui().actions\"><a href=\"#\" class=\"nssg-action\" data-bind=\"css: $data.css, click: function(){$data.onClick(row.raw)}\"></a></div>";
 templates["actions_hb"] = "<div class=\"nssg-actions-container\"> {{#each ../actions as |action key|}}<a href=\"#\" class=\"nssg-action {{action.css}}\" onClick=\"{{../../jsContext}}.invokeAction('{{../$identity}}', {{action.index}}); return false\"></a> {{/each}}</div>";
@@ -2010,9 +2011,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     };
                 });
         
-                if (options.changed.data) {
+                if (options.changed.data || !options.cache.didRunOnce) {
                     options.model.vm.data(uiData);
                     options.model.vm.data.loaded(true);
+                    options.cache.didRunOnce = true;
                 }
             }
         };
@@ -2202,11 +2204,18 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'ui-export-selected-rows',
                     'columns-apply-min-max-width',
                     'columns-redistribute-space',
-                    'vm-handlebars-data',
+                    'vm',
                     'vm-update-bindings-paging',
                     'vm-update-bindings-columns',
                     'vm-update-bindings-ui',
                     'vm-update-bindings-grid-state'
+                ],
+                'vm':[],
+                'use-handlebars' : [
+                    'vm-handlebars-data',
+                ],
+                'use-knockout': [
+                    'vm-update-bindings-data',
                 ],
                 'fetch-data': function () {
                     throw new Error("Grids must specifiy a 'fetch-data' function or override the definition of 'process'");
@@ -2482,6 +2491,29 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     ko.components.register('newgrid', {
         viewModel: {
             createViewModel: function (params) {
+                params.vm().process({processors:{vm:"use-handlebars"}});
+                return params.vm;
+            }
+        },
+        template: templates.grid_hb
+    });
+    
+
+    ko.components.register('newgrid-hb', {
+        viewModel: {
+            createViewModel: function (params) {
+                params.vm().process({processors:{vm:"use-handlebars"}});
+                return params.vm;
+            }
+        },
+        template: templates.grid_hb
+    });
+    
+
+    ko.components.register('newgrid-ko', {
+        viewModel: {
+            createViewModel: function (params) {
+                params.vm().process({processors:{vm:"use-knockout"}});
                 return params.vm;
             }
         },
