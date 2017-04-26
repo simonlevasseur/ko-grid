@@ -20,7 +20,7 @@ gridState.processors['vm-update-bindings-data'] = {
 
         var uiData = options.model.data.slice();
         uiData.forEach(function (row, index) {
-            var clone = deepReplace({}, row);
+            var clone = JSON.parse(JSON.stringify(row));
             uiData[index] = clone;
 
             var obs = selectedObservables[row.$identity];
