@@ -1,7 +1,8 @@
 ko.components.register('newgrid', {
     viewModel: {
         createViewModel: function (params) {
-            params.vm().process({processors:{vm:"use-handlebars"}});
+            var vm = typeof params.vm === "function" ? params.vm() : params.vm;
+            vm.process({processors:{vm:"use-handlebars"}});
             return params.vm;
         }
     },

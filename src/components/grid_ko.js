@@ -1,7 +1,8 @@
 ko.components.register('newgrid-ko', {
     viewModel: {
         createViewModel: function (params) {
-            params.vm().process({processors:{vm:"use-knockout"}});
+            var vm = typeof params.vm === "function" ? params.vm() : params.vm;
+            vm.process({processors:{vm:"use-knockout"}});
             return params.vm;
         }
     },
