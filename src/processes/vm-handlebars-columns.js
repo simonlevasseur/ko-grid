@@ -90,14 +90,23 @@ gridState.processors['vm-handlebars-columns'] = {
             }
             templateParts.push("{{#if col.isVisible}}")
             templateParts.push("<th ");
-            templateParts.push("class='nssg-th nssg-th-" + col.type+"' ");
+            templateParts.push("class='nssg-th nssg-th-" + col.type);
+            templateParts.push("{{#if col.isSortable}}nssg-sortable")
+            templateParts.push("    {{#if col.isSorted}}nssg-sorted")
+            templateParts.push("        {{#if col.isSortedAsc}}nssg-sorted-asc{{/if}}")
+            templateParts.push("        {{#unless col.isSortedAsc}}nssg-sorted-desc{{/unless}}")
+            templateParts.push("    {{/if}}");
+            templateParts.push("{{/if}}");
+            templateParts.push('\' ');
             templateParts.push("style='width:{{col.adjustedWidth}}px'")
             templateParts.push("{{#if col.isSortable}}onclick='{{jsContext}}.toggleSort(\"{{col.id}}\")'{{/if}}");
             templateParts.push('>');
             templateParts.push(templates[col.type + '-th-hb'])
             templateParts.push('</th>');
-            templateParts.push("{{/if}}")
-            var template = templateParts.join("\n");
+            templateParts.push("{{/if}}");
+            
+            templateParts = templateParts.map(function(str){return str.trim();});
+            var template = templateParts.join(" ");
             var regexFriendlyId = col.id.replace(/\$/g, "$$$$");
             template = template.replace(/\{\{([^\}]*)col/g, '{{$1columns.' + regexFriendlyId);
             return template;
