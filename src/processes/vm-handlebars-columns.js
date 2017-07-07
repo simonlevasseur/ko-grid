@@ -6,7 +6,7 @@ var selectedObservables = {};
 /** vm-Handlebars: data **/
 /******************************/
 gridState.processors['vm-handlebars-columns'] = {
-    watches: ['sort', 'columns', 'space'],
+    watches: ['sort', 'columns', 'space', 'paging', 'ui'],
     init: function (model) {
         if (!model.vm.hb_columns) {
             model.vm.hb_columns = ko.observable('');
@@ -32,6 +32,8 @@ gridState.processors['vm-handlebars-columns'] = {
             var context = {
                 jsContext: options.cache.namespace,
                 columns: options.model.columnsById,
+                showSelectAll: options.model.ui.selectMode === 'multi' && options.model.paging.totalItems > 0,
+                ui: options.model.ui
             };
 
             if (!options.model.lastInput.ui || !options.model.lastInput.ui.alreadyUpdatedColumns) {
@@ -58,6 +60,7 @@ gridState.processors['vm-handlebars-columns'] = {
                 options.cache.namespace = 'NSSG_' + Math.floor(Math.random() * 99999);
                 options.cache.jsContext = {};
                 window[options.cache.namespace] = options.cache.jsContext;
+                options.cache.jsContext.toggleSelectAll = toggleSelectAll;
             }
         }
         
@@ -129,15 +132,8 @@ gridState.processors['vm-handlebars-columns'] = {
             return didChange;
         }
         
-        function addColumnFunctions(col, options) {
-            if (col.type === 'select') {
-                col.toggleSelectAll = function (grid) {
-                    return function () {
-                        grid.process({ selection: { all: !options.model.ui.allSelected } });
-                        return true;
-                    };
-                };
-            }
+        function toggleSelectAll() {
+            options.model.vm.process({selection:{all:!options.model.ui.allSelected}});
         }
     }
 };
