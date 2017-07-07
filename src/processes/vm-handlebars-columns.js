@@ -61,6 +61,7 @@ gridState.processors['vm-handlebars-columns'] = {
                 options.cache.jsContext = {};
                 window[options.cache.namespace] = options.cache.jsContext;
                 options.cache.jsContext.toggleSelectAll = toggleSelectAll;
+                options.cache.jsContext.toggleSort = toggleSort;
             }
         }
         
@@ -88,7 +89,11 @@ gridState.processors['vm-handlebars-columns'] = {
                 col.type = "text";
             }
             templateParts.push("{{#if col.isVisible}}")
-            templateParts.push("<th class='nssg-th nssg-th-" + col.type + "' style='width:{{col.adjustedWidth}}px'>")
+            templateParts.push("<th ");
+            templateParts.push("class='nssg-th nssg-th-" + col.type+"' ");
+            templateParts.push("style='width:{{col.adjustedWidth}}px'")
+            templateParts.push("{{#if col.isSortable}}onclick='{{jsContext}}.toggleSort(\"{{col.id}}\")'{{/if}}");
+            templateParts.push('>');
             templateParts.push(templates[col.type + '-th-hb'])
             templateParts.push('</th>');
             templateParts.push("{{/if}}")
@@ -134,6 +139,12 @@ gridState.processors['vm-handlebars-columns'] = {
         
         function toggleSelectAll() {
             options.model.vm.process({selection:{all:!options.model.ui.allSelected}});
+        }
+        
+        function toggleSort(colId) {
+            var wasAlreadySortedAsc = options.model.sort && options.model.sort.length > 0 && options.model.sort[0].sortBy === colId && options.model.sort[0].sortAsc;
+            var sort = [{sortBy: colId, sortAsc: !wasAlreadySortedAsc}]
+            options.model.vm.process({sort:sort});
         }
     }
 };
