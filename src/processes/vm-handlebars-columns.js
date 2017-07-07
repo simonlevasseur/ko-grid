@@ -62,6 +62,7 @@ gridState.processors['vm-handlebars-columns'] = {
                 window[options.cache.namespace] = options.cache.jsContext;
                 options.cache.jsContext.toggleSelectAll = toggleSelectAll;
                 options.cache.jsContext.toggleSort = toggleSort;
+                options.cache.jsContext.beginResize = onColGripMouseDown;
             }
         }
         
@@ -101,6 +102,9 @@ gridState.processors['vm-handlebars-columns'] = {
             templateParts.push("style='width:{{col.adjustedWidth}}px'")
             templateParts.push("{{#if col.isSortable}}onclick='{{jsContext}}.toggleSort(\"{{col.id}}\")'{{/if}}");
             templateParts.push('>');
+            templateParts.push('{{#if col.isResizable}}');
+            templateParts.push('<div class="nssg-col-grip" onmousedown="{{jsContext}}.beginResize(event, \'{{col.id}}\')"></div>');
+            templateParts.push('{{/if}}');
             templateParts.push(templates[col.type + '-th-hb'])
             templateParts.push('</th>');
             templateParts.push("{{/if}}");
@@ -154,6 +158,53 @@ gridState.processors['vm-handlebars-columns'] = {
             var wasAlreadySortedAsc = options.model.sort && options.model.sort.length > 0 && options.model.sort[0].sortBy === colId && options.model.sort[0].sortAsc;
             var sort = [{sortBy: colId, sortAsc: !wasAlreadySortedAsc}]
             options.model.vm.process({sort:sort});
+        }
+        
+        function onColGripMouseDown(e, id) {
+            var $th = $(e.target).closest("th");
+            var $table = $th.closest("table");
+            var $document = $(document);
+            var $container = $table.closest(".nssg-container");
+            var resizeContext = {
+                col : options.model.columnsById[id],
+                startX : e.pageX,
+                startWidth : $th.outerWidth(),
+                $th: $th,
+                $table: $table,
+                $document: $document,
+                $container: $container
+            }
+
+            $document
+                .on('mousemove.' + options.cache.namespace, onDocumentMouseMove.bind(null, resizeContext))
+                .one('mouseup.' + options.cache.namespace, onDocumentMouseUp.bind(null, resizeContext));
+        }
+
+        function onDocumentMouseMove(ctx, e) {
+            var currentWidth = ctx.$th.outerWidth();
+            var newWidth = ctx.startWidth + (e.pageX - ctx.startX);
+            var minWidth = ctx.col.minWidth ? Math.max(80, ctx.col.minWidth) : 80;
+            newWidth = Math.max(minWidth, newWidth);
+            var difference = newWidth - currentWidth;
+
+            var tableWidth = ctx.$table.outerWidth();
+            var newTableWidth = tableWidth + difference;
+
+            if (newTableWidth >= ctx.$container.width()) {
+                ctx.$table.outerWidth(newTableWidth);
+            }
+            ctx.$th.outerWidth(newWidth);
+        }
+
+        function onDocumentMouseUp(ctx, e) {
+            var colWidth = ctx.startWidth + (e.pageX - ctx.startX);
+            ctx.$document.off('.' + options.cache.namespace);
+
+            var minWidth = ctx.col.minWidth ? Math.max(80, ctx.col.minWidth) : 80;
+
+            var update = {};
+            update[ctx.col.id] = { width: Math.max(minWidth, colWidth), adjustedWidth: 0 };
+            options.model.vm.process({ columnsById: update });
         }
     }
 };
