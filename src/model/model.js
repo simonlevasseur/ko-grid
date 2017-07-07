@@ -90,6 +90,7 @@ function createInitialGridState() {
                 'data-fetch-cell-values'
             ],
             'post-process': [
+                'ui-animate-on-change',
                 'columns-sort-indicators',
                 'data-calculate-row-identities',
                 'selection-select-all',

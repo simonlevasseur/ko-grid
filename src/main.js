@@ -63,6 +63,7 @@
         //= include "processes/ui-export-selected-rows.js"
         //= include "processes/ui-selected-all-indicator.js"
         //= include "processes/ui-selected-count.js"
+        //= include "processes/ui-animate-on-change.js"
         //= include "processes/vm-container-size.js"
         //= include "processes/vm-handlebars-data.js"
         //= include "processes/vm-handlebars-columns.js"
