@@ -46,8 +46,8 @@ gridState.processors['vm-handlebars-columns'] = {
 
                  if (options.model.logging) {
                      //keeping it here for debugging
-                     console.log('Render template', (timeB - timeA));
-                     console.log('Update Binding', (timeC - timeB));
+                     //console.log('Render template', (timeB - timeA));
+                     //console.log('Update Binding', (timeC - timeB));
                  }
             }
             else {
