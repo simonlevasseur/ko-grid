@@ -76,8 +76,8 @@ gridState.processors['vm-handlebars-data'] = {
             if (!col.isVisible) {
                 return '';
             }
-            if (!templates[col.type + '_hb']){
-                console.error("Column type "+ col.type+" is not defined for handlebars, defaulting to text");
+            if (templates[col.type + '_hb'] === undefined){
+                console.error("Body Column type "+ col.type+" is not defined for handlebars, defaulting to text");
                 col.type = "text";
             }
             return "<td class='nssg-td nssg-td-" + col.type + "'>" +
