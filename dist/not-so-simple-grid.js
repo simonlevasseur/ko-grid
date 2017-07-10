@@ -1946,8 +1946,17 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             },
             runs: function (options) {
                 var useHandlebars = options.model.paging.pageSize > 100;
+                var didChange = options.model.ui["columns-use-handlebars"]() !== useHandlebars;
                 options.model.ui["columns-use-handlebars"](useHandlebars);
                 options.model.processors["ui-columns"] = useHandlebars ? "ui-handlebar-columns" : "ui-ko-columns";
+                
+                var description = useHandlebars?"handlebars (faster performance)":"knockout (animations enabled)";
+                if (options.cache.didRunOnce && didChange) {
+                    console.log("Pagesize crossed 100 items/page threshold; Header row will now use " + description);
+                } else if (!options.cache.didRunOnce) {
+                    console.log("Header row will use "+ description);
+                }
+                options.cache.didRunOnce = true;
             }
         };
         
@@ -2465,6 +2474,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'ui-export-selected-rows',
                     'columns-apply-min-max-width',
                     'columns-redistribute-space',
+                    'ui-columns-performance',
                     'ui-columns',
                     'vm-update-bindings-paging',
                     'vm-update-bindings-ui',

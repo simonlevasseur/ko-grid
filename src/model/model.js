@@ -102,6 +102,7 @@ function createInitialGridState() {
                 'ui-export-selected-rows',
                 'columns-apply-min-max-width',
                 'columns-redistribute-space',
+                'ui-columns-performance',
                 'ui-columns',
                 'vm-update-bindings-paging',
                 'vm-update-bindings-ui',
