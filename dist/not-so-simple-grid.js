@@ -38,8 +38,8 @@
     /**     TEMPLATES   **/
     /*********************/
     var templates = {};
-templates["grid"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=\"nssg-table\"><thead class=\"nssg-thead\"><tr class=\"nssg-thead-tr\" data-bind=\"newnssgTheadTr: true\"><th class=\"nssg-th\" data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=\"nssg-tobdy\" data-bind=\"newnssgTbody: true\"><tr class=\"nssg-tbody-tr\" data-bind=\"newnssgTbodyTr: true\"><td class=\"nssg-td\" data-bind=\"newnssgTd: col\"></td></tr></tbody></table></div>";
-templates["grid_hb"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=\"nssg-table\"><thead class=\"nssg-thead\"><tr class=\"nssg-thead-tr\" data-bind=\"newnssgTheadTr: true\"><th class=\"nssg-th\" data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=\"nssg-tobdy\" data-bind=\"html: hb_tbody\"></tbody></table></div>";
+templates["grid"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=\"nssg-table\" data-bind=\"css : { animate: ui().animationEnabled}\"><thead class=\"nssg-thead\" data-bind=\"if: ui()['columns-use-handlebars']\"><tr class=\"nssg-thead-tr\" data-bind=\"html: hb_columns\"></tr></thead><thead class=\"nssg-thead\" data-bind=\"ifnot: ui()['columns-use-handlebars']\"><tr class=\"nssg-thead-tr\" data-bind=\"newnssgTheadTr: true\"><th class=\"nssg-th\" data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=\"nssg-tobdy\" data-bind=\"newnssgTbody: true\"><tr class=\"nssg-tbody-tr\" data-bind=\"newnssgTbodyTr: true\"><td class=\"nssg-td\" data-bind=\"newnssgTd: col\"></td></tr></tbody></table></div>";
+templates["grid_hb"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=\"nssg-table\" data-bind=\"css : { animate: ui().animationEnabled}\"><thead class=\"nssg-thead\" data-bind=\"if: ui()['columns-use-handlebars']\"><tr class=\"nssg-thead-tr\" data-bind=\"html: hb_columns\"></tr></thead><thead class=\"nssg-thead\" data-bind=\"ifnot: ui()['columns-use-handlebars']\"><tr class=\"nssg-thead-tr\" data-bind=\"newnssgTheadTr: true\"><th class=\"nssg-th\" data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=\"nssg-tobdy\" data-bind=\"html: hb_tbody\"></tbody></table></div>";
 templates["paging"] = "<div class=\"nssg-paging\"><div class=\"nssg-paging-selector-container\" data-bind=\"visible: true\"> <span class=\"nssg-paging-view\">View</span> <select class=\"nssg-paging-pages\" data-bind=\"options: pageSizes, value: pageSize\"></select></div> <span class=\"nssg-paging-count\">Showing&nbsp;<span data-bind=\"text:firstItem\"></span>-<span data-bind=\"text:lastItem\"></span> of&nbsp;<span data-bind=\"text:totalItems\"></span></span><div class=\"nssg-paging-controls\" data-bind=\"visible: true\"> <a href=\"#\" class=\"nssg-paging-arrow nssg-paging-first\" data-bind=\"click: goToFirstPage, visible: currentPageIndex()>1\"></a> <a href=\"#\" class=\"nssg-paging-arrow nssg-paging-prev\" data-bind=\"click: goToPrevPage, visible: currentPageIndex()>1\"></a> <input type=\"text\" class=\"nssg-paging-current\" data-bind=\"value: currentPageIndex\"/><span class=\"nssg-paging-total\" data-bind=\"text: 'of ' + maxPageIndex()\"></span><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-next\" data-bind=\"click: goToNextPage, visible: currentPageIndex() < maxPageIndex()\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-last\" data-bind=\"click: goToLastPage, visible: currentPageIndex() < maxPageIndex()\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-refresh\" data-bind=\"click: refresh\"></a></div></div>";
 templates["actions"] = "<div class=\"nssg-actions-container\" data-bind=\"foreach: $component().ui().actions\"><a href=\"#\" class=\"nssg-action\" data-bind=\"css: $data.css, click: function(){$data.onClick(row.raw)}\"></a></div>";
 templates["actions_hb"] = "<div class=\"nssg-actions-container\"> {{#each ../actions as |action key|}}<a href=\"#\" class=\"nssg-action {{action.css}}\" onClick=\"{{../../jsContext}}.invokeAction('{{../$identity}}', {{action.index}}); return false\"></a> {{/each}}</div>";
@@ -49,7 +49,10 @@ templates["select"] = "<input type=\"checkbox\" data-bind=\"checked: row.isSelec
 templates["select_hb"] = "<input type=\"checkbox\" {{#if isSelected}}checked {{/if}} onClick=\"javascript:{{../jsContext}}.toggleSelect('{{$identity}}', this)\"/>";
 templates["text"] = "<div class=\"nssg-td-text\" data-bind=\"text: $parent[id], attr: { title: $parent[id] }\"></div>";
 templates["text_hb"] = "<div class=\"nssg-td-text\" title=\"{{value}}\">{{value}}</div>";
+templates["actions-th-hb"] = "";
+templates["select-th-hb"] = "{{#if showSelectAll}} <input type=\"checkbox\" {{#if ui.allSelected}}checked=\"checked\"{{/if}} onclick=\"{{jsContext}}.toggleSelectAll()\"/> {{/if}}";
 templates["select-th"] = "<input type=\"checkbox\" data-bind=\"checked: $component().ui().allSelected, visible: $parent.ui().selectMode==='multi' && $parent.paging().totalItems> 0, click: col.toggleSelectAll($component())\" />";
+templates["text-th-hb"] = "<div class=\"nssg-th-text\" title=\"{{col.heading}}\">{{col.heading}}</div>";
 templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.heading, attr: { title: col.heading }\"></div>";
     /* eslint no-unused-vars: "off" */
     
@@ -1755,6 +1758,31 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
 
         /* eslint no-unused-vars: 0 */
         
+        /**************************/
+        /** UI Animate on change **/
+        /**************************/
+        gridState.processors['ui-animate-on-change'] = {
+            watches: ['paging','space','columns'],
+            init: function(model){
+                model.ui = model.ui || {};
+                model.ui.animationEnabled = ko.observable(false);
+            },
+            runs: function (options) {
+                options.model.ui.animationEnabled(true);
+                
+                if (options.cache.lastTimeout) {
+                    clearTimeout(options.cache.lastTimeout);
+                }
+                
+                options.cache.lastTimeout = setTimeout(function(){
+                    options.model.ui.animationEnabled(false);
+                }, 500)
+            }
+        };
+        
+
+        /* eslint no-unused-vars: 0 */
+        
         /***********************/
         /** vm Container Size **/
         /***********************/
@@ -1853,6 +1881,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     if (!col.isVisible) {
                         return '';
                     }
+                    if (templates[col.type + '_hb'] === undefined){
+                        console.error("Body Column type "+ col.type+" is not defined for handlebars, defaulting to text");
+                        col.type = "text";
+                    }
                     return "<td class='nssg-td nssg-td-" + col.type + "'>" +
                         templates[col.type + '_hb'].replace(/\{\{value/g, '{{' + col.id) +
                         '</td>';
@@ -1897,6 +1929,234 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     setTimeout(function () {
                         options.model.vm.data.loaded(true);
                     }, 100);
+                }
+            }
+        };
+        
+
+        /* eslint no-unused-vars: 0 */
+        
+        /***************************/
+        /** UI Columns Performance **/
+        /***************************/
+        gridState.processors['ui-columns-performance'] = {
+            watches: ['paging'],
+            init: function(model){
+                model.ui["columns-use-handlebars"] = ko.observable(false);
+            },
+            runs: function (options) {
+                var useHandlebars = options.model.paging.pageSize > 100;
+                options.model.ui["columns-use-handlebars"](useHandlebars);
+                options.model.processors["ui-columns"] = useHandlebars ? "ui-handlebar-columns" : "ui-ko-columns";
+            }
+        };
+        
+
+        /* eslint no-unused-vars: 0 */
+        
+        var selectedObservables = {};
+        
+        /******************************/
+        /** vm-Handlebars: data **/
+        /******************************/
+        gridState.processors['vm-handlebars-columns'] = {
+            watches: ['sort', 'columns', 'space', 'paging', 'ui'],
+            init: function (model) {
+                if (!model.vm.hb_columns) {
+                    model.vm.hb_columns = ko.observable('');
+                }
+            },
+            runs: function (options) {
+                if (!options.model.space || !options.model.space.width) {
+                    return;
+                }
+                
+                if (!detectChanges()) {
+                    return;
+                }
+                if (options.model.logging) {
+                    console.log('Updating the grid columns using Handlebar templates');
+                }
+                
+                createJsContext();
+                var template = compileTemplates();
+                updateDom(template);
+                
+                function updateDom(compiledTemplate){
+                    var context = {
+                        jsContext: options.cache.namespace,
+                        columns: options.model.columnsById,
+                        showSelectAll: options.model.ui.selectMode === 'multi' && options.model.paging.totalItems > 0,
+                        ui: options.model.ui
+                    };
+        
+                    if (!options.model.lastInput.ui || !options.model.lastInput.ui.alreadyUpdatedColumns) {
+                        var timeA = performance.now();
+                        var compiledHtml = compiledTemplate(context);
+                        var timeB = performance.now();
+                        options.model.vm.hb_columns(compiledHtml);
+                        
+                        var timeC = performance.now();
+        
+                         if (options.model.logging) {
+                             //keeping it here for debugging
+                             //console.log('Render template', (timeB - timeA));
+                             //console.log('Update Binding', (timeC - timeB));
+                         }
+                    }
+                    else {
+                        console.log('skipping the update dom step since the dom should already be up to date');
+                    }
+                }
+        
+                function createJsContext() {
+                    if (!options.cache.namespace) {
+                        options.cache.namespace = 'NSSG_' + Math.floor(Math.random() * 99999);
+                        options.cache.jsContext = {};
+                        window[options.cache.namespace] = options.cache.jsContext;
+                        options.cache.jsContext.toggleSelectAll = toggleSelectAll;
+                        options.cache.jsContext.toggleSort = toggleSort;
+                        options.cache.jsContext.beginResize = onColGripMouseDown;
+                    }
+                }
+                
+                function compileTemplates(){
+                    options.cache.templates = options.cache.templates || {};
+                    
+                    var templateParts = [];
+                    templateParts = templateParts.concat(options.model.columns.map(createSingleColumnTemplate));
+                    templateParts.push("<th class='nssg-th nssg-td-gutter'></th>");
+                    var template = templateParts.join('\n');
+                    var compiledTemplate = options.cache.templates[template];
+                    if (!compiledTemplate) {
+                        compiledTemplate = Handlebars.compile(template);
+                        options.cache.templates[template] = compiledTemplate;
+                    }
+                    return compiledTemplate;
+                }
+                
+                function createSingleColumnTemplate(col) {
+                    var templateParts = [];
+                    if (templates[col.type + '-th-hb'] === undefined){
+                        console.error("Header Column type "+ col.type+" is not defined for handlebars, defaulting to text");
+                        col.type = "text";
+                    }
+                    templateParts.push("{{#if col.isVisible}}")
+                    templateParts.push("<th ");
+                    templateParts.push("class='nssg-th nssg-th-" + col.type);
+                    templateParts.push("{{#if col.isSortable}}nssg-sortable")
+                    templateParts.push("    {{#if col.isSorted}}nssg-sorted")
+                    templateParts.push("        {{#if col.isSortedAsc}}nssg-sorted-asc{{/if}}")
+                    templateParts.push("        {{#unless col.isSortedAsc}}nssg-sorted-desc{{/unless}}")
+                    templateParts.push("    {{/if}}");
+                    templateParts.push("{{/if}}");
+                    templateParts.push('\' ');
+                    templateParts.push("style='width:{{col.adjustedWidth}}px'")
+                    templateParts.push("{{#if col.isSortable}}onclick='{{jsContext}}.toggleSort(\"{{col.id}}\")'{{/if}}");
+                    templateParts.push('>');
+                    templateParts.push('{{#if col.isResizable}}');
+                    templateParts.push('<div class="nssg-col-grip" onmousedown="{{jsContext}}.beginResize(event, \'{{col.id}}\')"></div>');
+                    templateParts.push('{{/if}}');
+                    templateParts.push(templates[col.type + '-th-hb'])
+                    templateParts.push('</th>');
+                    templateParts.push("{{/if}}");
+                    
+                    templateParts = templateParts.map(function(str){return str.trim();});
+                    var template = templateParts.join(" ");
+                    var regexFriendlyId = col.id.replace(/\$/g, "$$$$");
+                    template = template.replace(/\{\{([^\}]*)col/g, '{{$1columns.' + regexFriendlyId);
+                    return template;
+                }
+                
+                function detectChanges() {
+                    var didChange = false;
+                    var i = 0;
+        
+                    var columns = options.model.columns;
+                    var temp = options.model.vm.columns();
+                    var numBefore = temp.length;
+                    var numNow = columns.length;
+                    if (numBefore > numNow) {
+                        temp = temp.slice(0, numNow);
+                        didChange = true;
+                    }
+                    else if (numBefore < numNow) {
+                        for (i = numBefore; i < numNow; i++) {
+                            temp[i] = ko.observable();
+                            didChange = true;
+                        }
+                    }
+        
+                    for (i = 0; i < numNow; i++) {
+                        var column = columns[i];
+                        var colBefore = options.cache[column.id];
+                        var colNow = JSON.stringify(column);
+                        var newObj = JSON.parse(colNow);
+                        addColumnFunctions(newObj, options);
+                        newObj.width = newObj.adjustedWidth || newObj.width;
+                        temp[i](newObj);
+                        didChange = true;
+                        options.cache[column.id] = colNow;
+                    }
+                    
+                    return didChange;
+                }
+                
+                function toggleSelectAll() {
+                    options.model.vm.process({selection:{all:!options.model.ui.allSelected}});
+                }
+                
+                function toggleSort(colId) {
+                    var wasAlreadySortedAsc = options.model.sort && options.model.sort.length > 0 && options.model.sort[0].sortBy === colId && options.model.sort[0].sortAsc;
+                    var sort = [{sortBy: colId, sortAsc: !wasAlreadySortedAsc}]
+                    options.model.vm.process({sort:sort});
+                }
+                
+                function onColGripMouseDown(e, id) {
+                    var $th = $(e.target).closest("th");
+                    var $table = $th.closest("table");
+                    var $document = $(document);
+                    var $container = $table.closest(".nssg-container");
+                    var resizeContext = {
+                        col : options.model.columnsById[id],
+                        startX : e.pageX,
+                        startWidth : $th.outerWidth(),
+                        $th: $th,
+                        $table: $table,
+                        $document: $document,
+                        $container: $container
+                    }
+        
+                    $document
+                        .on('mousemove.' + options.cache.namespace, onDocumentMouseMove.bind(null, resizeContext))
+                        .one('mouseup.' + options.cache.namespace, onDocumentMouseUp.bind(null, resizeContext));
+                }
+        
+                function onDocumentMouseMove(ctx, e) {
+                    var currentWidth = ctx.$th.outerWidth();
+                    var newWidth = ctx.startWidth + (e.pageX - ctx.startX);
+                    var minWidth = ctx.col.minWidth ? Math.max(80, ctx.col.minWidth) : 80;
+                    newWidth = Math.max(minWidth, newWidth);
+                    var difference = newWidth - currentWidth;
+        
+                    var tableWidth = ctx.$table.outerWidth();
+                    var newTableWidth = tableWidth + difference;
+        
+                    if (newTableWidth >= ctx.$container.width()) {
+                        ctx.$table.outerWidth(newTableWidth);
+                    }
+                    ctx.$th.outerWidth(newWidth);
+                }
+        
+                function onDocumentMouseUp(ctx, e) {
+                    var colWidth = ctx.startWidth + (e.pageX - ctx.startX);
+                    ctx.$document.off('.' + options.cache.namespace);
+        
+                    var minWidth = ctx.col.minWidth ? Math.max(80, ctx.col.minWidth) : 80;
+        
+                    var update = {};
+                    update[ctx.col.id] = { width: Math.max(minWidth, colWidth), adjustedWidth: 0 };
+                    options.model.vm.process({ columnsById: update });
                 }
             }
         };
@@ -2193,6 +2453,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'data-fetch-cell-values'
                 ],
                 'post-process': [
+                    'ui-animate-on-change',
                     'columns-sort-indicators',
                     'data-calculate-row-identities',
                     'selection-select-all',
@@ -2204,19 +2465,18 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'ui-export-selected-rows',
                     'columns-apply-min-max-width',
                     'columns-redistribute-space',
-                    'vm',
+                    'ui-columns',
                     'vm-update-bindings-paging',
-                    'vm-update-bindings-columns',
                     'vm-update-bindings-ui',
-                    'vm-update-bindings-grid-state'
+                    'vm-update-bindings-grid-state',
+                    'vm',
                 ],
                 'vm':[],
-                'use-handlebars' : [
-                    'vm-handlebars-data',
-                ],
-                'use-knockout': [
-                    'vm-update-bindings-data',
-                ],
+                'use-handlebars' : 'vm-handlebars-data',
+                'use-knockout': 'vm-update-bindings-data',
+                'ui-columns' : 'ui-ko-columns',
+                'ui-handlebar-columns': 'vm-handlebars-columns',
+                'ui-ko-columns':'vm-update-bindings-columns',
                 'fetch-data': function () {
                     throw new Error("Grids must specifiy a 'fetch-data' function or override the definition of 'process'");
                 },
@@ -2491,7 +2751,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     ko.components.register('newgrid', {
         viewModel: {
             createViewModel: function (params) {
-                params.vm().process({processors:{vm:"use-handlebars"}});
+                var vm = typeof params.vm === "function" ? params.vm() : params.vm;
+                vm.process({processors:{vm:"use-handlebars"}});
                 return params.vm;
             }
         },
@@ -2502,7 +2763,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     ko.components.register('newgrid-hb', {
         viewModel: {
             createViewModel: function (params) {
-                params.vm().process({processors:{vm:"use-handlebars"}});
+                var vm = typeof params.vm === "function" ? params.vm() : params.vm;
+                vm.process({processors:{vm:"use-handlebars"}});
                 return params.vm;
             }
         },
@@ -2513,7 +2775,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     ko.components.register('newgrid-ko', {
         viewModel: {
             createViewModel: function (params) {
-                params.vm().process({processors:{vm:"use-knockout"}});
+                var vm = typeof params.vm === "function" ? params.vm() : params.vm;
+                vm.process({processors:{vm:"use-knockout"}});
                 return params.vm;
             }
         },
