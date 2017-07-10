@@ -66,6 +66,7 @@
         //= include "processes/ui-animate-on-change.js"
         //= include "processes/vm-container-size.js"
         //= include "processes/vm-handlebars-data.js"
+        //= include "processes/ui-columns-performance.js"
         //= include "processes/vm-handlebars-columns.js"
         //= include "processes/vm-update-bindings-columns.js"
         //= include "processes/vm-update-bindings-data.js"

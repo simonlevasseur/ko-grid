@@ -1,6 +1,12 @@
 <div class="nssg-container" data-bind="css: { isLoading: !data.loaded() }, nssgContainerSize: size">
     <table class="nssg-table" data-bind="css : { animate: ui().animationEnabled}">
-        <thead class="nssg-thead" data-bind="html: hb_columns">
+        <thead class="nssg-thead" data-bind="if: ui()['columns-use-handlebars']">
+            <tr class="nssg-thead-tr" data-bind="html: hb_columns"></tr>
+        </thead>
+        <thead class="nssg-thead" data-bind="ifnot: ui()['columns-use-handlebars']">
+            <tr class="nssg-thead-tr" data-bind="newnssgTheadTr: true">
+                <th class="nssg-th" data-bind="newnssgTh: col"></th>
+            </tr>
         </thead>
         <tbody class="nssg-tobdy" data-bind="html: hb_tbody">
         </tbody>

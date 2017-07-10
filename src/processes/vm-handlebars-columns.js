@@ -70,10 +70,8 @@ gridState.processors['vm-handlebars-columns'] = {
             options.cache.templates = options.cache.templates || {};
             
             var templateParts = [];
-            templateParts.push("<tr class='nssg-thead-tr' id='" + options.cache.namespace + "'>");
             templateParts = templateParts.concat(options.model.columns.map(createSingleColumnTemplate));
             templateParts.push("<th class='nssg-th nssg-td-gutter'></th>");
-            templateParts.push("</tr>");
             var template = templateParts.join('\n');
             var compiledTemplate = options.cache.templates[template];
             if (!compiledTemplate) {
