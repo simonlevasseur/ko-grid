@@ -8,8 +8,10 @@ gridState.processors['vm-container-size'] = {
         model.vm.size = ko.observable();
 
         ko.computed(function () {
+            var previous = model.space ? model.space.width : undefined;
+            
             var size = model.vm.size();
-            if (size) {
+            if (size && size.width !== previous) {
                 model.vm.process({ space: size });
             }
         });
