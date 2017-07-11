@@ -1963,6 +1963,36 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
 
         /* eslint no-unused-vars: 0 */
         
+        /*********************************/
+        /** UI Columns Performance Once **/
+        /*********************************/
+        gridState.processors['ui-columns-performance-once'] = {
+            watches: ['sort', 'columns', 'space'],
+            init: function(model){
+                model.processors['ui-columns-performance-once-runner'] = [];
+            },
+            runs: function (options) {
+                if (!options.model.space || !options.model.space.width) {
+                    return;
+                }
+                var runOnce = [];
+                if (!options.model.vm.columns || !options.model.vm.columns())
+                {
+                    console.log("Running vm-update-bindings-columns once");
+                    runOnce.push('vm-update-bindings-columns');
+                }
+                if (!options.model.vm.hb_columns || !options.model.vm.hb_columns())
+                {
+                    console.log("Running vm-handlebars-columns once");
+                    runOnce.push('vm-handlebars-columns');
+                }
+                options.model.processors['ui-columns-performance-once-runner'] = runOnce;
+            }
+        };
+        
+
+        /* eslint no-unused-vars: 0 */
+        
         var selectedObservables = {};
         
         /******************************/
@@ -2480,6 +2510,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'vm-update-bindings-ui',
                     'vm-update-bindings-grid-state',
                     'vm',
+                    'ui-columns-performance-once',
+                    'ui-columns-performance-once-runner'
                 ],
                 'vm':[],
                 'use-handlebars' : 'vm-handlebars-data',

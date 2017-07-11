@@ -108,6 +108,8 @@ function createInitialGridState() {
                 'vm-update-bindings-ui',
                 'vm-update-bindings-grid-state',
                 'vm',
+                'ui-columns-performance-once',
+                'ui-columns-performance-once-runner'
             ],
             'vm':[],
             'use-handlebars' : 'vm-handlebars-data',
