@@ -122,15 +122,8 @@ gridState.processors['vm-handlebars-columns'] = {
             var temp = options.model.vm.columns();
             var numBefore = temp.length;
             var numNow = columns.length;
-            if (numBefore > numNow) {
-                temp = temp.slice(0, numNow);
+            if (numBefore !== numNow) {
                 didChange = true;
-            }
-            else if (numBefore < numNow) {
-                for (i = numBefore; i < numNow; i++) {
-                    temp[i] = ko.observable();
-                    didChange = true;
-                }
             }
 
             for (i = 0; i < numNow; i++) {
@@ -138,9 +131,6 @@ gridState.processors['vm-handlebars-columns'] = {
                 var colBefore = options.cache[column.id];
                 var colNow = JSON.stringify(column);
                 var newObj = JSON.parse(colNow);
-                addColumnFunctions(newObj, options);
-                newObj.width = newObj.adjustedWidth || newObj.width;
-                temp[i](newObj);
                 didChange = true;
                 options.cache[column.id] = colNow;
             }
