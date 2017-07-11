@@ -11,6 +11,7 @@
 Grid.Pager = function (options, gridVM) {
     window.doRegisterPaging();
 
+    var self = this;
     // Options
     this.enabled = ko.observable(true);
     this.pageSizes = propertyAsObservable(gridVM.ui, 'pageSizes');
@@ -28,6 +29,19 @@ Grid.Pager = function (options, gridVM) {
         return gridVM.paging().pageSize;
     },
         write: function (newValue) {
+            //Sometimes the value gets set while the control is in a weird state
+            //this doesn't fix that issue, but it prevents the incorrect values from
+            //propogating back into the grid.
+            //Todo: investigate ko select not initializing correctly
+            if (!newValue) {
+                self.pageSize.racing = true;
+                setTimeout(function() {
+                    self.pageSize.racing = false
+                },50);
+            }
+            if (self.pageSize.racing){
+                return;
+            }
             gridVM.process({ paging: { pageSize: newValue } });
         } });
 
