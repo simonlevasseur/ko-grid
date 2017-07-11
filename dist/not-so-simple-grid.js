@@ -1976,7 +1976,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     return;
                 }
                 var runOnce = [];
-                if (!options.model.vm.columns || !options.model.vm.columns())
+                if (!options.model.vm.columns || !options.model.vm.columns() || options.model.vm.columns().length !== options.model.columns.length)
                 {
                     console.log("Running vm-update-bindings-columns once");
                     runOnce.push('vm-update-bindings-columns');
@@ -2115,15 +2115,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     var temp = options.model.vm.columns();
                     var numBefore = temp.length;
                     var numNow = columns.length;
-                    if (numBefore > numNow) {
-                        temp = temp.slice(0, numNow);
+                    if (numBefore !== numNow) {
                         didChange = true;
-                    }
-                    else if (numBefore < numNow) {
-                        for (i = numBefore; i < numNow; i++) {
-                            temp[i] = ko.observable();
-                            didChange = true;
-                        }
                     }
         
                     for (i = 0; i < numNow; i++) {
@@ -2131,9 +2124,6 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                         var colBefore = options.cache[column.id];
                         var colNow = JSON.stringify(column);
                         var newObj = JSON.parse(colNow);
-                        addColumnFunctions(newObj, options);
-                        newObj.width = newObj.adjustedWidth || newObj.width;
-                        temp[i](newObj);
                         didChange = true;
                         options.cache[column.id] = colNow;
                     }
@@ -2655,6 +2645,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     Grid.Pager = function (options, gridVM) {
         window.doRegisterPaging();
     
+        var self = this;
         // Options
         this.enabled = ko.observable(true);
         this.pageSizes = propertyAsObservable(gridVM.ui, 'pageSizes');
@@ -2672,6 +2663,19 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             return gridVM.paging().pageSize;
         },
             write: function (newValue) {
+                //Sometimes the value gets set while the control is in a weird state
+                //this doesn't fix that issue, but it prevents the incorrect values from
+                //propogating back into the grid.
+                //Todo: investigate ko select not initializing correctly
+                if (!newValue) {
+                    self.pageSize.racing = true;
+                    setTimeout(function() {
+                        self.pageSize.racing = false
+                    },50);
+                }
+                if (self.pageSize.racing){
+                    return;
+                }
                 gridVM.process({ paging: { pageSize: newValue } });
             } });
     
