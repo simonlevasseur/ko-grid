@@ -13,7 +13,7 @@ gridState.processors['ui-columns-performance-once'] = {
             return;
         }
         var runOnce = [];
-        if (!options.model.vm.columns || !options.model.vm.columns())
+        if (!options.model.vm.columns || !options.model.vm.columns() || options.model.vm.columns().length !== options.model.columns.length)
         {
             console.log("Running vm-update-bindings-columns once");
             runOnce.push('vm-update-bindings-columns');
