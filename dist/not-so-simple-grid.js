@@ -1032,6 +1032,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 if (options.model.logging) {
                     console.log('Fetching cell values');
                 }
+                
+                var invalidDataAccessors = {};
         
                 options.model.data = originalData.map(function (row) {
                     var temp = {};
@@ -1041,15 +1043,24 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                         }
                     }
                     options.model.columns.forEach(function (col) {
+                        var value;
                         if (typeof col.dataAccessor === 'function') {
-                            temp[col.id] = col.dataAccessor(row);
+                            value = col.dataAccessor(row);
                         }
                         else {
-                            temp[col.id] = row[col.dataAccessor];
+                            value = row[col.dataAccessor];
+                        }
+                        temp[col.id] = value;
+                        if ((value === undefined || value === null) && col.id[0] !== "$") {
+                            invalidDataAccessors[col.id] = col.dataAccessor;
                         }
                     });
                     temp.raw = row;
                     return temp;
+                });
+                
+                _.forIn(invalidDataAccessors, function(da, colId){
+                    console.warn("DataAccessor for " + colId + " resulted in null or undefined:", da);
                 });
             }
         };
