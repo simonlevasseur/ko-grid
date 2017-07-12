@@ -8,6 +8,8 @@ gridState.processors['vm-update-bindings-grid-state'] = {
         model.vm.gridState = ko.observable();
     },
     runs: function (options) {
-        options.model.vm.gridState(options.model);
+        options.model.runAfter.push({id:'vm-update-bindings-grid-state',fnRef:function(){
+            options.model.vm.gridState(options.model);
+        }});
     }
 };

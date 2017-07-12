@@ -56,7 +56,7 @@ function createInitialGridState() {
         data: [],
         data_ChangeMode: 'Identity',
         processors: {
-            start: ['log-start', 'pre-process', 'process', 'post-process', 'log-done'],
+            start: ['log-start', 'pre-process', 'process', 'post-process', 'run-after', 'log-done'],
             'pre-process': [
                 'fetch-data-init',
                 'columns-enable-selection-column',

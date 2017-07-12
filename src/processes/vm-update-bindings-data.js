@@ -43,8 +43,10 @@ gridState.processors['vm-update-bindings-data'] = {
         });
 
         if (options.changed.data || !options.cache.didRunOnce) {
-            options.model.vm.data(uiData);
-            options.model.vm.data.loaded(true);
+            options.model.runAfter.push({id:'vm-update-bindings-data',fnRef:function(){
+                options.model.vm.data(uiData);
+                options.model.vm.data.loaded(true);
+            }});
             options.cache.didRunOnce = true;
         }
     }

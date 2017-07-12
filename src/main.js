@@ -74,6 +74,7 @@
         //= include "processes/vm-update-bindings-grid-state.js"
         //= include "processes/vm-update-bindings-paging.js"
         //= include "processes/vm-update-bindings-ui.js"
+        //= include "processes/run-after.js"
 
 
     }

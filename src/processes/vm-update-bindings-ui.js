@@ -23,7 +23,9 @@ gridState.processors['vm-update-bindings-ui'] = {
         if (clone.allSelected.peek() !== ui.allSelected) {
             clone.allSelected(ui.allSelected);
         }
-
-        options.model.vm.ui(clone);
+        
+        options.model.runAfter.push({id:'vm-update-bindings-ui',fnRef:function(){
+            options.model.vm.ui(clone);
+        }});
     }
 };

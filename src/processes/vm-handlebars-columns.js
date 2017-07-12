@@ -37,18 +37,10 @@ gridState.processors['vm-handlebars-columns'] = {
             };
 
             if (!options.model.lastInput.ui || !options.model.lastInput.ui.alreadyUpdatedColumns) {
-                var timeA = performance.now();
                 var compiledHtml = compiledTemplate(context);
-                var timeB = performance.now();
-                options.model.vm.hb_columns(compiledHtml);
-                
-                var timeC = performance.now();
-
-                 if (options.model.logging) {
-                     //keeping it here for debugging
-                     //console.log('Render template', (timeB - timeA));
-                     //console.log('Update Binding', (timeC - timeB));
-                 }
+                options.model.runAfter.push({id:'vm-handlebars-columns', fnRef:function(){
+                    options.model.vm.hb_columns(compiledHtml);
+                }});
             }
             else {
                 console.log('skipping the update dom step since the dom should already be up to date');

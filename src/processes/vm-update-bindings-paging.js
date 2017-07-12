@@ -12,6 +12,8 @@ gridState.processors['vm-update-bindings-paging'] = {
         if (options.model.logging) {
             console.log('Updating the page bindings');
         }
-        options.model.vm.paging(options.model.paging);
+        options.model.runAfter.push({id:'vm-update-bindings-paging',fnRef:function(){
+            options.model.vm.paging(options.model.paging);
+        }});
     }
 };

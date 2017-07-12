@@ -46,8 +46,9 @@ gridState.processors['vm-update-bindings-columns'] = {
             console.log('Updating the column bindings');
         }
 
-
-        options.model.vm.columns(temp);
+        options.model.runAfter.push({id:'vm-update-bindings-column',fnRef:function(){
+            options.model.vm.columns(temp);
+        }});
     }
 };
 
