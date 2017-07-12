@@ -1791,8 +1791,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 model.vm.size = ko.observable();
         
                 ko.computed(function () {
+                    var previous = model.space ? model.space.width : undefined;
+                    
                     var size = model.vm.size();
-                    if (size) {
+                    if (size && size.width !== previous) {
                         model.vm.process({ space: size });
                     }
                 });
@@ -1909,17 +1911,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 };
         
                 if (!options.model.lastInput.ui || !options.model.lastInput.ui.alreadyUpdatedSelection) {
-                    var timeA = performance.now();
                     var compiledHtml = compiledTemplate(context);
-                    var timeB = performance.now();
-                    options.model.vm.hb_tbody(compiledHtml);
-                    var timeC = performance.now();
-        
-                    // if (options.model.logging) {
-                        // keeping it here for debugging
-                        // console.log('Render template', (timeB - timeA));
-                        // console.log('Update Binding', (timeC - timeB));
-                    // }
+                    options.model.runAfter.push({id:'vm-handlebars-data',fnRef:function(){
+                        options.model.vm.hb_tbody(compiledHtml);
+                    }});
                 }
                 else {
                     console.log('skipping the update dom step since the dom should already be up to date');
@@ -2030,18 +2025,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     };
         
                     if (!options.model.lastInput.ui || !options.model.lastInput.ui.alreadyUpdatedColumns) {
-                        var timeA = performance.now();
                         var compiledHtml = compiledTemplate(context);
-                        var timeB = performance.now();
-                        options.model.vm.hb_columns(compiledHtml);
-                        
-                        var timeC = performance.now();
-        
-                         if (options.model.logging) {
-                             //keeping it here for debugging
-                             //console.log('Render template', (timeB - timeA));
-                             //console.log('Update Binding', (timeC - timeB));
-                         }
+                        options.model.runAfter.push({id:'vm-handlebars-columns', fnRef:function(){
+                            options.model.vm.hb_columns(compiledHtml);
+                        }});
                     }
                     else {
                         console.log('skipping the update dom step since the dom should already be up to date');
@@ -2239,8 +2226,9 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     console.log('Updating the column bindings');
                 }
         
-        
-                options.model.vm.columns(temp);
+                options.model.runAfter.push({id:'vm-update-bindings-column',fnRef:function(){
+                    options.model.vm.columns(temp);
+                }});
             }
         };
         
@@ -2301,8 +2289,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 });
         
                 if (options.changed.data || !options.cache.didRunOnce) {
-                    options.model.vm.data(uiData);
-                    options.model.vm.data.loaded(true);
+                    options.model.runAfter.push({id:'vm-update-bindings-data',fnRef:function(){
+                        options.model.vm.data(uiData);
+                        options.model.vm.data.loaded(true);
+                    }});
                     options.cache.didRunOnce = true;
                 }
             }
@@ -2332,7 +2322,9 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 model.vm.gridState = ko.observable();
             },
             runs: function (options) {
-                options.model.vm.gridState(options.model);
+                options.model.runAfter.push({id:'vm-update-bindings-grid-state',fnRef:function(){
+                    options.model.vm.gridState(options.model);
+                }});
             }
         };
         
@@ -2351,7 +2343,9 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 if (options.model.logging) {
                     console.log('Updating the page bindings');
                 }
-                options.model.vm.paging(options.model.paging);
+                options.model.runAfter.push({id:'vm-update-bindings-paging',fnRef:function(){
+                    options.model.vm.paging(options.model.paging);
+                }});
             }
         };
         
@@ -2381,8 +2375,39 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 if (clone.allSelected.peek() !== ui.allSelected) {
                     clone.allSelected(ui.allSelected);
                 }
+                
+                options.model.runAfter.push({id:'vm-update-bindings-ui',fnRef:function(){
+                    options.model.vm.ui(clone);
+                }});
+            }
+        };
         
-                options.model.vm.ui(clone);
+
+        /* eslint no-unused-vars: 0 */
+        
+        /******************/
+        /** ko run after **/
+        /******************/
+        gridState.processors['run-after'] = {
+            init: function (model) {
+                model.runAfter = [];
+            },
+            runs: function (options) {
+                var temp = options.model.runAfter;
+                var perf = {};
+                temp.forEach(function(req){
+                    try{
+                        var before = performance.now();
+                        req.fnRef();
+                        var after = performance.now();
+                        perf[req.id] = after - before;
+                    }
+                    catch(err){
+                        console.error(err);
+                    }
+                });
+                console.log("Run after performance: ", perf);
+                options.model.runAfter = [];
             }
         };
         
@@ -2448,7 +2473,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             data: [],
             data_ChangeMode: 'Identity',
             processors: {
-                start: ['log-start', 'pre-process', 'process', 'post-process', 'log-done'],
+                start: ['log-start', 'pre-process', 'process', 'post-process', 'run-after', 'log-done'],
                 'pre-process': [
                     'fetch-data-init',
                     'columns-enable-selection-column',
