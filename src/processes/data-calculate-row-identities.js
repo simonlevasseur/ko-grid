@@ -6,7 +6,7 @@
 gridState.processors['data-calculate-row-identities'] = {
     watches: ['data', 'columns'],
     runs: function (options) {
-        if (!options.model.ui.selectable) {
+        if (!options.model.ui.selectable && (!options.model.ui.actions || options.model.ui.actions.length === 0)) {
             return;
         }
         var didChange = false;
