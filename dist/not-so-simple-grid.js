@@ -42,7 +42,7 @@ templates["grid"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading:
 templates["grid_hb"] = "<div class=\"nssg-container\" data-bind=\"css: { isLoading: !data.loaded() }, nssgContainerSize: size\"><table class=\"nssg-table\" data-bind=\"css : { animate: ui().animationEnabled}\"><thead class=\"nssg-thead\" data-bind=\"if: ui()['columns-use-handlebars']\"><tr class=\"nssg-thead-tr\" data-bind=\"html: hb_columns\"></tr></thead><thead class=\"nssg-thead\" data-bind=\"ifnot: ui()['columns-use-handlebars']\"><tr class=\"nssg-thead-tr\" data-bind=\"newnssgTheadTr: true\"><th class=\"nssg-th\" data-bind=\"newnssgTh: col\"></th></tr></thead><tbody class=\"nssg-tobdy\" data-bind=\"html: hb_tbody\"></tbody></table></div>";
 templates["paging"] = "<div class=\"nssg-paging\"><div class=\"nssg-paging-selector-container\" data-bind=\"visible: true\"> <span class=\"nssg-paging-view\">View</span> <select class=\"nssg-paging-pages\" data-bind=\"options: pageSizes, value: pageSize\"></select></div> <span class=\"nssg-paging-count\">Showing&nbsp;<span data-bind=\"text:firstItem\"></span>-<span data-bind=\"text:lastItem\"></span> of&nbsp;<span data-bind=\"text:totalItems\"></span></span><div class=\"nssg-paging-controls\" data-bind=\"visible: true\"> <a href=\"#\" class=\"nssg-paging-arrow nssg-paging-first\" data-bind=\"click: goToFirstPage, visible: currentPageIndex()>1\"></a> <a href=\"#\" class=\"nssg-paging-arrow nssg-paging-prev\" data-bind=\"click: goToPrevPage, visible: currentPageIndex()>1\"></a> <input type=\"text\" class=\"nssg-paging-current\" data-bind=\"value: currentPageIndex\"/><span class=\"nssg-paging-total\" data-bind=\"text: 'of ' + maxPageIndex()\"></span><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-next\" data-bind=\"click: goToNextPage, visible: currentPageIndex() < maxPageIndex()\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-last\" data-bind=\"click: goToLastPage, visible: currentPageIndex() < maxPageIndex()\"></a><a href=\"#\" class=\"nssg-paging-arrow nssg-paging-refresh\" data-bind=\"click: refresh\"></a></div></div>";
 templates["actions"] = "<div class=\"nssg-actions-container\" data-bind=\"foreach: $component().ui().actions\"><a href=\"#\" class=\"nssg-action\" data-bind=\"css: $data.css, click: function(){$data.onClick(row.raw)}\"></a></div>";
-templates["actions_hb"] = "<div class=\"nssg-actions-container\"> {{#each ../actions as |action key|}}<a href=\"#\" class=\"nssg-action {{action.css}}\" onClick=\"{{../../jsContext}}.invokeAction('{{../$identity}}', {{action.index}}); return false\"></a> {{/each}}</div>";
+templates["actions_hb"] = "<div class=\"nssg-actions-container\"> {{#each ../actions as |action key|}}<a href=\"#\" class=\"nssg-action {{#nssg__strOrFn action.css ../raw ..}}{{/nssg__strOrFn}}\" onClick=\"{{../../jsContext}}.invokeAction('{{../$identity}}', {{action.index}}); return false\"></a> {{/each}}</div>";
 templates["gutter"] = "";
 templates["gutter_hb"] = "";
 templates["select"] = "<input type=\"checkbox\" data-bind=\"checked: row.isSelected, checkedValue: row, click: row.toggleSelection($component())\"/>";
@@ -280,6 +280,17 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         return requestInvoke;
     }
     
+
+        Handlebars.registerHelper('nssg__strOrFn', function(v1, v2){
+            if (typeof v1 === "string")
+            {
+                return v1;
+            }
+            else
+            {
+                return v1(v2);
+            }
+        })
 
 
     //= include "other/defaults.js"
@@ -939,7 +950,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['data-calculate-row-identities'] = {
             watches: ['data', 'columns'],
             runs: function (options) {
-                if (!options.model.ui.selectable) {
+                if (!options.model.ui.selectable && (!options.model.ui.actions || options.model.ui.actions.length === 0)) {
                     return;
                 }
                 var didChange = false;
@@ -1051,7 +1062,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                             value = row[col.dataAccessor];
                         }
                         temp[col.id] = value;
-                        if ((value === undefined || value === null) && col.id[0] !== "$") {
+                        if ((value === undefined) && col.id[0] !== "$") {
                             invalidDataAccessors[col.id] = col.dataAccessor;
                         }
                     });
