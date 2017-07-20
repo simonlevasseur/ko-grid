@@ -48,7 +48,7 @@ gridState.processors['data-fetch-cell-values'] = {
                     value = row[col.dataAccessor];
                 }
                 temp[col.id] = value;
-                if ((value === undefined || value === null) && col.id[0] !== "$") {
+                if ((value === undefined) && col.id[0] !== "$") {
                     invalidDataAccessors[col.id] = col.dataAccessor;
                 }
             });
