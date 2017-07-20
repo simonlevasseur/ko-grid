@@ -24,6 +24,8 @@
     //= include templates
 
     //= include "other/utils.js"
+    
+    //= include "other/handlebarsHelpers.js"
 
     //= include "other/defaults.js"
 

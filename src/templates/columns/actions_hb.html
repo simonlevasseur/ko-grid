@@ -1,5 +1,5 @@
 <div class="nssg-actions-container">
 {{#each ../actions as |action key|}}
-    <a href="#" class="nssg-action {{action.css}}" onClick="{{../../jsContext}}.invokeAction('{{../$identity}}', {{action.index}}); return false"></a>
+    <a href="#" class="nssg-action {{#nssg__strOrFn action.css ../raw ..}}{{/nssg__strOrFn}}" onClick="{{../../jsContext}}.invokeAction('{{../$identity}}', {{action.index}}); return false"></a>
 {{/each}}
 </div>
