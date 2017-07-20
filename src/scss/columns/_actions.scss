@@ -30,6 +30,10 @@
 .nssg-action {
     width: 30px;
     height: 26px;
+    
+    &.disabled {
+        pointer-events: none;
+    }
 }
 
 .nssg-action-delete {
