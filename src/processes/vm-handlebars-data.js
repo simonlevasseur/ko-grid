@@ -95,7 +95,7 @@ gridState.processors['vm-handlebars-data'] = {
         }
 
         var actions = options.model.ui.actions ? options.model.ui.actions.map(function (action, index) {
-            return { css: action.css, index: index };
+            return { css: action.css, index: index, tooltip: action.tooltip };
         }) : [];
         var context = {
             jsContext: options.cache.namespace,
