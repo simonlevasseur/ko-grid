@@ -45,8 +45,8 @@ templates["actions"] = "<div class=\"nssg-actions-container\" data-bind=\"foreac
 templates["actions_hb"] = "<div class=\"nssg-actions-container\"> {{#each ../actions as |action key|}}<a href=\"#\" class=\"nssg-action {{#nssg__strOrFn action.css ../raw ..}}{{/nssg__strOrFn}}\" onClick=\"{{../../jsContext}}.invokeAction('{{../$identity}}', {{action.index}}); return false\"></a> {{/each}}</div>";
 templates["gutter"] = "";
 templates["gutter_hb"] = "";
-templates["select"] = "<input type=\"checkbox\" data-bind=\"checked: row.isSelected, checkedValue: row, click: row.toggleSelection($component())\"/>";
-templates["select_hb"] = "<input type=\"checkbox\" {{#if isSelected}}checked {{/if}} onClick=\"javascript:{{../jsContext}}.toggleSelect('{{$identity}}', this)\"/>";
+templates["select"] = "<input type=\"checkbox\" data-bind=\"checked: row.isSelected, checkedValue: row, click: row.toggleSelection($component()), visible: isSelectable\"/>";
+templates["select_hb"] = "{{#if isSelectable}}<input type=\"checkbox\" {{#if isSelected}}checked {{/if}} onClick=\"javascript:{{../jsContext}}.toggleSelect('{{$identity}}', this)\"/>{{/if}}";
 templates["text"] = "<div class=\"nssg-td-text\" data-bind=\"text: $parent[id], attr: { title: $parent[id] }\"></div>";
 templates["text_hb"] = "<div class=\"nssg-td-text\" title=\"{{value}}\">{{value}}</div>";
 templates["actions-th-hb"] = "";
@@ -1285,10 +1285,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
 
         /* eslint no-unused-vars: 0 */
         
-        /************************/
-        /** Data row selection **/
-        /************************/
-        gridState.processors['data-row-selection'] = {
+        /**************************/
+        /** Data row is selected **/
+        /**************************/
+        gridState.processors['data-row-is-selected'] = {
             watches: ['data', 'selection'],
             runs: function (options) {
                 if (!options.model.ui.selectable) {
@@ -1307,6 +1307,34 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         
                 if (options.model.logging && didChange) {
                     console.log('Updating row selection');
+                }
+            }
+        };
+        
+
+        /* eslint no-unused-vars: 0 */
+        
+        /****************************/
+        /** Data row is selectable **/
+        /****************************/
+        gridState.processors['data-row-is-selectable'] = {
+            watches: ['data', 'ui'],
+            runs: function (options) {
+                if (!options.model.ui.selectable) {
+                    return;
+                }
+                var checkRowSelectability = options.model.ui.rowIsSelectable;
+                var didChange = false;
+                options.model.data.forEach(function (row) {
+                    var newValue = !!(checkRowSelectability ? checkRowSelectability(row) : true);
+                    if (row.isSelectable !== newValue) {
+                        didChange = true;
+                        row.isSelectable = newValue;
+                    }
+                });
+        
+                if (options.model.logging && didChange && checkRowSelectability) {
+                    console.log('Updating individual row selectability');
                 }
             }
         };
@@ -1924,7 +1952,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 }
         
                 var actions = options.model.ui.actions ? options.model.ui.actions.map(function (action, index) {
-                    return { css: action.css, index: index };
+                    return { css: action.css, index: index, tooltip: action.tooltip };
                 }) : [];
                 var context = {
                     jsContext: options.cache.namespace,
@@ -2535,7 +2563,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'selection-select-all',
                     'selection-select-single',
                     'selection-disable-multi-page',
-                    'data-row-selection',
+                    'data-row-is-selected',
+                    'data-row-is-selectable',
                     'ui-selected-all-indicator',
                     'ui-selected-count',
                     'ui-export-selected-rows',
