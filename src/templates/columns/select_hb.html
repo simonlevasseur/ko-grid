@@ -1,1 +1,1 @@
-<input type="checkbox" {{#if isSelected}}checked {{/if}} onClick="javascript:{{../jsContext}}.toggleSelect('{{$identity}}', this)"/>
+{{#if isSelectable}}<input type="checkbox" {{#if isSelected}}checked {{/if}} onClick="javascript:{{../jsContext}}.toggleSelect('{{$identity}}', this)"/>{{/if}}
