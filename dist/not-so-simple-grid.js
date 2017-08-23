@@ -1367,7 +1367,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                             console.warn("Tried to sort on a column that wasn't present in the data", criteria.sortBy);
                             continue;
                         }
-                        var sortFn = gridState.sortFunctions[column.type];
+                        var sortFn = column.sortFunction || gridState.sortFunctions[column.type];
                         if (!sortFn) {
                             console.warn('No comparator available for the specified column type, using generic compare', column.type);
                             sortFn = gridState.sortFunctions.generic;
