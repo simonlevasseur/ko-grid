@@ -7,7 +7,7 @@ gridState.processors['paging-check-valid'] = {
     watches: ['paging', 'data'],
     runs: function (options) {
         var paging = options.model.paging;
-        var data = options.model.data;
+        var data = options.model.data || [];
         var didChange = false;
         if (paging.pageSize < 1 || isNaN(paging.pageSize)) {
             paging.pageSize = 1;
