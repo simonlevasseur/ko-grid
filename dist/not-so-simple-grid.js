@@ -1254,7 +1254,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             watches: ['paging', 'data'],
             runs: function (options) {
                 var paging = options.model.paging;
-                var originalData = options.changed.data ? options.model.data : options.cache.data;
+                var originalData = (options.changed.data ? options.model.data : options.cache.data) || [];
                 options.cache.data = originalData;
         
                 if (options.model.logging) {
@@ -1514,7 +1514,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             watches: ['paging', 'data'],
             runs: function (options) {
                 var paging = options.model.paging;
-                var data = options.model.data;
+                var data = options.model.data || [];
                 var didChange = false;
                 if (paging.pageSize < 1 || isNaN(paging.pageSize)) {
                     paging.pageSize = 1;
