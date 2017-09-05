@@ -58,6 +58,7 @@ function createInitialGridState() {
         processors: {
             start: ['log-start', 'pre-process', 'process', 'post-process', 'run-after', 'log-done'],
             'pre-process': [
+                'ui-flag-pipeline-is-running',
                 'fetch-data-init',
                 'columns-enable-selection-column',
                 'columns-enable-actions-column',
@@ -66,7 +67,8 @@ function createInitialGridState() {
                 'columns-index-by-id',
                 'paging-filter-change-resets-currentpage',
                 'paging-sort-change-resets-currentpage',
-                'filter-check-valid'
+                'filter-check-valid',
+                'pre-process-vm'
             ],
             process: 'local',
             local: [
@@ -90,6 +92,7 @@ function createInitialGridState() {
                 'data-fetch-cell-values'
             ],
             'post-process': [
+                'post-process-vm',
                 'ui-animate-on-change',
                 'columns-sort-indicators',
                 'data-calculate-row-identities',
@@ -110,7 +113,8 @@ function createInitialGridState() {
                 'vm-update-bindings-grid-state',
                 'vm',
                 'ui-columns-performance-once',
-                'ui-columns-performance-once-runner'
+                'ui-columns-performance-once-runner',
+                'ui-flag-pipeline-is-finished'
             ],
             'vm':[],
             'use-handlebars' : 'vm-handlebars-data',
@@ -118,6 +122,8 @@ function createInitialGridState() {
             'ui-columns' : 'ui-ko-columns',
             'ui-handlebar-columns': 'vm-handlebars-columns',
             'ui-ko-columns':'vm-update-bindings-columns',
+            'pre-process-vm':[],
+            'post-process-vm':[],
             'fetch-data': function () {
                 throw new Error("Grids must specifiy a 'fetch-data' function or override the definition of 'process'");
             },

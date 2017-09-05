@@ -71,6 +71,8 @@
         //= include "processes/vm-handlebars-data.js"
         //= include "processes/ui-columns-performance.js"
         //= include "processes/ui-columns-performance-once.js"
+        //= include "processes/ui-flag-pipeline-is-finished.js"
+        //= include "processes/ui-flag-pipeline-is-running.js"
         //= include "processes/vm-handlebars-columns.js"
         //= include "processes/vm-update-bindings-columns.js"
         //= include "processes/vm-update-bindings-data.js"

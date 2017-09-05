@@ -1,4 +1,4 @@
-<div class="nssg-container" data-bind="css: { isLoading: !data.loaded() }, nssgContainerSize: size">
+<div class="nssg-container" data-bind="css: { isLoading: !data.loaded() || ui().running1000() }, nssgContainerSize: size">
     <table class="nssg-table" data-bind="css : { animate: ui().animationEnabled}">
         <thead class="nssg-thead" data-bind="if: ui()['columns-use-handlebars']">
             <tr class="nssg-thead-tr" data-bind="html: hb_columns"></tr>
