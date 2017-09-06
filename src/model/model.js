@@ -51,7 +51,8 @@ function createInitialGridState() {
         },
         ui: {
             allowResizing: true,
-            allowSorting: true
+            allowSorting: true,
+            showSpinnerDelay: 1000
         },
         data: [],
         data_ChangeMode: 'Identity',
