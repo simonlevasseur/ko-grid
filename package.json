@@ -1,6 +1,6 @@
 {
   "name": "not-so-simple-grid",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "author": "Simon LeVasseur",
   "devDependencies": {
     "browser-sync": "^2.7.6",
