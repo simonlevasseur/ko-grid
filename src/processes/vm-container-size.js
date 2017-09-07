@@ -11,7 +11,7 @@ gridState.processors['vm-container-size'] = {
             var previous = model.space ? model.space.width : undefined;
             
             var size = model.vm.size();
-            if (size && size.width !== previous) {
+            if (size && size.width !== previous  && size.width > 150) {
                 model.vm.process({ space: size });
             }
         });
