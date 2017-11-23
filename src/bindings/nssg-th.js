@@ -8,6 +8,8 @@
             var $document = $(document);
             var $container = $(element).closest('.nssg-container');
             var $colGrip = null;
+            
+            $th.attr('col-id', col.id);
 
             /**************************/
             /**     COLUMN SORTING   **/

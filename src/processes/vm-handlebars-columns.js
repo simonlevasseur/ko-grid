@@ -89,6 +89,7 @@ gridState.processors['vm-handlebars-columns'] = {
             templateParts.push("    {{/if}}");
             templateParts.push("{{/if}}");
             templateParts.push('\' ');
+            templateParts.push('col-id=\'' + col.id + '\' ');
             templateParts.push("style='width:{{col.adjustedWidth}}px'")
             templateParts.push("{{#if col.isSortable}}onclick='{{jsContext}}.toggleSort(\"{{col.id}}\")'{{/if}}");
             templateParts.push('>');
