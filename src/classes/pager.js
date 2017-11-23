@@ -19,12 +19,18 @@ Grid.Pager = function (options, gridVM) {
     this.firstItem = propertyAsObservable(gridVM.paging, 'firstItem');
     this.lastItem = propertyAsObservable(gridVM.paging, 'lastItem');
     this.totalItems = propertyAsObservable(gridVM.paging, 'totalItems');
-    this.currentPageIndex = ko.pureComputed({ read: function () {
-        return gridVM.paging().currentPage;
-    },
+    this.currentPageIndex = ko.pureComputed({
+        read: function () {
+            return gridVM.paging().currentPage;
+        },
         write: function (newValue) {
-            gridVM.process({ paging: { currentPage: newValue } });
-        } });
+            var page = parseInt(newValue);
+            if (isNaN(page)) {
+                page = 1;
+            }
+            gridVM.process({ paging: { currentPage: page } });
+        }
+    });
     this.pageSize = ko.pureComputed({ read: function () {
         return gridVM.paging().pageSize;
     },
