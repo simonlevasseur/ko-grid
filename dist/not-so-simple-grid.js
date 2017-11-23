@@ -281,15 +281,16 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
     }
     
 
-        Handlebars.registerHelper('nssg__strOrFn', function (v1, v2) {
-            if (typeof v1 === 'string') {
+        Handlebars.registerHelper('nssg__strOrFn', function(v1, v2){
+            if (typeof v1 === "string")
+            {
                 return v1;
             }
-            else {
+            else
+            {
                 return v1(v2);
             }
-        });
-        
+        })
 
 
     //= include "other/defaults.js"
@@ -1843,7 +1844,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     var previous = model.space ? model.space.width : undefined;
                     
                     var size = model.vm.size();
-                    if (size && size.width !== previous) {
+                    if (size && size.width !== previous  && size.width > 150) {
                         model.vm.process({ space: size });
                     }
                 });
@@ -2153,6 +2154,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     templateParts.push("    {{/if}}");
                     templateParts.push("{{/if}}");
                     templateParts.push('\' ');
+                    templateParts.push('col-id=\'' + col.id + '\' ');
                     templateParts.push("style='width:{{col.adjustedWidth}}px'")
                     templateParts.push("{{#if col.isSortable}}onclick='{{jsContext}}.toggleSort(\"{{col.id}}\")'{{/if}}");
                     templateParts.push('>');
@@ -2610,14 +2612,14 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     'ui-columns-performance-once-runner',
                     'ui-flag-pipeline-is-finished'
                 ],
-                vm: [],
-                'use-handlebars': 'vm-handlebars-data',
+                'vm':[],
+                'use-handlebars' : 'vm-handlebars-data',
                 'use-knockout': 'vm-update-bindings-data',
-                'ui-columns': 'ui-ko-columns',
+                'ui-columns' : 'ui-ko-columns',
                 'ui-handlebar-columns': 'vm-handlebars-columns',
-                'ui-ko-columns': 'vm-update-bindings-columns',
-                'pre-process-vm': [],
-                'post-process-vm': [],
+                'ui-ko-columns':'vm-update-bindings-columns',
+                'pre-process-vm':[],
+                'post-process-vm':[],
                 'fetch-data': function () {
                     throw new Error("Grids must specifiy a 'fetch-data' function or override the definition of 'process'");
                 },
@@ -2762,18 +2764,12 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         this.firstItem = propertyAsObservable(gridVM.paging, 'firstItem');
         this.lastItem = propertyAsObservable(gridVM.paging, 'lastItem');
         this.totalItems = propertyAsObservable(gridVM.paging, 'totalItems');
-        this.currentPageIndex = ko.pureComputed({
-            read: function () {
-                return gridVM.paging().currentPage;
-            },
+        this.currentPageIndex = ko.pureComputed({ read: function () {
+            return gridVM.paging().currentPage;
+        },
             write: function (newValue) {
-                var page = parseInt(newValue);
-                if (isNaN(page)) {
-                    page = 1;
-                }
-                gridVM.process({ paging: { currentPage: page } });
-            }
-        });
+                gridVM.process({ paging: { currentPage: newValue } });
+            } });
         this.pageSize = ko.pureComputed({ read: function () {
             return gridVM.paging().pageSize;
         },
@@ -3035,6 +3031,8 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                 var $document = $(document);
                 var $container = $(element).closest('.nssg-container');
                 var $colGrip = null;
+                
+                $th.attr('col-id', col.id);
     
                 /**************************/
                 /**     COLUMN SORTING   **/
