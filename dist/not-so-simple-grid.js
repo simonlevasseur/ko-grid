@@ -1020,7 +1020,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['data-fetch-cell-values'] = {
             watches: ['data', 'columns'],
             runs: function (options) {
-                var originalData = options.changed.data ? options.model.data : options.cache.data;
+                var originalData = options.changed.data ? options.model.data : options.cache.data || options.model.data;
                 options.cache.data = originalData;
         
                 // Check to make sure this is a change worth updating for
@@ -1085,7 +1085,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['data-aggregate-values'] = {
             watches: ['filter', 'data'],
             runs: function (options) {
-                var originalData = options.changed.data ? options.model.data : options.cache.data;
+                var originalData = options.changed.data ? options.model.data : options.cache.data || options.model.data;
                 options.cache.data = originalData;
         
                 if (!options.model.filter || !options.model.filter['*']) {
@@ -1133,7 +1133,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['data-to-lowercase'] = {
             watches: ['filter', 'data'],
             runs: function (options) {
-                var originalData = options.changed.data ? options.model.data : options.cache.data;
+                var originalData = options.changed.data ? options.model.data : options.cache.data || options.model.data;
                 options.cache.data = originalData;
         
                 var hasKeys = false;
@@ -1185,7 +1185,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
         gridState.processors['data-filter'] = {
             watches: ['filter', 'data'],
             runs: function (options) {
-                var originalData = options.changed.data ? options.model.data : options.cache.data;
+                var originalData = options.changed.data ? options.model.data : options.cache.data || options.model.data;
                 options.cache.data = originalData;
         
                 var hasKeys = false;
@@ -1254,7 +1254,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             watches: ['paging', 'data'],
             runs: function (options) {
                 var paging = options.model.paging;
-                var originalData = (options.changed.data ? options.model.data : options.cache.data) || [];
+                var originalData = (options.changed.data ? options.model.data : (options.cache.data || options.model.data)) || [];
                 options.cache.data = originalData;
         
                 if (options.model.logging) {
@@ -1349,7 +1349,7 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
             input: 'sortFunctions',
             watches: ['sort', 'data'],
             runs: function (options) {
-                var originalData = options.changed.data ? options.model.data : options.cache.data;
+                var originalData = options.changed.data ? options.model.data : (options.cache.data || options.model.data);
                 options.cache.data = originalData;
         
                 if (options.model.logging) {
