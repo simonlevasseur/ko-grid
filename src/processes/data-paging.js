@@ -7,7 +7,7 @@ gridState.processors['data-paging'] = {
     watches: ['paging', 'data'],
     runs: function (options) {
         var paging = options.model.paging;
-        var originalData = (options.changed.data ? options.model.data : options.cache.data) || [];
+        var originalData = (options.changed.data ? options.model.data : (options.cache.data || options.model.data)) || [];
         options.cache.data = originalData;
 
         if (options.model.logging) {

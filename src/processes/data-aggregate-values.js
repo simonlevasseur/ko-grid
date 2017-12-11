@@ -6,7 +6,7 @@
 gridState.processors['data-aggregate-values'] = {
     watches: ['filter', 'data'],
     runs: function (options) {
-        var originalData = options.changed.data ? options.model.data : options.cache.data;
+        var originalData = options.changed.data ? options.model.data : options.cache.data || options.model.data;
         options.cache.data = originalData;
 
         if (!options.model.filter || !options.model.filter['*']) {

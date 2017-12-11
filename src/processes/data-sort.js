@@ -7,7 +7,7 @@ gridState.processors['data-sort'] = {
     input: 'sortFunctions',
     watches: ['sort', 'data'],
     runs: function (options) {
-        var originalData = options.changed.data ? options.model.data : options.cache.data;
+        var originalData = options.changed.data ? options.model.data : (options.cache.data || options.model.data);
         options.cache.data = originalData;
 
         if (options.model.logging) {

@@ -6,7 +6,7 @@
 gridState.processors['data-fetch-cell-values'] = {
     watches: ['data', 'columns'],
     runs: function (options) {
-        var originalData = options.changed.data ? options.model.data : options.cache.data;
+        var originalData = options.changed.data ? options.model.data : options.cache.data || options.model.data;
         options.cache.data = originalData;
 
         // Check to make sure this is a change worth updating for
