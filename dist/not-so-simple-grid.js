@@ -45,11 +45,15 @@ templates["actions"] = "<div class=\"nssg-actions-container\" data-bind=\"foreac
 templates["actions_hb"] = "<div class=\"nssg-actions-container\"> {{#each ../actions as |action key|}}<a href=\"#\" class=\"nssg-action {{#nssg__strOrFn action.css ../raw ..}}{{/nssg__strOrFn}}\" onClick=\"{{../../jsContext}}.invokeAction('{{../$identity}}', {{action.index}}); return false\"></a> {{/each}}</div>";
 templates["gutter"] = "";
 templates["gutter_hb"] = "";
+templates["number"] = "<div class=\"nssg-td-number\" data-bind=\"text: $parent[id], attr: { title: $parent[id] }\"></div>";
+templates["number_hb"] = "<div class=\"nssg-td-number\" title=\"{{value}}\">{{value}}</div>";
 templates["select"] = "<input type=\"checkbox\" data-bind=\"checked: row.isSelected, checkedValue: row, click: row.toggleSelection($component()), visible: isSelectable\"/>";
 templates["select_hb"] = "{{#if isSelectable}}<input type=\"checkbox\" {{#if isSelected}}checked {{/if}} onClick=\"javascript:{{../jsContext}}.toggleSelect('{{$identity}}', this)\"/>{{/if}}";
 templates["text"] = "<div class=\"nssg-td-text\" data-bind=\"text: $parent[id], attr: { title: $parent[id] }\"></div>";
 templates["text_hb"] = "<div class=\"nssg-td-text\" title=\"{{value}}\">{{value}}</div>";
 templates["actions-th-hb"] = "";
+templates["number-th-hb"] = "<div class=\"nssg-th-number\" title=\"{{col.heading}}\">{{col.heading}}</div>";
+templates["number-th"] = "<div class=\"nssg-th-number\" data-bind=\"text: col.heading, attr: { title: col.heading }\"></div>";
 templates["select-th-hb"] = "{{#if showSelectAll}} <input type=\"checkbox\" {{#if ui.allSelected}}checked=\"checked\"{{/if}} onclick=\"{{jsContext}}.toggleSelectAll()\"/> {{/if}}";
 templates["select-th"] = "<input type=\"checkbox\" data-bind=\"checked: $component().ui().allSelected, visible: $parent.ui().selectMode==='multi' && $parent.paging().totalItems> 0, click: col.toggleSelectAll($component())\" />";
 templates["text-th-hb"] = "<div class=\"nssg-th-text\" title=\"{{col.heading}}\">{{col.heading}}</div>";
@@ -1372,8 +1376,9 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                             console.warn('No comparator available for the specified column type, using generic compare', column.type);
                             sortFn = gridState.sortFunctions.generic;
                         }
-                        var valueA = rowA[column.id];
-                        var valueB = rowB[column.id];
+                        var valueFn = column.sortValueFunction || valueById;
+                        var valueA = valueFn(column, rowA, rowA.raw);
+                        var valueB = valueFn(column, rowB, rowB.raw);
                         var result = sortFn(valueA, valueB);
                         if (result !== 0) {
                             return criteria.sortAsc ? result : 0 - result;
@@ -1381,6 +1386,10 @@ templates["text-th"] = "<div class=\"nssg-th-text\" data-bind=\"text: col.headin
                     }
                     return 0;
                 });
+                
+                function valueById(column, row, ignored) {
+                    return row[column.id];
+                }
             }
         };
         
