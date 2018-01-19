@@ -30,8 +30,9 @@ gridState.processors['data-sort'] = {
                     console.warn('No comparator available for the specified column type, using generic compare', column.type);
                     sortFn = gridState.sortFunctions.generic;
                 }
-                var valueA = rowA[column.id];
-                var valueB = rowB[column.id];
+                var valueFn = column.sortValueFunction || valueById;
+                var valueA = valueFn(column, rowA, rowA.raw);
+                var valueB = valueFn(column, rowB, rowB.raw);
                 var result = sortFn(valueA, valueB);
                 if (result !== 0) {
                     return criteria.sortAsc ? result : 0 - result;
@@ -39,6 +40,10 @@ gridState.processors['data-sort'] = {
             }
             return 0;
         });
+        
+        function valueById(column, row, ignored) {
+            return row[column.id];
+        }
     }
 };
 
